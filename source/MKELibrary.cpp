@@ -39,9 +39,17 @@
 #include "clock_config.h"
 #include "MKE18F16.h"
 #include "fsl_debug_console.h"
+#include "Service.h"
+
+#include "gpio.h"
 /* TODO: insert other include files here. */
 
 /* TODO: insert other definitions and declarations here. */
+
+void tick(void){
+	TestService::StaticClass().tick();
+	GPIO::StaticClass().tick();
+}
 
 /*
  * @brief   Application entry point.
@@ -55,6 +63,12 @@ int main(void) {
 	BOARD_InitDebugConsole();
 
     PRINTF("Hello World\n");
+
+    TestService::ConstructStatic(1);
+
+    GPIO::ConstructStatic();
+
+    tick();
 
     /* Force the counter to be placed into memory. */
     volatile static int i = 0 ;
