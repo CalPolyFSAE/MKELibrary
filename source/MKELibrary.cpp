@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, NXP Semiconductor, Inc.
+ * Copyright 2016-2018 NXP Semiconductor, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -54,8 +54,7 @@ int main(void) {
   	/* Init FSL debug console. */
 	BOARD_InitDebugConsole();
 
-	printf("AAA\n");
-
+    PRINTF("Hello World\n");
 
     /* Force the counter to be placed into memory. */
     volatile static int i = 0 ;

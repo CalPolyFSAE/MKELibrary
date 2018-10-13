@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 201, NXP Semiconductor, Inc.
+ * Copyright 2016-2018 NXP
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -36,8 +36,6 @@
 /* This is a template for board specific configuration created by MCUXpresso IDE Project Wizard.*/
 
 #include <stdint.h>
-#include "fsl_common.h"
-#include "fsl_debug_console.h"
 #include "board.h"
 
 /**
@@ -45,10 +43,4 @@
  */
 void BOARD_InitDebugConsole(void) {
 	/* The user initialization should be placed here */
-	CLOCK_SetIpSrc(kCLOCK_Lpuart0, kCLOCK_IpSrcSysPllAsync);
-
-	uint32_t uartClkSrcFreq = CLOCK_GetIpFreq(kCLOCK_Lpuart0);
-
-	DbgConsole_Init(LPUART0_BASE, 115200,
-			DEBUG_CONSOLE_DEVICE_TYPE_LPUART, uartClkSrcFreq);
 }

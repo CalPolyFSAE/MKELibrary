@@ -4,7 +4,7 @@
 //                  to hang application when debugger not connected.
 //
 // ****************************************************************************
-// Copyright(C) NXP Semiconductors, 2017
+// Copyright(C) NXP Semiconductors, 2017-2018
 // All rights reserved.
 //
 // Software that is described herein is for illustrative purposes only
@@ -98,7 +98,8 @@ void HardFault_Handler(void){
     	// 32 is slightly arbitrary, but appears to allow most
     	// C Library IO functions sitting on top of semihosting to
     	// continue to operate to some degree
-    		"MOVS   R0,#32 \n"
+    		    "MOVS   R1,#32 \n"
+    		    "STR R1,[ R0,#0 ] \n" // R0 is at location 0 on stack
     	// Return from hard fault handler to application
             "BX LR \n"
         ".syntax divided\n") ;
