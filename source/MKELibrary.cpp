@@ -40,7 +40,8 @@
 #include "MKE18F16.h"
 #include "fsl_debug_console.h"
 #include "Service.h"
-
+#include "fsl_common.h"
+#include "fsl_port.h"
 #include "gpio.h"
 /* TODO: insert other include files here. */
 
@@ -67,6 +68,10 @@ int main(void) {
     TestService::ConstructStatic(1);
 
     GPIO::ConstructStatic();
+
+    GPIO::set('c', 10U);
+
+    GPIO::clear('c', 10U);
 
     tick();
 
