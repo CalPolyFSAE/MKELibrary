@@ -30,7 +30,9 @@ public:
     static void clear(char portname, uint32_t pin);
     // Toggle logic level of pins in mask
     // mask pins 1 and 3: (1 << 0) | (1 << 3)
-    static void toggle(char portname, uint32_t pinmask);
+    static void toggle(char portname, uint32_t pin);
+
+    static uint32_t read(char portname, uint32_t pin);
 
 private:
 

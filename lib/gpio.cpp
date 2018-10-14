@@ -18,8 +18,12 @@ void GPIO::clear(char portname, uint32_t pin){
     GPIO_PinWrite(p, pin, 1);
 }
 
-void GPIO::toggle(char portname, uint32_t pinmask){
-    GPIO_PortToggle(port(portname), pinmask);
+void GPIO::toggle(char portname, uint32_t pin){
+    GPIO_PortToggle(port(portname), (1<<pin));
+}
+
+uint32_t GPIO::read(char portname, uint32_t pin){
+    return GPIO_PinRead(port(portname), pin);
 }
 
 GPIO_Type * GPIO::port(char portname){
