@@ -5,6 +5,10 @@
 /*
  * General notes
  *
+ * The IO system is two peripherals; GPIO and PORT.
+ * GPIO handles digital logic reading and writing.
+ * PORT handles assigning pins to peripherals and pin interrupts.
+ *
  * Pin config tool must be used to set up PORT utility and associated clocks.
  * This library does not do that, yet.
  *
@@ -13,6 +17,18 @@
  * "Each 32-pin port supports one interrupt."
  * Interrupts defined in startup file for ports A through E
  *      PORTX_IRQHandler
+ *
+ * Pin configuration register
+ * One register for each pin: PORTA_PCR0, etc.
+ *  ISF: The pin has interrupted
+ *      Every ISF is mirrored in port register PORTA_ISFR, etc.
+ *  IRQC: When will the pin trigger interrupt?
+ *  LK: Lock the register
+ *  MUX: What is the pin's function?
+ *  DSE: High or low drive strength?
+ *  PFE: Passive filter?
+ *  PE: Pull enable
+ *  PS: Pull direction
  */
 
 class GPIO : public StaticService<GPIO> {

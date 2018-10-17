@@ -23,11 +23,11 @@
 /* clang-format off */
 /* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 !!GlobalInfo
-product: Clocks v4.0
+product: Clocks v4.1
 processor: MKE18F512xxx16
-package_id: MKE18F512VLH16
+package_id: MKE18F512VLL16
 mcu_data: ksdk2_0
-processor_version: 3.0.1
+processor_version: 4.0.0
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 /* clang-format on */
 
@@ -120,8 +120,6 @@ outputs:
 - {id: System_clock.outFreq, value: 12 MHz}
 settings:
 - {id: SCG.DIVCORE.scale, value: '4', locked: true}
-- {id: 'SCG::HCCR[DIVCORE].bitField', value: Divide-by-4}
-- {id: 'SCG::VCCR[DIVCORE].bitField', value: Divide-by-9}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 /* clang-format on */
 
