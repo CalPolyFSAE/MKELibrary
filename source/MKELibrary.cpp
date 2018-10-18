@@ -52,6 +52,11 @@ void tick(void){
 	GPIO::StaticClass().tick();
 }
 
+void PORTA_IRQHandler(void){
+    if(GPIO::StaticClass().porta_int)
+        GPIO::StaticClass().porta_int();
+}
+
 /*
  * @brief   Application entry point.
  */

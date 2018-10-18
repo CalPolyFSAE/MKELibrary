@@ -1,6 +1,10 @@
+#ifndef _GPIO_H_
+#define _GPIO_H_
+
 #include <stdio.h>
 #include "Service.h"
 #include "fsl_gpio.h"
+#include "MKE18F16.h"
 
 /*
  * General notes
@@ -31,15 +35,14 @@
  *  PS: Pull direction
  */
 
+
 class GPIO : public StaticService<GPIO> {
 public:
-	GPIO(){
-		printf("GPIO INITIALIZED\n");
-	}
-
 	virtual void tick() override{
 		printf("tock\n");
 	}
+
+    GPIO();
 
     // Set a pin to a logic level.
     static void set(char portname, uint32_t pin);
@@ -50,8 +53,14 @@ public:
 
     static uint32_t read(char portname, uint32_t pin);
 
+    // Set to NULL in constructor
+    void (*porta_int)(void);
+
 private:
 
     static GPIO_Type * port(char portname);
 
 };
+
+
+#endif

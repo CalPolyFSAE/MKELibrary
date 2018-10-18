@@ -1,5 +1,10 @@
 #include "gpio.h"
 
+GPIO::GPIO(){
+    printf("GPIO INITIALIZED\n");
+    porta_int = NULL;
+}
+
 void GPIO::set(char portname, uint32_t pin){
     GPIO_Type* p = port(portname);
 
