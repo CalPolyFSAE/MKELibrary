@@ -1,5 +1,12 @@
 #include "gpio.h"
 
+extern "C" {
+void PORTA_IRQHandler(void) {
+	if (GPIO::StaticClass().porta_int)
+		GPIO::StaticClass().porta_int();
+}
+}
+
 GPIO::GPIO(){
     printf("GPIO INITIALIZED\n");
     porta_int = NULL;
