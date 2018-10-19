@@ -16,22 +16,27 @@ void GPIO::set(char portname, uint32_t pin){
     GPIO_Type* p = port(portname);
 
     // Ensure the pin is an output
-    if(!(p->PDDR & (1U << pin))) p->PDDR |= (1U << pin);
+    if(!(p->PDDR & (kGPIO_DigitalOutput << pin))) p->PDDR |= (kGPIO_DigitalOutput << pin);
 
-    GPIO_PinWrite(p, pin, 0);
+    GPIO_PinWrite(p, pin, kGPIO_LogicHigh);
 }
 
 void GPIO::clear(char portname, uint32_t pin){
     GPIO_Type* p = port(portname);
 
     // Ensure the pin is an output
-    if(!(p->PDDR & (1U << pin))) p->PDDR |= (1U << pin);
+    if(!(p->PDDR & (kGPIO_DigitalOutput << pin))) p->PDDR |= (kGPIO_DigitalOutput << pin);
 
-    GPIO_PinWrite(p, pin, 1);
+    GPIO_PinWrite(p, pin, kGPIO_LogicLow);
 }
 
 void GPIO::toggle(char portname, uint32_t pin){
-    GPIO_PortToggle(port(portname), (1<<pin));
+    GPIO_Type* p = port(portname);
+
+    // Ensure the pin is an output
+    if(!(p->PDDR & (kGPIO_DigitalOutput << pin))) p->PDDR |= (kGPIO_DigitalOutput << pin);
+
+    GPIO_PortToggle(p, (1<<pin));
 }
 
 uint32_t GPIO::read(char portname, uint32_t pin){
@@ -39,15 +44,15 @@ uint32_t GPIO::read(char portname, uint32_t pin){
 }
 
 GPIO_Type * GPIO::port(char portname){
-    if(portname == 'a')
+    if(portname == 'a' || portname == 'A')
         return GPIOA;
-    if(portname == 'b')
+    if(portname == 'b' || portname == 'B')
         return GPIOB;
-    if(portname == 'c')
+    if(portname == 'c' || portname == 'C')
         return GPIOC;
-    if(portname == 'd')
+    if(portname == 'd' || portname == 'D')
         return GPIOD;
-    if(portname == 'e')
+    if(portname == 'e' || portname == 'E')
         return GPIOE;
     return NULL;
 }

@@ -36,6 +36,14 @@
  */
 
 
+/*! @brief GPIO logic level definition */
+typedef enum _gpio_logic_level
+{
+    kGPIO_LogicLow = 0U,  /*!< Digital logic low*/
+    kGPIO_LogicHigh = 1U, /*!< Digital logic high*/
+} gpio_logic_level_t;
+
+
 class GPIO : public StaticService<GPIO> {
 public:
 	virtual void tick() override{
