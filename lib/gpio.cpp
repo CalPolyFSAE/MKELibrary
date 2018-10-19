@@ -44,15 +44,15 @@ uint32_t GPIO::read(char portname, uint32_t pin){
 }
 
 GPIO_Type * GPIO::port(char portname){
-    if(portname == 'a' || portname == 'A')
+    if((portname == 'a') || (portname == 'A'))
         return GPIOA;
-    if(portname == 'b' || portname == 'B')
+    if((portname == 'b') || (portname == 'B'))
         return GPIOB;
-    if(portname == 'c' || portname == 'C')
+    if((portname == 'c') || (portname == 'C'))
         return GPIOC;
-    if(portname == 'd' || portname == 'D')
+    if((portname == 'd') || (portname == 'D'))
         return GPIOD;
-    if(portname == 'e' || portname == 'E')
+    if((portname == 'e') || (portname == 'E'))
         return GPIOE;
     return NULL;
 }
