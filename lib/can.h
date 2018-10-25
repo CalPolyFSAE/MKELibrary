@@ -27,7 +27,14 @@ public:
 	};
 
 	struct mb_frame {
-		uint8_t data[8];
+		union {
+			uint8_t 	data08	[8];
+			uint16_t 	data16	[4];
+			uint32_t 	data32	[2];
+			uint64_t 	data64;
+		};
+		uint16_t id;
+		uint8_t dlc;
 	};
 
 	void tick() override {}
