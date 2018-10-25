@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include "Service.h"
+#include "fsl_port.h"
 #include "fsl_gpio.h"
 #include "MKE18F16.h"
 
@@ -53,27 +54,94 @@ public:
 
     GPIO();
 
-    // Set pin
+    /*!
+     * @brief Sets the output level of the multiple GPIO pins to the logic 1.
+     *
+     * @param port 	GPIO port name
+     * @param pin	GPIO pin number(s)
+     */
     static void set(gpio_port_t port, uint32_t pin);
 
-    // clear pin
+    /*!
+     * @brief Sets the output level of the multiple GPIO pins to the logic 0.
+     *
+     * @param port 	GPIO port name
+     * @param pin	GPIO pin number(s)
+     */
     static void clear(gpio_port_t port, uint32_t pin);
 
-    // Toggle pin
+    /*!
+     * @brief Reverses the current output logic of the multiple GPIO pins.
+     *
+     * @param port 	GPIO port name
+     * @param pin	GPIO pin number(s)
+     */
     static void toggle(gpio_port_t port, uint32_t pin);
 
-    // Write pin
-    static void write(gpio_port_t port, uint32_t pin, uint32_t data);
-
-    // Read pin
+    /*!
+     * @brief Reads the current input value of the GPIO port.
+     *
+     * @param port 	GPIO port name
+     * @param pin	GPIO pin number(s)
+     * @retval GPIO port input value
+     *        - 0: corresponding pin input low-logic level.
+     *        - 1: corresponding pin input high-logic level.
+     */
     static uint32_t read(gpio_port_t port, uint32_t pin);
+
+    /*!
+     * @brief Sets the port PCR register.
+     *
+     * This is an example to define an input pin or output pin PCR configuration.
+     * @code
+     * // Define a digital input pin PCR configuration
+     * port_pin_config_t config = {
+     *      kPORT_PullUp,
+     *      kPORT_FastSlewRate,
+     *      kPORT_PassiveFilterDisable,
+     *      kPORT_OpenDrainDisable,
+     *      kPORT_LowDriveStrength,
+     *      kPORT_MuxAsGpio,
+     *      kPORT_UnLockRegister,
+     * };
+     * @endcode
+     *
+     * @param port 		GPIO port name
+     * @param pin		GPIO pin number
+     * @param config 	PORT PCR register configuration structure.
+     */
+    static void config_pin(gpio_port_t port, uint32_t pin, port_pin_config_t *config);
+
+    /*!
+     * @brief Configures the port pin interrupt/DMA request.
+     *
+     * @param port 		GPIO port name
+     * @param pin		GPIO pin number
+     * @param config  	PORT pin interrupt configuration.
+     *        - #kPORT_InterruptOrDMADisabled: Interrupt/DMA request disabled.
+     *        - #kPORT_DMARisingEdge : DMA request on rising edge(if the DMA requests exit).
+     *        - #kPORT_DMAFallingEdge: DMA request on falling edge(if the DMA requests exit).
+     *        - #kPORT_DMAEitherEdge : DMA request on either edge(if the DMA requests exit).
+     *        - #kPORT_FlagRisingEdge : Flag sets on rising edge(if the Flag states exit).
+     *        - #kPORT_FlagFallingEdge : Flag sets on falling edge(if the Flag states exit).
+     *        - #kPORT_FlagEitherEdge : Flag sets on either edge(if the Flag states exit).
+     *        - #kPORT_InterruptLogicZero  : Interrupt when logic zero.
+     *        - #kPORT_InterruptRisingEdge : Interrupt on rising edge.
+     *        - #kPORT_InterruptFallingEdge: Interrupt on falling edge.
+     *        - #kPORT_InterruptEitherEdge : Interrupt on either edge.
+     *        - #kPORT_InterruptLogicOne   : Interrupt when logic one.
+     *        - #kPORT_ActiveHighTriggerOutputEnable : Enable active high-trigger output (if the trigger states exit).
+     *        - #kPORT_ActiveLowTriggerOutputEnable  : Enable active low-trigger output (if the trigger states exit).
+     */
+    static void config_interrupt(gpio_port_t port, uint32_t pin, port_interrupt_t config);
 
     // Set to NULL in constructor
     void (*porta_int)(void);
 
 private:
 
-    static GPIO_Type * get_port(gpio_port_t port);
+    static PORT_Type * get_port(gpio_port_t port);
+    static GPIO_Type * get_gpio(gpio_port_t port);
 
 };
 
