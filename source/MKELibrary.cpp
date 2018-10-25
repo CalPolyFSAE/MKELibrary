@@ -69,9 +69,9 @@ int main(void) {
 
     GPIO::ConstructStatic();
 
-    GPIO::set('c', 10U);
+    GPIO::set(kGPIO_PortC, 10U);
 
-    GPIO::clear('c', 10U);
+    GPIO::clear(kGPIO_PortC, 10U);
 
     tick();
 

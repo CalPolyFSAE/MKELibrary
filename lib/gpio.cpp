@@ -12,26 +12,26 @@ GPIO::GPIO(){
     porta_int = NULL;
 }
 
-void GPIO::set(char portname, uint32_t pin){
-    GPIO_Type* p = port(portname);
+void GPIO::set(gpio_port_t port, uint32_t pin){
+    GPIO_Type* p = get_port(port);
 
     // Ensure the pin is an output
     if(!(p->PDDR & (kGPIO_DigitalOutput << pin))) p->PDDR |= (kGPIO_DigitalOutput << pin);
 
-    GPIO_PinWrite(p, pin, kGPIO_LogicHigh);
+    GPIO_PortSet(p, (1<<pin));
 }
 
-void GPIO::clear(char portname, uint32_t pin){
-    GPIO_Type* p = port(portname);
+void GPIO::clear(gpio_port_t port, uint32_t pin){
+	GPIO_Type* p = get_port(port);
 
     // Ensure the pin is an output
     if(!(p->PDDR & (kGPIO_DigitalOutput << pin))) p->PDDR |= (kGPIO_DigitalOutput << pin);
 
-    GPIO_PinWrite(p, pin, kGPIO_LogicLow);
+    GPIO_PortClear(p, (1<<pin));
 }
 
-void GPIO::toggle(char portname, uint32_t pin){
-    GPIO_Type* p = port(portname);
+void GPIO::toggle(gpio_port_t port, uint32_t pin){
+	GPIO_Type* p = get_port(port);
 
     // Ensure the pin is an output
     if(!(p->PDDR & (kGPIO_DigitalOutput << pin))) p->PDDR |= (kGPIO_DigitalOutput << pin);
@@ -39,20 +39,23 @@ void GPIO::toggle(char portname, uint32_t pin){
     GPIO_PortToggle(p, (1<<pin));
 }
 
-uint32_t GPIO::read(char portname, uint32_t pin){
-    return GPIO_PinRead(port(portname), pin);
+uint32_t GPIO::read(gpio_port_t port, uint32_t pin){
+    return GPIO_PinRead(get_port(port), pin);
 }
 
-GPIO_Type * GPIO::port(char portname){
-    if((portname == 'a') || (portname == 'A'))
-        return GPIOA;
-    if((portname == 'b') || (portname == 'B'))
-        return GPIOB;
-    if((portname == 'c') || (portname == 'C'))
-        return GPIOC;
-    if((portname == 'd') || (portname == 'D'))
-        return GPIOD;
-    if((portname == 'e') || (portname == 'E'))
-        return GPIOE;
-    return NULL;
+GPIO_Type * GPIO::get_port(gpio_port_t port){
+    switch(port){
+    	case kGPIO_PortA:
+    		return GPIOA;
+    	case kGPIO_PortB:
+    		return GPIOB;
+    	case kGPIO_PortC:
+    		return GPIOC;
+    	case kGPIO_PortD:
+    		return GPIOD;
+    	case kGPIO_PortE:
+    		return GPIOE;
+    	default:
+    		return NULL;
+    }
 }

@@ -35,14 +35,15 @@
  *  PS: Pull direction
  */
 
-
-/*! @brief GPIO logic level definition */
-typedef enum _gpio_logic_level
+/*! @brief GPIO port definition */
+typedef enum _gpio_port
 {
-    kGPIO_LogicLow = 0U,  /*!< Digital logic low*/
-    kGPIO_LogicHigh = 1U, /*!< Digital logic high*/
-} gpio_logic_level_t;
-
+	kGPIO_PortA = 0U,	/*!< GPIO Port A*/
+	kGPIO_PortB = 1U,	/*!< GPIO Port B*/
+	kGPIO_PortC = 2U,	/*!< GPIO Port C*/
+	kGPIO_PortD = 3U,	/*!< GPIO Port D*/
+	kGPIO_PortE = 4U,	/*!< GPIO Port E*/
+} gpio_port_t;
 
 class GPIO : public StaticService<GPIO> {
 public:
@@ -52,21 +53,27 @@ public:
 
     GPIO();
 
-    // Set a pin to a logic level.
-    static void set(char portname, uint32_t pin);
-    static void clear(char portname, uint32_t pin);
-    // Toggle logic level of pins in mask
-    // mask pins 1 and 3: (1 << 0) | (1 << 3)
-    static void toggle(char portname, uint32_t pin);
+    // Set pin
+    static void set(gpio_port_t port, uint32_t pin);
 
-    static uint32_t read(char portname, uint32_t pin);
+    // clear pin
+    static void clear(gpio_port_t port, uint32_t pin);
+
+    // Toggle pin
+    static void toggle(gpio_port_t port, uint32_t pin);
+
+    // Write pin
+    static void write(gpio_port_t port, uint32_t pin, uint32_t data);
+
+    // Read pin
+    static uint32_t read(gpio_port_t port, uint32_t pin);
 
     // Set to NULL in constructor
     void (*porta_int)(void);
 
 private:
 
-    static GPIO_Type * port(char portname);
+    static GPIO_Type * get_port(gpio_port_t port);
 
 };
 
