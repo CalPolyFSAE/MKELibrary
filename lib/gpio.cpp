@@ -1,15 +1,12 @@
 #include "gpio.h"
 
-extern "C" {
-void PORTA_IRQHandler(void) {
-	if (GPIO::StaticClass().porta_int)
-		GPIO::StaticClass().porta_int();
-}
-}
-
 GPIO::GPIO(){
     printf("GPIO INITIALIZED\n");
-    porta_int = NULL;
+    function[kGPIO_PortA] = NULL;
+    function[kGPIO_PortB] = NULL;
+    function[kGPIO_PortC] = NULL;
+    function[kGPIO_PortD] = NULL;
+    function[kGPIO_PortE] = NULL;
 }
 
 void GPIO::set(gpio_port_t port, uint32_t pin){
@@ -51,6 +48,11 @@ void GPIO::config_interrupt(gpio_port_t port, uint32_t pin, port_interrupt_t con
 	PORT_SetPinInterruptConfig(get_port(port), pin, config);
 }
 
+void GPIO::config_function(gpio_port_t port, int (* function)(int argc, ...))
+{
+	GPIO::function[port] = function;
+}
+
 PORT_Type * GPIO::get_port(gpio_port_t port){
     switch(port){
     	case kGPIO_PortA:
@@ -84,3 +86,26 @@ GPIO_Type * GPIO::get_gpio(gpio_port_t port){
     		return NULL;
     }
 }
+
+extern "C" {
+void PORTA_IRQHandler(void){
+	if(GPIO::StaticClass().function[kGPIO_PortA]) GPIO::StaticClass().function[kGPIO_PortA];
+}
+
+void PORTB_IRQHandler(void){
+	if(GPIO::StaticClass().function[kGPIO_PortB]) GPIO::StaticClass().function[kGPIO_PortB];
+}
+
+void PORTC_IRQHandler(void){
+	if(GPIO::StaticClass().function[kGPIO_PortC]) GPIO::StaticClass().function[kGPIO_PortC];
+}
+
+void PORTD_IRQHandler(void){
+	if(GPIO::StaticClass().function[kGPIO_PortD]) GPIO::StaticClass().function[kGPIO_PortD];
+}
+
+void PORTE_IRQHandler(void){
+	if(GPIO::StaticClass().function[kGPIO_PortE]) GPIO::StaticClass().function[kGPIO_PortE];
+}
+}
+

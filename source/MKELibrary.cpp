@@ -39,9 +39,6 @@
 #include "clock_config.h"
 #include "MKE18F16.h"
 #include "fsl_debug_console.h"
-#include "Service.h"
-#include "fsl_common.h"
-#include "fsl_port.h"
 #include "gpio.h"
 /* TODO: insert other include files here. */
 
@@ -69,17 +66,10 @@ int main(void) {
 
     GPIO::ConstructStatic();
 
-    GPIO::set(kGPIO_PortC, 10U);
-
-    GPIO::clear(kGPIO_PortC, 10U);
-
     tick();
 
-    /* Force the counter to be placed into memory. */
-    volatile static int i = 0 ;
-    /* Enter an infinite loop, just incrementing a counter. */
     while(1) {
-        i++ ;
+        GPIO::toggle(kGPIO_PortC, 10U);
     }
     return 0 ;
 }

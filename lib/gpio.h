@@ -3,8 +3,8 @@
 
 #include <stdio.h>
 #include "Service.h"
-#include "fsl_port.h"
 #include "fsl_gpio.h"
+#include "fsl_port.h"
 #include "MKE18F16.h"
 
 /*
@@ -39,20 +39,25 @@
 /*! @brief GPIO port definition */
 typedef enum _gpio_port
 {
-	kGPIO_PortA = 0U,	/*!< GPIO Port A*/
-	kGPIO_PortB = 1U,	/*!< GPIO Port B*/
-	kGPIO_PortC = 2U,	/*!< GPIO Port C*/
-	kGPIO_PortD = 3U,	/*!< GPIO Port D*/
-	kGPIO_PortE = 4U,	/*!< GPIO Port E*/
+	kGPIO_PortA 	= 0U,	/*!< GPIO Port A*/
+	kGPIO_PortB 	= 1U,	/*!< GPIO Port B*/
+	kGPIO_PortC 	= 2U,	/*!< GPIO Port C*/
+	kGPIO_PortD 	= 3U,	/*!< GPIO Port D*/
+	kGPIO_PortE 	= 4U,	/*!< GPIO Port E*/
+	kGPIO_PortCount = 5U,	/*!< GPIO Port Count*/
 } gpio_port_t;
 
 class GPIO : public StaticService<GPIO> {
 public:
+
+	/*! @brief GPIO interrupt function pointers */
+    int (* function [kGPIO_PortCount])(int argc, ...);
+
+    GPIO();
+
 	virtual void tick() override{
 		printf("tock\n");
 	}
-
-    GPIO();
 
     /*!
      * @brief Sets the output level of the multiple GPIO pins to the logic 1.
@@ -135,8 +140,13 @@ public:
      */
     static void config_interrupt(gpio_port_t port, uint32_t pin, port_interrupt_t config);
 
-    // Set to NULL in constructor
-    void (*porta_int)(void);
+    /*!
+     * @brief Configures the port interrupt function.
+     *
+     * @param port 		GPIO port name
+     * @param function  User-defined function pointer
+     */
+    void config_function(gpio_port_t port, int (* function)(int argc, ...));
 
 private:
 
