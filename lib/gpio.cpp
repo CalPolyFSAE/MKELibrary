@@ -2,11 +2,11 @@
 
 GPIO::GPIO(){
     printf("GPIO INITIALIZED\n");
-    function[kGPIO_PortA] = NULL;
-    function[kGPIO_PortB] = NULL;
-    function[kGPIO_PortC] = NULL;
-    function[kGPIO_PortD] = NULL;
-    function[kGPIO_PortE] = NULL;
+    GPIO::StaticClass().function[kGPIO_PortA] = NULL;
+    GPIO::StaticClass().function[kGPIO_PortB] = NULL;
+    GPIO::StaticClass().function[kGPIO_PortC] = NULL;
+    GPIO::StaticClass().function[kGPIO_PortD] = NULL;
+    GPIO::StaticClass().function[kGPIO_PortE] = NULL;
 }
 
 void GPIO::set(gpio_port_t port, uint32_t pin){
@@ -36,8 +36,11 @@ void GPIO::toggle(gpio_port_t port, uint32_t pin){
     GPIO_PortToggle(p, (1<<pin));
 }
 
-uint32_t GPIO::read(gpio_port_t port, uint32_t pin){
-    return GPIO_PinRead(get_gpio(port), pin);
+gpio_logic_level_t GPIO::read(gpio_port_t port, uint32_t pin){
+	if(GPIO_PinRead(get_gpio(port), pin))
+		return kGPIO_LogicHigh;
+	else
+		return kGPIO_LogicLow;
 }
 
 void GPIO::config_pin(gpio_port_t port, uint32_t pin, port_pin_config_t *config){
@@ -50,7 +53,7 @@ void GPIO::config_interrupt(gpio_port_t port, uint32_t pin, port_interrupt_t con
 
 void GPIO::config_function(gpio_port_t port, int (* function)(int argc, ...))
 {
-	GPIO::function[port] = function;
+	GPIO::StaticClass().function[port] = function;
 }
 
 PORT_Type * GPIO::get_port(gpio_port_t port){

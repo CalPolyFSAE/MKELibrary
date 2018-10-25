@@ -47,6 +47,13 @@ typedef enum _gpio_port
 	kGPIO_PortCount = 5U,	/*!< GPIO Port Count*/
 } gpio_port_t;
 
+/*! @brief GPIO logic level definition */
+typedef enum _gpio_logic_level
+{
+    kGPIO_LogicLow = 0U,  /*!< Digital logic low*/
+    kGPIO_LogicHigh = 1U, /*!< Digital logic high*/
+} gpio_logic_level_t;
+
 class GPIO : public StaticService<GPIO> {
 public:
 
@@ -60,39 +67,39 @@ public:
 	}
 
     /*!
-     * @brief Sets the output level of the multiple GPIO pins to the logic 1.
+     * @brief Sets the output level of a GPIO pin to logic '1'.
      *
      * @param port 	GPIO port name
-     * @param pin	GPIO pin number(s)
+     * @param pin	GPIO pin number
      */
     static void set(gpio_port_t port, uint32_t pin);
 
     /*!
-     * @brief Sets the output level of the multiple GPIO pins to the logic 0.
+     * @brief Sets the output level of a GPIO pin to logic '0'.
      *
      * @param port 	GPIO port name
-     * @param pin	GPIO pin number(s)
+     * @param pin	GPIO pin number
      */
     static void clear(gpio_port_t port, uint32_t pin);
 
     /*!
-     * @brief Reverses the current output logic of the multiple GPIO pins.
+     * @brief Toggles the output logic of a GPIO pin.
      *
      * @param port 	GPIO port name
-     * @param pin	GPIO pin number(s)
+     * @param pin	GPIO pin number
      */
     static void toggle(gpio_port_t port, uint32_t pin);
 
     /*!
-     * @brief Reads the current input value of the GPIO port.
+     * @brief Reads the current value of a GPIO pin.
      *
      * @param port 	GPIO port name
-     * @param pin	GPIO pin number(s)
+     * @param pin	GPIO pin number
      * @retval GPIO port input value
-     *        - 0: corresponding pin input low-logic level.
-     *        - 1: corresponding pin input high-logic level.
+     *        - kGPIO_LogicLow: corresponding pin input low-logic level.
+     *        - kGPIO_LogicHigh: corresponding pin input high-logic level.
      */
-    static uint32_t read(gpio_port_t port, uint32_t pin);
+    static gpio_logic_level_t read(gpio_port_t port, uint32_t pin);
 
     /*!
      * @brief Sets the port PCR register.
@@ -146,7 +153,7 @@ public:
      * @param port 		GPIO port name
      * @param function  User-defined function pointer
      */
-    void config_function(gpio_port_t port, int (* function)(int argc, ...));
+    static void config_function(gpio_port_t port, int (* function)(int argc, ...));
 
 private:
 
