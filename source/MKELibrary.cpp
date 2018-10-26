@@ -69,7 +69,7 @@ int main(void) {
     tick();
 
     while(1) {
-        GPIO::toggle(kGPIO_PortC, 10U);
+        GPIO::StaticClass().toggle(GPIO_port::PortC, 10U);
     }
     return 0 ;
 }

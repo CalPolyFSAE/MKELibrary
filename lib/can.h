@@ -12,7 +12,7 @@
 
 namespace BSP {
 
-class can final : public StaticService<can, const can_config*> {
+class CAN final : public StaticService<can, const can_config*> {
 public:
 
 	struct can_config {
@@ -27,12 +27,7 @@ public:
 	};
 
 	struct mb_frame {
-		union {
-			uint8_t 	data08	[8];
-			uint16_t 	data16	[4];
-			uint32_t 	data32	[2];
-			uint64_t 	data64;
-		};
+		uint8_t data08[8];
 		uint16_t id;
 		uint8_t dlc;
 	};
@@ -40,7 +35,7 @@ public:
 	void tick() override {}
 	void init() override {}
 
-	can(const can_config*);
+	CAN(const can_config*);
 
 	/*
 	 * configure mb with rx or tx settings
@@ -58,7 +53,7 @@ public:
 	bool rxMSG(const mb_frame*);
 
 private:
-
+	CAN() = default;
 };
 
 

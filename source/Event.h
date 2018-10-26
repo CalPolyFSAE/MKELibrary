@@ -19,36 +19,68 @@ public:
 
 	Event() = default;
 
+	/*!
+	 * @brief copy constructor
+	 */
 	Event(const Event& other) {
 		this->object = other.object;
 		this->method_ptr = other.method_ptr;
 	}
 
-	bool operator==(const Event& other){
+	/*!
+	 * @brief Check if the function pointer is valid.
+	 *
+	 * @retval Is the Event pointer null
+	 */
+	bool isNull() const {
+		return method_ptr == nullptr;
+	}
+
+	bool operator==(const Event& other) const {
 		return other.method_ptr == method_ptr && other.object == object;
 	}
-	bool operator!=(const Event& other){
+	bool operator!=(const Event& other) const {
 		return other.method_ptr != method_ptr || other.object != object;
 	}
 
+	/*!
+	 * @brief create an Event from a member function
+	 *
+	 * @retval Event created
+	 */
 	template<class T, Ret(T::*TMethod)(Params...)>
 	static Event create(T* object){
 		return Event(object, method_stub<T, TMethod>);
 	}
 
+	/*!
+	 * @brief create an Event from a const qualified member function
+	 *
+	 * @retval Event created
+	 */
 	template<class T, Ret(T::*TMethod)(Params...) const>
 	static Event create(const T* object){
 		return Event(object, method_stub_const<T, TMethod>);
 	}
 
+	/*!
+	 * @brief create an Event from a non-member function
+	 *
+	 * @retval Event created
+	 */
 	template<Ret(*TMethod)(Params...)>
 	static Event create(){
 		return Event(nullptr, function_stub<TMethod>);
 	}
 
-
+	/*!
+	 * @brief executes function pointer
+	 *
+	 * @param params variadic arguments
+	 * @retval specified function return value
+	 */
 	Ret operator()(Params&&... params){
-		return method_ptr(object, static_cast<Params&&>(params)...);
+		return (*method_ptr)(object, static_cast<Params&&>(params)...);
 	}
 
 private:

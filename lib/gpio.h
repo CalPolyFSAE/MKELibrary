@@ -2,6 +2,8 @@
 #define _GPIO_H_
 
 #include <stdio.h>
+
+#include <Event.h>
 #include "Service.h"
 #include "fsl_gpio.h"
 #include "fsl_port.h"
@@ -37,15 +39,15 @@
  */
 
 /*! @brief GPIO port definition */
-typedef enum _gpio_port
+enum  GPIO_port
 {
-	kGPIO_PortA 	= 0U,	/*!< GPIO Port A*/
-	kGPIO_PortB 	= 1U,	/*!< GPIO Port B*/
-	kGPIO_PortC 	= 2U,	/*!< GPIO Port C*/
-	kGPIO_PortD 	= 3U,	/*!< GPIO Port D*/
-	kGPIO_PortE 	= 4U,	/*!< GPIO Port E*/
-	kGPIO_PortCount = 5U,	/*!< GPIO Port Count*/
-} gpio_port_t;
+	PortA 	= 0U,	/*!< GPIO Port A*/
+	PortB 	= 1U,	/*!< GPIO Port B*/
+	PortC 	= 2U,	/*!< GPIO Port C*/
+	PortD 	= 3U,	/*!< GPIO Port D*/
+	PortE 	= 4U,	/*!< GPIO Port E*/
+	PortCount = 5U,	/*!< GPIO Port Count*/
+};
 
 /*! @brief GPIO logic level definition */
 typedef enum _gpio_logic_level
@@ -54,15 +56,18 @@ typedef enum _gpio_logic_level
     kGPIO_LogicHigh = 1U, /*!< Digital logic high*/
 } gpio_logic_level_t;
 
-class GPIO : public StaticService<GPIO> {
+class GPIO final : public StaticService<GPIO> {
 public:
 
+	/*! @brief function pointer callback type */
+	using ISR_func_ptr = SE::Event<int(uint8_t)>;
+
 	/*! @brief GPIO interrupt function pointers */
-    int (* function [kGPIO_PortCount])(int argc, ...);
+    ISR_func_ptr function [GPIO_port::PortCount];
 
     GPIO();
 
-	virtual void tick() override{
+	void tick() override {
 		printf("tock\n");
 	}
 
@@ -72,7 +77,7 @@ public:
      * @param port 	GPIO port name
      * @param pin	GPIO pin number
      */
-    static void set(gpio_port_t port, uint32_t pin);
+    void set(GPIO_port port, uint32_t pin);
 
     /*!
      * @brief Sets the output level of a GPIO pin to logic '0'.
@@ -80,7 +85,7 @@ public:
      * @param port 	GPIO port name
      * @param pin	GPIO pin number
      */
-    static void clear(gpio_port_t port, uint32_t pin);
+    void clear(GPIO_port port, uint32_t pin);
 
     /*!
      * @brief Toggles the output logic of a GPIO pin.
@@ -88,7 +93,7 @@ public:
      * @param port 	GPIO port name
      * @param pin	GPIO pin number
      */
-    static void toggle(gpio_port_t port, uint32_t pin);
+    void toggle(GPIO_port port, uint32_t pin);
 
     /*!
      * @brief Reads the current value of a GPIO pin.
@@ -99,7 +104,7 @@ public:
      *        - kGPIO_LogicLow: corresponding pin input low-logic level.
      *        - kGPIO_LogicHigh: corresponding pin input high-logic level.
      */
-    static gpio_logic_level_t read(gpio_port_t port, uint32_t pin);
+    gpio_logic_level_t read(GPIO_port port, uint32_t pin);
 
     /*!
      * @brief Sets the port PCR register.
@@ -122,7 +127,7 @@ public:
      * @param pin		GPIO pin number
      * @param config 	PORT PCR register configuration structure.
      */
-    static void config_pin(gpio_port_t port, uint32_t pin, port_pin_config_t *config);
+    void config_pin(GPIO_port port, uint32_t pin, port_pin_config_t *config);
 
     /*!
      * @brief Configures the port pin interrupt/DMA request.
@@ -145,7 +150,7 @@ public:
      *        - #kPORT_ActiveHighTriggerOutputEnable : Enable active high-trigger output (if the trigger states exit).
      *        - #kPORT_ActiveLowTriggerOutputEnable  : Enable active low-trigger output (if the trigger states exit).
      */
-    static void config_interrupt(gpio_port_t port, uint32_t pin, port_interrupt_t config);
+    void config_interrupt(GPIO_port port, uint32_t pin, port_interrupt_t config);
 
     /*!
      * @brief Configures the port interrupt function.
@@ -153,12 +158,12 @@ public:
      * @param port 		GPIO port name
      * @param function  User-defined function pointer
      */
-    static void config_function(gpio_port_t port, int (* function)(int argc, ...));
+    void config_function(GPIO_port port, ISR_func_ptr callback);
 
 private:
 
-    static PORT_Type * get_port(gpio_port_t port);
-    static GPIO_Type * get_gpio(gpio_port_t port);
+    static PORT_Type* get_port(GPIO_port port);
+    static GPIO_Type* get_gpio(GPIO_port port);
 
 };
 
