@@ -10,6 +10,7 @@
 #ifndef SERVICE_H_
 #define SERVICE_H_
 
+#include "stdio.h"
 #include <utility>
 #include <assert.h>
 
@@ -52,8 +53,6 @@ T* StaticService<T, Args...>::inst;
 
 
 
-
-
 ///////////////////////////
 // TESTING
 ///////////////////////////
@@ -76,7 +75,7 @@ T* StaticService<T, Args...>::inst;
 //	int a;
 //};
 
-class TestService : public StaticService<TestService, int> {
+/*class TestService : public StaticService<TestService, int> {
 public:
 	TestService(int a){
 		printf("TESTSERVICE INITIALIZED WITH %d\n", a);
@@ -85,6 +84,6 @@ public:
 	virtual void tick() override {
 		printf("tick\n");
 	}
-};
+};*/
 
 #endif /* SERVICE_H_ */

@@ -60,7 +60,7 @@ class GPIO final : public StaticService<GPIO> {
 public:
 
 	/*! @brief function pointer callback type */
-	using ISR_func_ptr = SE::Event<int(uint8_t)>;
+	using ISR_func_ptr = se::Event<int(uint8_t)>;
 
 	/*! @brief GPIO interrupt function pointers */
     ISR_func_ptr function [GPIO_port::PortCount];

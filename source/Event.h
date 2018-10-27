@@ -7,7 +7,7 @@
 #ifndef EVENT_H_
 #define EVENT_H_
 
-namespace SE {
+namespace se {
 
 template<typename T>
 class Event;

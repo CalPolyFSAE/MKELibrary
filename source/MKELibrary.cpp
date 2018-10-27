@@ -40,6 +40,7 @@
 #include "MKE18F16.h"
 #include "fsl_debug_console.h"
 #include "gpio.h"
+#include "can.h"
 /* TODO: insert other include files here. */
 
 /* TODO: insert other definitions and declarations here. */
@@ -71,5 +72,5 @@ int main(void) {
     while(1) {
         GPIO::StaticClass().toggle(GPIO_port::PortC, 10U);
     }
-    return 0 ;
+    return 0;
 }
