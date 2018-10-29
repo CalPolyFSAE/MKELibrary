@@ -46,7 +46,7 @@
 /* TODO: insert other definitions and declarations here. */
 
 void tick(void){
-	TestService::StaticClass().tick();
+	//TestService::StaticClass().tick();
 	GPIO::StaticClass().tick();
 }
 
@@ -63,7 +63,7 @@ int main(void) {
 
     PRINTF("Hello World\n");
 
-    TestService::ConstructStatic(1);
+    //TestService::ConstructStatic(1);
 
     GPIO::ConstructStatic();
 

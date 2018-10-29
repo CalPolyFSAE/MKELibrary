@@ -29,7 +29,7 @@ public:
 	};
 
 	struct mb_config {
-
+		// mode
 	};
 
 	struct mb_frame {
@@ -53,14 +53,20 @@ public:
 	/*
 	 * tx using selected mb
 	 */
-	bool txMSG(const mb_frame*);
+	bool txMSG(const mb_frame&);
 
 	/*
 	 * rx using selected mb
 	 */
-	bool rxMSG(const mb_frame*, const callback_type& callback);
+	bool rxMSG(const mb_frame&, const callback_type& callback);
 
 private:
+
+	struct mb_data {
+		volatile mb_frame frame_data;
+		mb_config config_data;
+	};
+
 	CAN() = default;
 
 
