@@ -12,17 +12,26 @@
 using namespace BSP::CAN;
 
 struct CAN::controller_data {
+	controller_data(const controller_config& config) : config(config) {
+
+	}
 	flexcan_handle_t flexcanHandle;
+	controller_config config;
 };
 
 static void flexcan_callback(CAN_Type* base, flexcan_handle_t* handle, status_t status, uint32_t result, void* userData);
 
-CAN::CAN(const config* conf){
-
+CAN::CAN(const config* conf) :
+		CAN0_config(nullptr), CAN1_config(nullptr), mb_can0(), mb_can1() {
+	assert(conf);
+	if (conf->CAN0_config)
+		CAN0_config = new controller_data(*(conf->CAN0_config));
+	if (conf->CAN1_config)
+		CAN1_config = new controller_data(*(conf->CAN1_config));
 }
 
 void CAN::tick() {
-	// flag check
+	// flag check, mb_info status update, check for hardware/mb_info changes
 }
 
 void CAN::init() {
@@ -31,15 +40,11 @@ void CAN::init() {
 
 }
 
-bool CAN::txMSG(const mb_info& frame) {
+bool CAN::rxMSG(uint8_t bus, const mb_info&, const callback_type&) {
 	return false;
 }
 
-bool CAN::rxMSG(const mb_info&, const callback_type&) {
-	return false;
-}
-
-void CAN::config_controller(CAN_Type* base) {
+void CAN::config_controller(uint8_t bus) {
 	flexcan_config_t flexcanConfig;
 
 	/* Get FlexCAN module default Configuration. */
