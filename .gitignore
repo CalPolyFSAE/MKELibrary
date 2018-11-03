@@ -1,5 +1,6 @@
 *.launch
 **/Debug
 **/Release
+**/CMakeFiles
 
 *.swp
