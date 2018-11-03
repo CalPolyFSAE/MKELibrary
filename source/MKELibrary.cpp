@@ -40,7 +40,7 @@
 #include "MKE18F16.h"
 #include "fsl_debug_console.h"
 #include "gpio.h"
-#include "can.h"
+#include "spi.h"
 /* TODO: insert other include files here. */
 
 /* TODO: insert other definitions and declarations here. */
