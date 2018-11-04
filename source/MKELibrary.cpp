@@ -41,15 +41,16 @@
 #include "fsl_debug_console.h"
 #include "gpio.h"
 #include "spi.h"
-/* TODO: insert other include files here. */
 
-/* TODO: insert other definitions and declarations here. */
+using namespace BSP;
 
 void tick(void){
 	//TestService::StaticClass().tick();
-	GPIO::StaticClass().tick();
 }
+void a(LPSPI_Type* base, void* a, status_t status, void* b){
 
+
+}
 /*
  * @brief   Application entry point.
  */
@@ -62,15 +63,25 @@ int main(void) {
 	BOARD_InitDebugConsole();
 
     PRINTF("Hello World\n");
+    CLOCK_SetIpSrc(kCLOCK_Lpspi0, kCLOCK_IpSrcFircAsync);
 
-    //TestService::ConstructStatic(1);
+    SPI::config spiconfig;
 
-    GPIO::ConstructStatic();
+    spiconfig.callback0 = a;
+    spiconfig.clock0 = kCLOCK_IpSrcFircAsync;
 
-    tick();
+    SPI spi(&spiconfig);
+
+    SPI::masterConfig mc0;
+    mc0.pcs = kLPSPI_Pcs2;
+    mc0.baudRate = 200000;
+
+    spi.initMaster(0, &mc0);
+
+    uint8_t data[] = {2, '\n'};
 
     while(1) {
-        GPIO::StaticClass().toggle(GPIO_port::PortC, 10U);
+        spi.transmit(data, 2);
     }
     return 0;
 }

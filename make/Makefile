@@ -1482,33 +1482,6 @@ home/gray/formula/git/MKELibrary/lib/spi.cpp.s:
 	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/git/MKELibrary/lib/spi.cpp.s
 .PHONY : home/gray/formula/git/MKELibrary/lib/spi.cpp.s
 
-home/gray/formula/git/MKELibrary/source/EventScheduler.obj: home/gray/formula/git/MKELibrary/source/EventScheduler.cpp.obj
-
-.PHONY : home/gray/formula/git/MKELibrary/source/EventScheduler.obj
-
-# target to build an object file
-home/gray/formula/git/MKELibrary/source/EventScheduler.cpp.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/git/MKELibrary/source/EventScheduler.cpp.obj
-.PHONY : home/gray/formula/git/MKELibrary/source/EventScheduler.cpp.obj
-
-home/gray/formula/git/MKELibrary/source/EventScheduler.i: home/gray/formula/git/MKELibrary/source/EventScheduler.cpp.i
-
-.PHONY : home/gray/formula/git/MKELibrary/source/EventScheduler.i
-
-# target to preprocess a source file
-home/gray/formula/git/MKELibrary/source/EventScheduler.cpp.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/git/MKELibrary/source/EventScheduler.cpp.i
-.PHONY : home/gray/formula/git/MKELibrary/source/EventScheduler.cpp.i
-
-home/gray/formula/git/MKELibrary/source/EventScheduler.s: home/gray/formula/git/MKELibrary/source/EventScheduler.cpp.s
-
-.PHONY : home/gray/formula/git/MKELibrary/source/EventScheduler.s
-
-# target to generate assembly for a file
-home/gray/formula/git/MKELibrary/source/EventScheduler.cpp.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/git/MKELibrary/source/EventScheduler.cpp.s
-.PHONY : home/gray/formula/git/MKELibrary/source/EventScheduler.cpp.s
-
 home/gray/formula/git/MKELibrary/source/MKELibrary.obj: home/gray/formula/git/MKELibrary/source/MKELibrary.cpp.obj
 
 .PHONY : home/gray/formula/git/MKELibrary/source/MKELibrary.obj
@@ -1858,9 +1831,6 @@ help:
 	@echo "... home/gray/formula/git/MKELibrary/lib/spi.obj"
 	@echo "... home/gray/formula/git/MKELibrary/lib/spi.i"
 	@echo "... home/gray/formula/git/MKELibrary/lib/spi.s"
-	@echo "... home/gray/formula/git/MKELibrary/source/EventScheduler.obj"
-	@echo "... home/gray/formula/git/MKELibrary/source/EventScheduler.i"
-	@echo "... home/gray/formula/git/MKELibrary/source/EventScheduler.s"
 	@echo "... home/gray/formula/git/MKELibrary/source/MKELibrary.obj"
 	@echo "... home/gray/formula/git/MKELibrary/source/MKELibrary.i"
 	@echo "... home/gray/formula/git/MKELibrary/source/MKELibrary.s"
