@@ -72,21 +72,21 @@ struct controller_config {
 	controller_config() = default;
 };
 
-class CAN final : public StaticService<CAN, const struct config*> {
-public:
+struct can_config {
+	// input parameters
+	// can0 and can1 configs
+	//
+	struct controller_config* CAN0_config;
+	struct controller_config* CAN1_config;
+};
 
-	struct config {
-		// input parameters
-		// can0 and can1 configs
-		//
-		struct controller_config* CAN0_config;
-		struct controller_config* CAN1_config;
-	};
+class CAN final : public StaticService<CAN, const can_config*> {
+public:
 
 	void tick() override;
 	void init() override;
 
-	CAN(const config*);
+	CAN(const can_config*);
 
 	/*!
 	 * @brief send a message using any mb

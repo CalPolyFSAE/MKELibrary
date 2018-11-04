@@ -67,6 +67,9 @@ int main(void) {
 
     GPIO::ConstructStatic();
 
+    BSP::CAN::can_config ar;
+    BSP::CAN::CAN::ConstructStatic(&ar);
+
     tick();
 
     while(1) {

@@ -21,7 +21,7 @@ struct CAN::controller_data {
 
 static void flexcan_callback(CAN_Type* base, flexcan_handle_t* handle, status_t status, uint32_t result, void* userData);
 
-CAN::CAN(const config* conf) :
+CAN::CAN(const can_config* conf) :
 		CAN0_config(nullptr), CAN1_config(nullptr), mb_can0(), mb_can1() {
 	assert(conf);
 	if (conf->CAN0_config)
