@@ -2,20 +2,21 @@
 #include "fsl_lpspi.h"
 
 using namespace BSP;
+using namespace spi;
 
 SPI::SPI(spi_config* spiconfig) {
 
-    callbacks[0] = spiconfig->callback0;
-    callbacks[1] = spiconfig->callback1;
+    callbacks[0] = spiconfig->callbacks[0];
+    callbacks[1] = spiconfig->callbacks[1];
 
-    if(spiconfig->clock0) {
+    if(spiconfig->clocks[0]) {
         // Shove the clock value somewhere in the Clock Table.
         // Fine if done at any point before starting to use the peripheral.
-        CLOCK_SetIpSrc(kCLOCK_Lpspi0, spiconfig->clock0);
+        CLOCK_SetIpSrc(kCLOCK_Lpspi0, spiconfig->clocks[0]);
         freqs[0] = CLOCK_GetIpFreq(kCLOCK_Lpspi0);
     }
-    if(spiconfig->clock1) {
-        CLOCK_SetIpSrc(kCLOCK_Lpspi1, spiconfig->clock1);
+    if(spiconfig->clocks[1]) {
+        CLOCK_SetIpSrc(kCLOCK_Lpspi1, spiconfig->clocks[1]);
         freqs[1] = CLOCK_GetIpFreq(kCLOCK_Lpspi1);
     }
 

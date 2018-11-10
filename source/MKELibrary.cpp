@@ -46,9 +46,14 @@ using namespace BSP;
 
 void tick(void){
 	//TestService::StaticClass().tick();
+	GPIO::StaticClass().tick();
 }
-void a(LPSPI_Type* base, void* a, status_t status, void* b){
 
+void s_cb(LPSPI_Type* base, void* handle, status_t status, void* data){
+
+}
+
+void m_cb(LPSPI_Type* base, void* handle, status_t status, void* data){
 
 }
 /*
@@ -63,25 +68,23 @@ int main(void) {
 	BOARD_InitDebugConsole();
 
     PRINTF("Hello World\n");
-    CLOCK_SetIpSrc(kCLOCK_Lpspi0, kCLOCK_IpSrcFircAsync);
 
-    SPI::spi_config spiconfig;
+    //TestService::ConstructStatic(1);
 
-    spiconfig.callback0 = a;
-    spiconfig.clock0 = kCLOCK_IpSrcFircAsync;
+    spi::spi_config conf;
+    conf.callbacks[0] = s_cb;
+    conf.callbacks[1] = m_cb;
+    conf.clocks[0] = kCLOCK_IpSrcFircAsync;
+    conf.clocks[1] = kCLOCK_IpSrcFircAsync;
 
-    SPI& spi
+    spi::SPI::ConstructStatic(&conf);
 
-    SPI::masterConfig mc0;
-    mc0.pcs = kLPSPI_Pcs2;
-    mc0.baudRate = 500000;
+    GPIO::ConstructStatic();
 
-    spi.initMaster(0, &mc0);
-
-    uint8_t data[] = {2, '\n'};
+    tick();
 
     while(1) {
-        spi.transmit(data, 2);
+        GPIO::StaticClass().toggle(GPIO_port::PortC, 10U);
     }
     return 0;
 }

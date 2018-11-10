@@ -24,27 +24,24 @@
 
 namespace BSP{
 
-namespace SPI{
-
+namespace spi{
 
 typedef void (*callback)(LPSPI_Type*, void*, status_t, void*);
 
 struct spi_config {
 
     // Callback functions
-    callback callback0 = NULL;
-    callback callback1 = NULL;
+    callback callbacks[2] = {NULL, NULL};
 
     // A good choice for this is kCLOCK_IpSrcFircAsync
     // But really, make sure your clock mux is configured correctly
     // Just use the IDE for that for now
-    clock_ip_src_t clock0 = kCLOCK_IpSrcNoneOrExt;
-    clock_ip_src_t clock1 = kCLOCK_IpSrcNoneOrExt;
+    clock_ip_src_t clocks[2] = {kCLOCK_IpSrcNoneOrExt, kCLOCK_IpSrcNoneOrExt};
 
 };
 
 
-class SPI final : public StaticService<SPI, spi_config> {
+class SPI final : public StaticService<SPI, const spi_config*> {
 public:
 
     // Base address, master/slave handle pointer, status, user data pointer
@@ -98,7 +95,7 @@ public:
         lpspi_data_out_config_t datacfg = kLpspiDataOutRetained;
     };
 
-    SPI(spi_config*);
+    SPI(const spi_config*);
 
 
     void initSlave(uint8_t, slaveConfig*);
@@ -119,10 +116,10 @@ private:
     callback callbacks[2] = {NULL, NULL};
     uint32_t freqs[2];
     LPSPI_Type* bases[2] = {LPSPI0, LPSPI1};
-    lpspi_which_pcs_t pcs[2] = {kLPSPI_Pcs0, kLPSPI_Pcs0}
+    lpspi_which_pcs_t pcs[2] = {kLPSPI_Pcs0, kLPSPI_Pcs0};
 
 };
 
 }
-
+}
 #endif // SPI_H_
