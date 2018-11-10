@@ -1,19 +1,18 @@
 #ifndef ADC_H_
 #define ADC_H_
 
-#include <stdio.h>
-
-#include <Event.h>
 #include "Service.h"
-#include "fsl_adc12.h"
-#include "MKE18F16.h"
+#include "Event.h"
+
+namespace BSP {
+namespace ADC {
 
 /*! @brief ADC port definition */
-enum  ADC_port
+enum ADC_port
 {
-	Port0 = ADC0,	/*!< ADC Port 0*/
-	Port1 = ADC1,	/*!< ADC Port 1*/
-	Port2 = ADC2,	/*!< ADC Port 2*/
+	Port0 = 0U,	/*!< ADC Port 0*/
+	Port1 = 1U,	/*!< ADC Port 1*/
+	Port2 = 2U,	/*!< ADC Port 2*/
 	PortCount = 3U,	/*!< ADC Port Count*/
 };
 
@@ -53,48 +52,89 @@ enum ADC_channel
 	Channel30 = 30U,	/*!< ADC Channel 30*/
 	Channel31 = 31U,	/*!< ADC Channel 31*/
 	ChanneCount = 32U,	/*!< ADC Channel Count*/
-
 };
 
-class ADC final : public StaticService<ADC> {
+/*! @brief ADC port configuration structure */
+struct adc_port_config {
+    uint32_t reference_voltage_source = 0U;
+    uint32_t clock_source = 0U;
+    uint32_t clock_divider = 0U;
+    uint32_t resolution = 1U;
+    uint32_t sample_clock_count = 2U;
+    bool enable_continuous_conversion = true;
 
+	adc_port_config() = default;
+};
+
+/*! @brief ADC channel configuration structure */
+struct adc_channel_config {
+    uint32_t channel_number;                    	/*!< Setting the conversion channel number. */
+    bool enable_interrupt_on_conversion_completed; 	/*!< Generate a interrupt request once the conversion is completed. */
+};
+
+/*! @brief ADC hardware compare configuration structure */
+struct adc_hardware_compare_config {
+    uint32_t hardware_compare_mode; 	/*!< Select the hardware compare mode. */
+    int16_t value1;                     /*!< Setting value1 for hardware compare mode. */
+    int16_t value2;                     /*!< Setting value2 for hardware compare mode. */
+};
+
+/*! @brief ADC configuration structure */
+struct adc_config {
+	struct adc_port_config* ADC0_config;
+	struct adc_port_config* ADC1_config;
+	struct adc_port_config* ADC2_config;
+};
+
+class ADC final : public StaticService<ADC, const adc_config*> {
 public:
-
-	/*! @brief function pointer callback type */
-	using ISR_func_ptr = se::Event<int(uint8_t)>;
-
-	/*! @brief ADC interrupt function pointer */
-    ISR_func_ptr function[ADC_port::PortCount];
-
-	ADC();
-
 	void tick() override;
-
 	void init() override;
 
-	void config_port(ADC_port port, adc12_config_t *config);
+	ADC(const adc_config*);
 
-	void config_channel(ADC_port port, ADC_channel ch, adc12_channel_config_t *config);
+	/* @brief Configure channel */
+	void config_channel(ADC_port port, ADC_channel ch, adc_channel_config *config);
 
-	void config_hardware_compare(ADC_port port);
+	/* @brief Configure hardware comapre */
+	void config_hardware_compare(ADC_port port, adc_hardware_compare_config *config);
 
+	/* @brief Set offset */
 	void set_offset(ADC_port port, uint32_t offset);
 
+	/* @brief Set gain */
 	void set_gain(ADC_port port, uint32_t gain);
 
-	void set_hardware_average(ADC_port port, adc12_hardware_average_mode_t mode);
+	/* @brief Set hardware average */
+	void set_hardware_average(ADC_port port, uint32_t mode);
 
+	/* @brief Enable direct memory access */
 	void enable_dma(ADC_port port, bool enable);
 
+	/* @brief Enable hardware trigger */
 	void enable_hardware_trigger(ADC_port port, bool enable);
 
+	/* @brief Run auto calibration */
 	void auto_calibrate(ADC_port port);
 
+	/* @brief Read channel data */
 	uint32_t read(ADC_port port, ADC_channel ch);
 
 private:
+	struct adc_port_data;
 
+	adc_port_data* ADC0_config;
+	adc_port_data* ADC1_config;
+	adc_port_data* ADC2_config;
+
+	ADC() = default;
+
+	/*! @brief Configure port using fsl_adc12 driver. */
+	void config_port(ADC_port port, adc_port_config* config);
 
 };
 
-#endif
+}
+}
+
+#endif /* ADC_H_ */
