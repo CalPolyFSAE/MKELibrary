@@ -65,16 +65,16 @@ int main(void) {
     PRINTF("Hello World\n");
     CLOCK_SetIpSrc(kCLOCK_Lpspi0, kCLOCK_IpSrcFircAsync);
 
-    SPI::config spiconfig;
+    SPI::spi_config spiconfig;
 
     spiconfig.callback0 = a;
     spiconfig.clock0 = kCLOCK_IpSrcFircAsync;
 
-    SPI spi(&spiconfig);
+    SPI& spi
 
     SPI::masterConfig mc0;
     mc0.pcs = kLPSPI_Pcs2;
-    mc0.baudRate = 200000;
+    mc0.baudRate = 500000;
 
     spi.initMaster(0, &mc0);
 

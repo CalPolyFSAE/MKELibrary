@@ -24,27 +24,38 @@
 
 namespace BSP{
 
-class SPI { //final : public StaticService<SPI> {
+namespace SPI{
+
+
+typedef void (*callback)(LPSPI_Type*, void*, status_t, void*);
+
+struct spi_config {
+
+    // Callback functions
+    callback callback0 = NULL;
+    callback callback1 = NULL;
+
+    // A good choice for this is kCLOCK_IpSrcFircAsync
+    // But really, make sure your clock mux is configured correctly
+    // Just use the IDE for that for now
+    clock_ip_src_t clock0 = kCLOCK_IpSrcNoneOrExt;
+    clock_ip_src_t clock1 = kCLOCK_IpSrcNoneOrExt;
+
+};
+
+
+class SPI final : public StaticService<SPI, spi_config> {
 public:
 
     // Base address, master/slave handle pointer, status, user data pointer
-    typedef void (*callback)(LPSPI_Type*, void*, status_t, void*);
 
-    struct config {
-        // Callback functions
-        callback callback0 = NULL;
-        callback callback1 = NULL;
-
-        // A good choice for this is kCLOCK_IpSrcFircAsync
-        clock_ip_src_t clock0 = kCLOCK_IpSrcNoneOrExt;
-        clock_ip_src_t clock1 = kCLOCK_IpSrcNoneOrExt;
-
-    };
 
     struct masterConfig {
 
         uint32_t baudRate = 500000;
         // Number of bits during one Frame, or set of clock pulses
+        // bounty: someone write an explanation of how exactly frame lengths work.
+        // It is bizzarre
         uint32_t frameLength = 8;
 
         // SPI Mode; clock polarity/phase, chip select polarity, and bit direction
@@ -67,13 +78,37 @@ public:
 
     };
 
-    SPI(config*);
+    struct slaveConfig {
+
+        // Absolutely no idea what this means in a slave context.
+        uint32_t frameLength = 8;
+
+        // SPI Mode; clock polarity/phase, chip select polarity, and bit direction
+        // Same defaults for master/slave
+        lpspi_clock_polarity_t cpol = kLPSPI_ClockPolarityActiveHigh;
+        lpspi_clock_phase_t cphase = kLPSPI_ClockPhaseFirstEdge;
+        lpspi_pcs_polarity_config_t pcspol = kLPSPI_PcsActiveLow;
+        lpspi_shift_direction_t bitdir = kLPSPI_MsbFirst;
+
+        // Choice of chip select; 0-3
+        lpspi_which_pcs_t pcs = kLPSPI_Pcs0;
+
+        // Not sure what the point of these are.
+        lpspi_pin_config_t pincfg = kLPSPI_SdiInSdoOut;
+        lpspi_data_out_config_t datacfg = kLpspiDataOutRetained;
+    };
+
+    SPI(spi_config*);
 
 
-    void initSlave(uint8_t);
+    void initSlave(uint8_t, slaveConfig*);
     void initMaster(uint8_t, masterConfig*);
 
-    void transmit(uint8_t*, uint8_t);
+    void mastertx(uint8_t no, uint8_t* data, uint8_t size);
+    void masterrx(uint8_t no, uint8_t* data, uint8_t size);
+
+    void slaverx(uint8_t no, uint8_t* data, uint8_t size);
+    void slavetx(uint8_t no, uint8_t* data, uint8_t size);
 
 
 private:
@@ -84,6 +119,7 @@ private:
     callback callbacks[2] = {NULL, NULL};
     uint32_t freqs[2];
     LPSPI_Type* bases[2] = {LPSPI0, LPSPI1};
+    lpspi_which_pcs_t pcs[2] = {kLPSPI_Pcs0, kLPSPI_Pcs0}
 
 };
 
