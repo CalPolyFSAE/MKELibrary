@@ -79,7 +79,7 @@ public:
 	 * @param params variadic arguments
 	 * @retval specified function return value
 	 */
-	Ret operator()(Params&&... params){
+	Ret operator()(Params... params){
 		return (*method_ptr)(object, static_cast<Params&&>(params)...);
 	}
 
