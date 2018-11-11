@@ -7,6 +7,10 @@
 /* 
  * Notes
  *
+ * This all relies heavily on the fsl driver using master/slave handles.
+ * This makes callbacks a little railroady.
+ * Getting away from the dependence on handles is worthwhile but not a priority.
+ *
  * Configuration parameters include:
  * - Baud rate
  *   Bits per frame
@@ -32,7 +36,6 @@ struct spi_config {
 
     // Callback functions
     callback callbacks[2] = {NULL, NULL};
-
     // A good choice for this is kCLOCK_IpSrcFircAsync
     // But really, make sure your clock mux is configured correctly
     // Just use the IDE for that for now
@@ -45,7 +48,8 @@ class SPI final : public StaticService<SPI, const spi_config*> {
 public:
 
     // Base address, master/slave handle pointer, status, user data pointer
-
+    
+    void tick() override;
 
     struct masterConfig {
 
@@ -98,8 +102,8 @@ public:
     SPI(const spi_config*);
 
 
-    void initSlave(uint8_t, slaveConfig*);
-    void initMaster(uint8_t, masterConfig*);
+    void initSlave(uint8_t no, slaveConfig*);
+    void initMaster(uint8_t no, masterConfig*);
 
     void mastertx(uint8_t no, uint8_t* data, uint8_t size);
     void masterrx(uint8_t no, uint8_t* data, uint8_t size);
@@ -107,12 +111,12 @@ public:
     void slaverx(uint8_t no, uint8_t* data, uint8_t size);
     void slavetx(uint8_t no, uint8_t* data, uint8_t size);
 
-
 private:
     SPI() = default;
 
     // Handles for each SPI module. Void so as to allow master or slave handle pointers.
     void* handles[2] = {NULL, NULL};
+
     callback callbacks[2] = {NULL, NULL};
     uint32_t freqs[2];
     LPSPI_Type* bases[2] = {LPSPI0, LPSPI1};
