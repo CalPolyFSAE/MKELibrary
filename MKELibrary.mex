@@ -28,22 +28,17 @@
                   <enableClock>true</enableClock>
                </options>
                <dependencies>
-                  <dependency resourceType="Peripheral" resourceId="CAN0" description="Peripheral CAN0 is not initialized" problem_level="1" source="Pins:BOARD_InitPins">
-                     <feature name="initialized" evaluation="equal">
-                        <data>true</data>
-                     </feature>
-                  </dependency>
                   <dependency resourceType="Peripheral" resourceId="LPUART0" description="Peripheral LPUART0 is not initialized" problem_level="1" source="Pins:BOARD_InitPins">
                      <feature name="initialized" evaluation="equal">
                         <data>true</data>
                      </feature>
                   </dependency>
-                  <dependency resourceType="Peripheral" resourceId="ADC0" description="Peripheral ADC0 is not initialized" problem_level="1" source="Pins:BOARD_InitPins">
+                  <dependency resourceType="Peripheral" resourceId="LPSPI0" description="Peripheral LPSPI0 is not initialized" problem_level="1" source="Pins:BOARD_InitPins">
                      <feature name="initialized" evaluation="equal">
                         <data>true</data>
                      </feature>
                   </dependency>
-                  <dependency resourceType="Peripheral" resourceId="LPSPI0" description="Peripheral LPSPI0 is not initialized" problem_level="1" source="Pins:BOARD_InitPins">
+                  <dependency resourceType="Peripheral" resourceId="LPSPI1" description="Peripheral LPSPI1 is not initialized" problem_level="1" source="Pins:BOARD_InitPins">
                      <feature name="initialized" evaluation="equal">
                         <data>true</data>
                      </feature>
@@ -60,19 +55,16 @@
                   </dependency>
                </dependencies>
                <pins>
-                  <pin peripheral="CAN0" signal="RX" pin_num="30" pin_signal="ADC0_SE10/ACMP0_IN5/XTAL32/PTC2/FTM0_CH2/CAN0_RX"/>
-                  <pin peripheral="CAN0" signal="TX" pin_num="29" pin_signal="ADC0_SE11/ACMP0_IN4/EXTAL32/PTC3/FTM0_CH3/CAN0_TX"/>
                   <pin peripheral="LPUART0" signal="RX" pin_num="54" pin_signal="ADC0_SE4/ADC1_SE14/PTB0/LPUART0_RX/LPSPI0_PCS0/LPTMR0_ALT3/PWT_IN3"/>
                   <pin peripheral="LPUART0" signal="TX" pin_num="53" pin_signal="ADC0_SE5/ADC1_SE15/PTB1/LPUART0_TX/LPSPI0_SOUT/TCLK0"/>
-                  <pin peripheral="ADC0" signal="SE, 0" pin_num="79" pin_signal="ADC0_SE0/ACMP0_IN0/PTA0/FTM2_CH1/LPI2C0_SCLS/FXIO_D2/FTM2_QD_PHA/LPUART0_CTS/TRGMUX_OUT3"/>
-                  <pin peripheral="ADC0" signal="SE, 1" pin_num="78" pin_signal="ADC0_SE1/ACMP0_IN1/PTA1/FTM1_CH1/LPI2C0_SDAS/FXIO_D3/FTM1_QD_PHA/LPUART0_RTS/TRGMUX_OUT0"/>
-                  <pin peripheral="ADC0" signal="SE, 2" pin_num="58" pin_signal="ADC0_SE2/ACMP1_IN0/PTA6/FTM0_FLT1/LPSPI1_PCS1/LPUART1_CTS"/>
-                  <pin peripheral="ADC0" signal="VREFH" pin_num="12" pin_signal="VREFH"/>
-                  <pin peripheral="ADC0" signal="VREFL" pin_num="13" pin_signal="VREFL"/>
-                  <pin peripheral="LPSPI0" signal="PCS1_HREQ" pin_num="27" pin_signal="PTB5/FTM0_CH5/LPSPI0_PCS1/TRGMUX_IN0/ACMP1_OUT"/>
                   <pin peripheral="LPSPI0" signal="SCK" pin_num="48" pin_signal="ADC0_SE6/PTB2/FTM1_CH0/LPSPI0_SCK/FTM1_QD_PHB/TRGMUX_IN3"/>
                   <pin peripheral="LPSPI0" signal="SIN" pin_num="47" pin_signal="ADC0_SE7/PTB3/FTM1_CH1/LPSPI0_SIN/FTM1_QD_PHA/TRGMUX_IN2"/>
                   <pin peripheral="LPSPI0" signal="SOUT" pin_num="28" pin_signal="ACMP1_IN2/PTB4/FTM0_CH4/LPSPI0_SOUT/TRGMUX_IN1"/>
+                  <pin peripheral="LPSPI1" signal="SCK" pin_num="4" pin_signal="ADC2_SE0/PTD0/FTM0_CH2/LPSPI1_SCK/FTM2_CH0/FXIO_D0/TRGMUX_OUT1"/>
+                  <pin peripheral="LPSPI1" signal="SIN" pin_num="3" pin_signal="ADC2_SE1/PTD1/FTM0_CH3/LPSPI1_SIN/FTM2_CH1/FXIO_D1/TRGMUX_OUT2"/>
+                  <pin peripheral="LPSPI1" signal="SOUT" pin_num="64" pin_signal="ADC1_SE15/PTB16/FTM0_CH4/LPSPI1_SOUT"/>
+                  <pin peripheral="LPSPI1" signal="PCS0" pin_num="70" pin_signal="ADC1_SE3/PTD3/FTM3_CH5/LPSPI1_PCS0/FXIO_D5/TRGMUX_IN4/NMI_b"/>
+                  <pin peripheral="LPSPI0" signal="PCS2" pin_num="84" pin_signal="ADC1_SE11/ACMP0_IN6/PTE6/LPSPI0_PCS2/FTM3_CH7/LPUART1_RTS"/>
                </pins>
             </function>
          </functions_list>
@@ -103,10 +95,14 @@
                   <clock_output id="Flash_clock.outFreq" value="7.5 MHz" locked="false" accuracy=""/>
                   <clock_output id="LPO1KCLK.outFreq" value="1 kHz" locked="false" accuracy=""/>
                   <clock_output id="LPO_clock.outFreq" value="128 kHz" locked="false" accuracy=""/>
+                  <clock_output id="PCC.PCC_LPSPI0_CLK.outFreq" value="60 MHz" locked="false" accuracy=""/>
+                  <clock_output id="PCC.PCC_LPSPI1_CLK.outFreq" value="60 MHz" locked="false" accuracy=""/>
                   <clock_output id="SIRC_CLK.outFreq" value="8 MHz" locked="false" accuracy=""/>
                   <clock_output id="System_clock.outFreq" value="15 MHz" locked="false" accuracy=""/>
                </clock_outputs>
                <clock_settings>
+                  <setting id="PCC.PCC_LPSPI0_SEL.sel" value="SCG.FIRCDIV2_CLK" locked="false"/>
+                  <setting id="PCC.PCC_LPSPI1_SEL.sel" value="SCG.FIRCDIV2_CLK" locked="false"/>
                   <setting id="SCG.DIVCORE.scale" value="4" locked="true"/>
                   <setting id="SCG.FIRCDIV1.scale" value="1" locked="true"/>
                   <setting id="SCG.FIRCDIV2.scale" value="1" locked="true"/>

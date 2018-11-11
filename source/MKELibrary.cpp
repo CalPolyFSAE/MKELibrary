@@ -42,49 +42,162 @@
 #include "gpio.h"
 #include "spi.h"
 
+#define TRANSFER_SIZE 64U         /*! Transfer dataSize */
+
+uint8_t slaveRxData[TRANSFER_SIZE] = {0U};
+uint8_t masterRxData[TRANSFER_SIZE] = {0U};
+uint8_t masterTxData[TRANSFER_SIZE] = {0U};
+
+volatile bool misTransferCompleted = false;
+
+volatile bool sisTransferCompleted = false;
+void LPSPI_SlaveUserCallback(LPSPI_Type *base, void *handle, status_t status, void *userData)
+{
+    if (status == kStatus_Success)
+    {
+        PRINTF("This is LPSPI slave transfer completed callback. \r\n");
+        PRINTF("It's a successful transfer. \r\n\r\n");
+    }
+
+    if (status == kStatus_LPSPI_Error)
+    {
+        PRINTF("This is LPSPI slave transfer completed callback. \r\n");
+        PRINTF("Error occured in this transfer. \r\n\r\n");
+    }
+
+    sisTransferCompleted = true;
+}
+void LPSPI_MasterUserCallback(LPSPI_Type *base, void *handle, status_t status, void *userData)
+{
+    if (status == kStatus_Success)
+    {
+        __NOP();
+    }
+
+    misTransferCompleted = true;
+}
+
+
 using namespace BSP;
 
-void tick(void){
-	//TestService::StaticClass().tick();
-	GPIO::StaticClass().tick();
-}
 
-void s_cb(LPSPI_Type* base, void* handle, status_t status, void* data){
-
-}
-
-void m_cb(LPSPI_Type* base, void* handle, status_t status, void* data){
-
-}
-/*
- * @brief   Application entry point.
- */
 int main(void) {
-  	/* Init board hardware. */
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
     BOARD_InitBootPeripherals();
-  	/* Init FSL debug console. */
 	BOARD_InitDebugConsole();
 
-    PRINTF("Hello World\n");
+    spi::spi_config spiconf;
+    spiconf.callbacks[0] = LPSPI_MasterUserCallback;
+    spiconf.callbacks[1] = LPSPI_SlaveUserCallback;
+    spiconf.clocks[0] = kCLOCK_IpSrcFircAsync;
+    spiconf.clocks[1] = kCLOCK_IpSrcFircAsync;
 
-    //TestService::ConstructStatic(1);
+    spi::SPI::ConstructStatic(&spiconf);
+    spi::SPI& spi = spi::SPI::StaticClass();
+    uint32_t errorCount;
+    uint32_t i;
 
-    spi::spi_config conf;
-    conf.callbacks[0] = s_cb;
-    conf.callbacks[1] = m_cb;
-    conf.clocks[0] = kCLOCK_IpSrcFircAsync;
-    conf.clocks[1] = kCLOCK_IpSrcFircAsync;
+    spi::SPI::masterConfig mconf;
 
-    spi::SPI::ConstructStatic(&conf);
+    mconf.baudRate = 500000U;
+    mconf.frameLength = 8 * TRANSFER_SIZE;
+    mconf.pcs = kLPSPI_Pcs2;
+    spi.initMaster(0, &mconf);
 
-    GPIO::ConstructStatic();
+    spi::SPI::slaveConfig sconf;
+    sconf.frameLength = 8 * TRANSFER_SIZE;
+    sconf.pcs = kLPSPI_Pcs0;
+    spi.initSlave(1, &sconf);
 
-    tick();
+	for (i = 0U; i < TRANSFER_SIZE; i++)
+	{
+	 slaveRxData[i] = 0U;
+	}
 
-    while(1) {
-        GPIO::StaticClass().toggle(GPIO_port::PortC, 10U);
-    }
+	sisTransferCompleted = false;
+	spi.slaverx(1, slaveRxData, TRANSFER_SIZE);
+
+	for (i = 0U; i < TRANSFER_SIZE; i++)
+	{
+	  masterTxData[i] = (i) % 256U;
+	  masterRxData[i] = 0U;
+	}
+
+	/* Print out transmit buffer */
+	PRINTF("\r\n Master transmit:\r\n");
+	for (i = 0U; i < TRANSFER_SIZE; i++)
+	{
+	  /* Print 16 numbers in a line */
+	  if ((i & 0x0FU) == 0U)
+	  {
+		  PRINTF("\r\n");
+	  }
+	  PRINTF(" %02X", masterTxData[i]);
+	}
+	PRINTF("\r\n");
+
+	misTransferCompleted = false;
+	spi.mastertx(0, masterTxData, TRANSFER_SIZE);
+
+	while (!sisTransferCompleted || !misTransferCompleted)
+	{
+	}
+
+	sisTransferCompleted = false;
+	spi.slavetx(1, slaveRxData, TRANSFER_SIZE);
+	misTransferCompleted = false;
+	spi.masterrx(0, masterRxData, TRANSFER_SIZE);
+
+	while (!sisTransferCompleted || !misTransferCompleted)
+	{
+	}
+
+	/* Print out receive buffer */
+	PRINTF("\r\n Slave received:");
+	for (i = 0U; i < TRANSFER_SIZE; i++)
+	{
+	 /* Print 16 numbers in a line */
+	 if ((i & 0x0FU) == 0U)
+	 {
+		 PRINTF("\r\n    ");
+	 }
+	 PRINTF(" %02X", slaveRxData[i]);
+	}
+	PRINTF("\r\n");
+
+	errorCount = 0U;
+	for (i = 0U; i < TRANSFER_SIZE; i++)
+	{
+	 if (masterTxData[i] != masterRxData[i])
+	 {
+		 errorCount++;
+	 }
+	}
+	if (errorCount == 0U)
+	{
+	 PRINTF(" \r\nLPSPI transfer all data matched! \r\n");
+	 /* Print out receive buffer */
+	 PRINTF("\r\n Master received:\r\n");
+	 for (i = 0U; i < TRANSFER_SIZE; i++)
+	 {
+		 /* Print 16 numbers in a line */
+		 if ((i & 0x0FU) == 0U)
+		 {
+			 PRINTF("\r\n");
+		 }
+		 PRINTF(" %02X", masterRxData[i]);
+	 }
+	 PRINTF("\r\n");
+	}
+	else
+	{
+	 PRINTF(" \r\nError occured in LPSPI transfer ! \r\n");
+	}
+
+	PRINTF("done\n");
+
+	while(1){}
+
     return 0;
 }
