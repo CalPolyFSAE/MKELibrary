@@ -7,12 +7,14 @@
 #include "i2c.h"
 #include "fsl_lpi2c.h"
 
+using namespace BSP::I2C;
+
 I2C::I2C(const I2Cconfig& config): config(config)
 {
 
 }
 
-I2C::rx(callback_type& callback)
+void I2C::rx(callback_type& callback)
 {
 
 }
