@@ -27,8 +27,8 @@
  *		3. Data streaming.
  */
 
-#ifndef CAN_H_
-#define CAN_H_
+#ifndef CANDRV_H_
+#define CANDRV_H_
 
 #include "stdint.h"
 
@@ -41,11 +41,16 @@ namespace CAN {
 static constexpr uint8_t number_MBs 		= 16;
 static constexpr uint8_t max_msg_size 		= 8;
 static constexpr uint8_t number_controllers = 2;
-using callback_type = se::Event<void(const struct MB_info*)>;
+
+enum class Controller {
+	bus_CAN0,
+	bus_CAN1
+};
+
+using callback_type = se::Event<void(const uint8_t*, uint8_t, Controller)>;
 
 class MB_info {
 public:
-	friend class CAN;
 
 	enum class MB_transfer_mode {
 		TX_single,		// single tx will fire once, then stop
@@ -59,13 +64,15 @@ private:
 	callback_type callback;
 	MB_transfer_mode mode = MB_transfer_mode::disabled;
 
+	uint8_t mb_id;
+	Controller bus;
+
 	// frame data
-	uint32_t 	id_mask = 0;
-	uint32_t 	id = 0;
-	uint8_t 	data[max_msg_size];	// this only holds data after an RX event
-	uint8_t 	dlc = 0;
-	bool 		remote = false;
-	bool 		extended_id = false;
+	//uint8_t* 	data;	// this only holds data after an RX event
+
+	// wrapper struct for the fsl_can flexcan_frame_t type
+	struct Frame_data;
+	Frame_data* frame_data = nullptr;
 
 	volatile bool completed = false;
 
@@ -76,7 +83,8 @@ private:
 	// array of frame data
 public:
 
-	MB_info();
+	MB_info() = default;
+	MB_info(Controller bus, uint8_t mb_id);
 
 	struct flexcan_frame_t* initialize_frame(struct flexcan_frame_t*);
 
@@ -88,13 +96,7 @@ public:
 	/*!
 	 * @brief Check if completed flag is set, then fire callback if valid and clear flag
 	 */
-	inline void do_callback() {
-		if (completed) {
-			completed = false;
-			if (!callback.isNull())
-				callback(this);
-		}
-	}
+	void do_callback();
 
 	/*!
 	 * @brief Check if the last event has not been serviced. Set completed flag.
@@ -108,23 +110,34 @@ public:
 	/*!
 	 * @brief set the current callback for completion
 	 */
-	void set_callback(const callback_type&);
+	inline void set_callback(const callback_type& callback) {
+		this->callback = callback;
+	}
 
 	/*!
-	 * @brief configure the frame data used in RX filtering or TX
+	 * @brief configure the frame data used in TX modes
 	 */
-	void set_frame_data(uint32_t id, const uint8_t (&data)[max_msg_size],
+	bool set_frame_data_tx(uint32_t id, const uint8_t (&data)[max_msg_size],
 			uint8_t dlc, bool remote, bool extended_id);
 
 	/*!
-	 * @brief reconfigure the hardware to match mb_info settings
+	 * @brief configure the expected frame for RX modes
 	 */
-	void reconfigure_MB(uint8_t mb_id);
+	bool set_frame_data_rx(uint32_t id, uint8_t dlc, bool remote, bool extended_id, uint32_t mask);
+
+	/*!
+	 * @brief Set the mode for this MB
+	 */
+	inline void set_mode(MB_transfer_mode mode) {
+		this->mode = mode;
+	}
 
 	/*!
 	 * @brief is this mb currently in one of the RX or TX modes
 	 */
-	bool is_in_use() const;
+	inline bool is_in_use() const {
+		return mode != MB_transfer_mode::disabled;
+	}
 };
 
 struct Controller_config {
@@ -144,34 +157,31 @@ struct can_config {
 	// input parameters
 	// can0 and can1 configs
 	//
-	struct Controller_config* CAN0_config;
-	struct Controller_config* CAN1_config;
+	Controller_config* CAN0_config;
+	Controller_config* CAN1_config;
 };
 
-class CAN final : public StaticService<CAN, const can_config*> {
+class CAN_drv final : public StaticService<CAN_drv, const can_config*> {
 public:
-
-	enum class controller {
-		bus_CAN0,
-		bus_CAN1
-	};
+	friend MB_info;
 
 	void tick() override;
 	void init() override;
 
-	CAN(const can_config*);
+	CAN_drv(const can_config*);
 
 	/*!
 	 * @brief send a message using any mb
 	 */
-	bool tx_msg(controller bus, uint32_t id,
+	bool tx_msg(Controller bus, uint32_t id,
 			const uint8_t (&data)[max_msg_size], uint8_t dlc, bool remote,
 			bool extended_id, const callback_type* callback = nullptr);
 
 	/*
 	 * rx using selected mb
 	 */
-	bool rx_msg(controller bus, const MB_info& frame, const callback_type& callback);
+	bool rx_msg(Controller bus, uint32_t id, bool extended_id, uint8_t dlc,
+			bool remote, uint32_t mask, const callback_type& callback);
 
 
 	// performance info
@@ -179,36 +189,35 @@ public:
 	/*!
 	 * @brief get how many mbs are in use
 	 */
-	float get_metric_current_MB_usage(controller bus) {
+	float get_metric_current_MB_usage(Controller bus) {
 		return 0.0f;
 	}
 
 	/*!
 	 * @brief get current RX error counter
 	 */
-	uint32_t get_metric_current_CAN_RX_error(controller bus) {
+	uint32_t get_metric_current_CAN_RX_error(Controller bus) {
 		return 0;
 	}
 
 	/*!
 	 * @brief get current TX error counter
 	 */
-	uint32_t get_metric_current_CAN_TX_error(controller bus) {
+	uint32_t get_metric_current_CAN_TX_error(Controller bus) {
 		return 0;
 	}
 
 	/*!
 	 * @brief Do not call. This is for the fsl_can driver interrupt callback.
 	 */
-	void ISR_CAN_driver_RX(controller bus, uint32_t result);
+	void ISR_CAN_driver_RX(Controller bus, uint32_t result);
 
 	/*!
 	 * @brief Do not call. This is for the fsl_can driver interrupt callback.
 	 */
-	void ISR_CAN_driver_TX(controller bus, uint32_t result);
+	void ISR_CAN_driver_TX(Controller bus, uint32_t result);
 
 private:
-
 	struct Controller_data;
 
 	// parameters passed in during construction, used during init
@@ -218,7 +227,7 @@ private:
 	MB_info mb_can0[number_MBs];
 	MB_info mb_can1[number_MBs];
 
-	CAN() = default;
+	CAN_drv() = default;
 
 	/*!
 	 * @brief configure mb with rx or tx settings
@@ -228,12 +237,14 @@ private:
 	/*!
 	 * @brief Configure controller hardware using fsl_can driver. Gets handle for fsl_can driver.
 	 */
-	void config_controller(Controller_data* config, controller bus);
+	void config_controller(Controller_data* config, Controller bus);
 
+
+	MB_info* get_free_mb_info(Controller bus);
 };
 
 }
 }
 
 
-#endif /* CAN_H_ */
+#endif /* CANDRV_H_ */
