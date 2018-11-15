@@ -38,42 +38,32 @@
 #include "pin_mux.h"
 #include "clock_config.h"
 #include "MKE18F16.h"
-#include "fsl_debug_console.h"
-#include "gpio.h"
-#include "can.h"
+
 /* TODO: insert other include files here. */
+#include "fsl_debug_console.h"
+#include "adc.h"
 
 /* TODO: insert other definitions and declarations here. */
 
-void tick(void){
-	//TestService::StaticClass().tick();
-	GPIO::StaticClass().tick();
-}
+void tick(void){}
 
 /*
  * @brief   Application entry point.
  */
 int main(void) {
-  	/* Init board hardware. */
+
+	/* Init board hardware. */
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
     BOARD_InitBootPeripherals();
+
   	/* Init FSL debug console. */
 	BOARD_InitDebugConsole();
 
     PRINTF("Hello World\n");
 
-    //TestService::ConstructStatic(1);
-
-    GPIO::ConstructStatic();
-
-    BSP::CAN::can_config ar;
-    BSP::CAN::CAN::ConstructStatic(&ar);
-
     tick();
 
-    while(1) {
-        GPIO::StaticClass().toggle(GPIO_port::PortC, 10U);
-    }
+    while(1) {}
     return 0;
 }

@@ -10,9 +10,9 @@ namespace ADC {
 /*! @brief ADC port definition */
 enum ADC_port
 {
-	Port0 = 0U,	/*!< ADC Port 0*/
-	Port1 = 1U,	/*!< ADC Port 1*/
-	Port2 = 2U,	/*!< ADC Port 2*/
+	Port0 = 0U,		/*!< ADC Port 0*/
+	Port1 = 1U,		/*!< ADC Port 1*/
+	Port2 = 2U,		/*!< ADC Port 2*/
 	PortCount = 3U,	/*!< ADC Port Count*/
 };
 
