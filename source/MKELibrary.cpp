@@ -32,6 +32,7 @@
  * @file    MKELibrary.cpp
  * @brief   Application entry point.
  */
+#include <candrv.h>
 #include <stdio.h>
 #include "board.h"
 #include "peripherals.h"
@@ -39,7 +40,11 @@
 #include "clock_config.h"
 #include "MKE18F16.h"
 #include "fsl_debug_console.h"
+<<<<<<< HEAD
 //#include "gpio.h"
+=======
+#include "gpio.h"
+>>>>>>> e65f9e27a7b0532094b56c48b9508b555c638f11
 /* TODO: insert other include files here. */
 
 /* TODO: insert other definitions and declarations here. */
@@ -63,6 +68,13 @@ int main(void) {
 
     //TestService::ConstructStatic(1);
 
+<<<<<<< HEAD
+=======
+    GPIO::ConstructStatic();
+
+    BSP::CAN::can_config ar;
+    BSP::CAN::CAN_drv::ConstructStatic(&ar);
+>>>>>>> e65f9e27a7b0532094b56c48b9508b555c638f11
 
     tick();
 
