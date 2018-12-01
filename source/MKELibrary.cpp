@@ -45,12 +45,14 @@
 
 /* TODO: insert other definitions and declarations here. */
 
-void tick(void){}
+
+using namespace BSP;
 
 /*
  * @brief   Application entry point.
  */
 int main(void) {
+	uint32_t data;
 
 	/* Init board hardware. */
     BOARD_InitBootPins();
@@ -60,10 +62,25 @@ int main(void) {
   	/* Init FSL debug console. */
 	BOARD_InitDebugConsole();
 
-    PRINTF("Hello World\n");
 
-    tick();
+	PRINTF("constructing ADC driver...\n");
+	ADC::ADC::ConstructStatic(NULL);
+	ADC::ADC& adc = ADC::ADC::StaticClass();
 
-    while(1) {}
+	PRINTF("configuring ADC...\n");
+	adc.config_port(ADC1);
+	adc.config_channel(ADC1, 1);
+	adc.config_hardware_compare(ADC1);
+
+	PRINTF("calibrating ADC...\n");
+	adc.auto_calibration(ADC1);
+
+	PRINTF("reading ADC...\n");
+	data = adc.read_channel(ADC1, 1);
+
+    PRINTF("ADC1.1 = %lu\n", data);
+
+    while(1){}
+
     return 0;
 }
