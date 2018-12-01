@@ -7,10 +7,10 @@
 namespace BSP {
 namespace ADC {
 
-typedef void (*callback)(ADC_Type *, void *, status_t, void *);
+typedef void (*adc_callback_t)(ADC_Type *, void *, status_t, void *);
 
-struct adc_config {
-	callback callbacks[2];
+typedef struct adc_config {
+	adc_callback_t function;
 	adc12_config_t port;
 	adc12_channel_config_t channel;
 	adc12_hardware_compare_config_t hardware_compare;
@@ -19,12 +19,12 @@ struct adc_config {
 	uint32_t gain;
 	bool dma;
 	bool hardware_trigger;
-};
+} adc_config_t;
 
-class ADC final : public StaticService<ADC, const adc_config *> {
+class ADC final : public StaticService<ADC, const adc_config_t *> {
 public:
 
-    ADC(const adc_config *);
+    ADC(const adc_config_t *);
 
     void tick() override;
 
@@ -32,6 +32,7 @@ public:
     void config_channel(ADC_Type *base, uint32_t channel, adc12_channel_config_t *config);
     void config_hardware_compare(ADC_Type *base, adc12_hardware_compare_config_t *config);
 
+    void set_callback(ADC_Type *base, adc_callback_t function);
     void set_offset(ADC_Type *base, uint32_t value);
     void set_gain(ADC_Type *base, uint32_t value);
     void set_hardware_average(ADC_Type *base, adc12_hardware_average_mode_t mode);
@@ -50,8 +51,9 @@ private:
 
     ADC() = default;
 
-    adc_config config[3];
+    adc_config_t config[3];
 
+    adc_callback_t get_callback(ADC_Type *base);
     uint32_t get_index(ADC_Type *base);
 };
 

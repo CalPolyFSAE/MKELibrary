@@ -1,8 +1,9 @@
+#include "MKE18F16.h"
 #include "adc.h"
 
 using namespace BSP::ADC;
 
-ADC::ADC(const adc_config *config){
+ADC::ADC(const adc_config_t *config){
 	if(config){
 		ADC::config[0] = *config;
 		ADC::config[1] = *config;
@@ -45,6 +46,11 @@ void ADC::config_hardware_compare(ADC_Type *base, adc12_hardware_compare_config_
 	ADC12_SetHardwareCompareConfig(base, &(ADC::config[index].hardware_compare));
 }
 
+void ADC::set_callback(ADC_Type *base, adc_callback_t function){
+	uint32_t index = get_index(base);
+	ADC::config[index].function = function;
+}
+
 void ADC::set_offset(ADC_Type *base, uint32_t value){
 	uint32_t index = get_index(base);
 	ADC::config[index].offset = value;
@@ -75,9 +81,8 @@ void ADC::enable_hardware_trigger(ADC_Type *base, bool enable){
 	ADC12_EnableHardwareTrigger(base, ADC::config[index].hardware_trigger);
 }
 
-void ADC::get_default_config(adc_config *config){
-	config->callbacks[0] = NULL;
-	config->callbacks[1] = NULL;
+void ADC::get_default_config(adc_config_t *config){
+	config->function = NULL;
 	config->port = {kADC12_ReferenceVoltageSourceVref, kADC12_ClockSourceAlt0, kADC12_ClockDivider1, kADC12_Resolution12Bit, 17U, true};
 	config->channel= {0, false};
 	config->hardware_compare = {kADC12_HardwareCompareMode0, 0, 0};
@@ -104,6 +109,10 @@ uint32_t ADC::read_channel(ADC_Type *base, uint32_t channel){
 	return(ADC12_GetChannelConversionValue(base, channel));
 }
 
+adc_callback_t ADC::get_callback(ADC_Type *base){
+	return(ADC::config[get_index(base)].function);
+}
+
 uint32_t ADC::get_index(ADC_Type *base){
 	if(base == ADC0){
 		return 0;
@@ -114,4 +123,14 @@ uint32_t ADC::get_index(ADC_Type *base){
 	}else{
 		assert(0);
 	}
+}
+
+extern "C" {
+void ADC1_IRQHandler(){
+	// TODO
+}
+
+void ADC2_IRQHandler(){
+	// TODO
+}
 }
