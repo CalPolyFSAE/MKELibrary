@@ -28,20 +28,20 @@ public:
 
     void tick() override;
 
-    void config_port(ADC_Type *base);
-    void config_channel(ADC_Type *base, uint32_t channel);
-    void config_hardware_compare(ADC_Type *base);
+    void config_port(ADC_Type *base, adc12_config_t *config);
+    void config_channel(ADC_Type *base, uint32_t channel, adc12_channel_config_t *config);
+    void config_hardware_compare(ADC_Type *base, adc12_hardware_compare_config_t *config);
+
+    void set_offset(ADC_Type *base, uint32_t value);
+    void set_gain(ADC_Type *base, uint32_t value);
+    void set_hardware_average(ADC_Type *base, adc12_hardware_average_mode_t mode);
+
+    void enable_dma(ADC_Type *base, bool enable);
+    void enable_hardware_trigger(ADC_Type *base, bool enable);
 
     void get_default_config(adc_config *config);
     uint32_t get_port_status_flags(ADC_Type *base);
     uint32_t get_channel_status_flags(ADC_Type *base, uint32_t channel);
-
-    void set_offset(ADC_Type *base);
-    void set_gain(ADC_Type *base);
-    void set_hardware_average(ADC_Type *base);
-
-    void enable_dma(ADC_Type *base);
-    void enable_hardware_trigger(ADC_Type *base);
 
     status_t auto_calibration(ADC_Type *base);
     uint32_t read_channel(ADC_Type *base, uint32_t channel);
@@ -50,7 +50,9 @@ private:
 
     ADC() = default;
 
-    adc_config config;
+    adc_config config[3];
+
+    uint32_t get_index(ADC_Type *base);
 };
 
 }

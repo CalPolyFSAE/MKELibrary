@@ -68,9 +68,9 @@ int main(void) {
 	ADC::ADC& adc = ADC::ADC::StaticClass();
 
 	PRINTF("configuring ADC...\n");
-	adc.config_port(ADC1);
-	adc.config_channel(ADC1, 1);
-	adc.config_hardware_compare(ADC1);
+	adc.config_port(ADC1, NULL);
+	adc.config_channel(ADC1, 1, NULL);
+	adc.config_hardware_compare(ADC1, NULL);
 
 	PRINTF("calibrating ADC...\n");
 	adc.auto_calibration(ADC1);
