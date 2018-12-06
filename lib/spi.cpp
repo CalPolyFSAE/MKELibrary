@@ -46,7 +46,7 @@ void SPI::initSlave(uint8_t no, slaveConfig* sc){
 
     handles[no] = new lpspi_slave_handle_t;
 
-    // Necessary to cast hanldes[] and callbacks[] as those are general purpose 
+    // Necessary to cast handles[] and callbacks[] as those are general purpose 
     // and could be either master or slave constructs
     LPSPI_SlaveTransferCreateHandle(bases[no],
 			(lpspi_slave_handle_t*)handles[no],
@@ -74,7 +74,7 @@ void SPI::initMaster(uint8_t no, masterConfig* mc){
     fslmc.pinCfg = mc->pincfg;
     fslmc.dataOutConfig = mc->datacfg;
     
-    LPSPI_MasterInit(bases[no], &fslmc, freqs[no]);
+    return LPSPI_MasterInit(bases[no], &fslmc, freqs[no]);
 
     handles[no] = new lpspi_master_handle_t;
 
@@ -84,7 +84,7 @@ void SPI::initMaster(uint8_t no, masterConfig* mc){
 
 }
 
-void SPI::mastertx(uint8_t no, uint8_t* data, uint8_t size){
+uint32_t SPI::mastertx(uint8_t no, uint8_t* data, uint8_t size){
     
     lpspi_transfer_t tx;
 
@@ -93,11 +93,11 @@ void SPI::mastertx(uint8_t no, uint8_t* data, uint8_t size){
     tx.dataSize = size;
     tx.configFlags = pcs[no] << LPSPI_MASTER_PCS_SHIFT | kLPSPI_MasterPcsContinuous | kLPSPI_MasterByteSwap;
 
-    LPSPI_MasterTransferNonBlocking(bases[no], (lpspi_master_handle_t*)handles[no], &tx);
+    return LPSPI_MasterTransferNonBlocking(bases[no], (lpspi_master_handle_t*)handles[no], &tx);
 
 }
 
-void SPI::masterrx(uint8_t no, uint8_t* data, uint8_t size){
+uint32_t SPI::masterrx(uint8_t no, uint8_t* data, uint8_t size){
     
     lpspi_transfer_t rx;
 
@@ -106,11 +106,11 @@ void SPI::masterrx(uint8_t no, uint8_t* data, uint8_t size){
     rx.dataSize = size;
     rx.configFlags = pcs[no] << LPSPI_MASTER_PCS_SHIFT | kLPSPI_MasterPcsContinuous | kLPSPI_MasterByteSwap;
 
-    LPSPI_MasterTransferNonBlocking(bases[no], (lpspi_master_handle_t*)handles[no], &rx);
+    return LPSPI_MasterTransferNonBlocking(bases[no], (lpspi_master_handle_t*)handles[no], &rx);
 
 }
 
-void SPI::slaverx(uint8_t no, uint8_t* data, uint8_t size){
+uint32_t SPI::slaverx(uint8_t no, uint8_t* data, uint8_t size){
 
     lpspi_transfer_t rx;
     rx.txData = NULL;
@@ -118,11 +118,11 @@ void SPI::slaverx(uint8_t no, uint8_t* data, uint8_t size){
     rx.dataSize = size;
     rx.configFlags = pcs[no] << LPSPI_SLAVE_PCS_SHIFT | kLPSPI_SlaveByteSwap;
 
-    LPSPI_SlaveTransferNonBlocking(bases[no], (lpspi_slave_handle_t*)handles[no], &rx);
+    return LPSPI_SlaveTransferNonBlocking(bases[no], (lpspi_slave_handle_t*)handles[no], &rx);
 
 }
 
-void SPI::slavetx(uint8_t no, uint8_t* data, uint8_t size){
+uint32_t SPI::slavetx(uint8_t no, uint8_t* data, uint8_t size){
     
     lpspi_transfer_t tx;
 
@@ -131,7 +131,7 @@ void SPI::slavetx(uint8_t no, uint8_t* data, uint8_t size){
     tx.dataSize = size;
     tx.configFlags = pcs[no] << LPSPI_SLAVE_PCS_SHIFT | kLPSPI_SlaveByteSwap;
 
-    LPSPI_SlaveTransferNonBlocking(bases[no], (lpspi_slave_handle_t*)handles[no], &tx);
+    return LPSPI_SlaveTransferNonBlocking(bases[no], (lpspi_slave_handle_t*)handles[no], &tx);
 
 }
 
