@@ -39,6 +39,7 @@ struct spi_config {
     // A good choice for this is kCLOCK_IpSrcFircAsync
     // But really, make sure your clock mux is configured correctly
     // Just use the IDE for that for now
+    // These defaults just keep you honest. You can't make a handle passing these
     clock_ip_src_t clocks[2] = {kCLOCK_IpSrcNoneOrExt, kCLOCK_IpSrcNoneOrExt};
 
 };
@@ -47,7 +48,6 @@ struct spi_config {
 class SPI final : public StaticService<SPI, const spi_config*> {
 public:
 
-    // Base address, master/slave handle pointer, status, user data pointer
     
     void tick() override;
 
@@ -105,11 +105,12 @@ public:
     void initSlave(uint8_t no, slaveConfig*);
     void initMaster(uint8_t no, masterConfig*);
 
-    void mastertx(uint8_t no, uint8_t* data, uint8_t size);
-    void masterrx(uint8_t no, uint8_t* data, uint8_t size);
-
-    void slaverx(uint8_t no, uint8_t* data, uint8_t size);
-    void slavetx(uint8_t no, uint8_t* data, uint8_t size);
+    // Arguments: SPI module; data buffer; expected data length
+    // Returns state of linked FSL function. 0 is good, not 0 is not good.
+    uint32_t mastertx(uint8_t no, uint8_t* data, uint8_t size);
+    uint32_t masterrx(uint8_t no, uint8_t* data, uint8_t size);
+    uint32_t slaverx(uint8_t no, uint8_t* data, uint8_t size);
+    uint32_t slavetx(uint8_t no, uint8_t* data, uint8_t size);
 
 private:
     SPI() = default;
