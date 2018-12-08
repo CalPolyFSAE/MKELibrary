@@ -32,19 +32,18 @@
  * @file    MKELibrary.cpp
  * @brief   Application entry point.
  */
-#include <stdio.h>
 #include "board.h"
 #include "peripherals.h"
 #include "pin_mux.h"
 #include "clock_config.h"
-#include "MKE18F16.h"
+#include "fsl_debug_console.h"
 
 /* TODO: insert other include files here. */
-#include "fsl_debug_console.h"
 #include "adc.h"
 
 /* TODO: insert other definitions and declarations here. */
-
+#define ADC_BASE ADC2
+#define ADC_CH 13
 
 using namespace BSP;
 
@@ -52,6 +51,7 @@ using namespace BSP;
  * @brief   Application entry point.
  */
 int main(void) {
+	adc12_channel_config_t config;
 	uint32_t data;
 
 	/* Init board hardware. */
@@ -63,24 +63,31 @@ int main(void) {
 	BOARD_InitDebugConsole();
 
 
-	PRINTF("constructing ADC driver...\n");
+	PRINTF("constructing ADC driver.....");
 	ADC::ADC::ConstructStatic(NULL);
 	ADC::ADC& adc = ADC::ADC::StaticClass();
+	PRINTF("done\n");
 
-	PRINTF("configuring ADC...\n");
-	adc.config_port(ADC1, NULL);
-	adc.config_channel(ADC1, 1, NULL);
-	adc.config_hardware_compare(ADC1, NULL);
+	PRINTF("configuring ADC.....\n");
+	config.channelNumber = ADC_CH;
+	config.enableInterruptOnConversionCompleted = false;
+	adc.config_base(ADC_BASE, NULL);
+	adc.config_channel(ADC_BASE, 0, &config);
+	adc.config_hardware_compare(ADC_BASE, NULL);
+	adc.enable_dma(ADC_BASE, false);
+	adc.enable_hardware_trigger(ADC_BASE, false);
+	PRINTF("done\n");
 
-	PRINTF("calibrating ADC...\n");
-	adc.auto_calibration(ADC1);
+	PRINTF("calibrating ADC.....\n");
+	if(adc.calibrate(ADC_BASE) != kStatus_Success)
+		PRINTF("FAILED\n");
+	else
+		PRINTF("done\n");
 
-	PRINTF("reading ADC...\n");
-	data = adc.read_channel(ADC1, 1);
-
-    PRINTF("ADC1.1 = %lu\n", data);
-
-    while(1){}
+    while(1){
+    	data = adc.read(ADC_BASE, 0);
+    	PRINTF("ADC = %lu\n", data);
+    }
 
     return 0;
 }

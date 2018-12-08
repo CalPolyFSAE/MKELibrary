@@ -19,31 +19,41 @@ void ADC::tick(){
 	// TODO
 }
 
-void ADC::config_port(ADC_Type *base, adc12_config_t *config){
+void ADC::config_base(ADC_Type *base, adc12_config_t *config){
 	uint32_t index = get_index(base);
 
 	if(config)
-		ADC::config[index].port = *config;
+		ADC::config[index].base_config = *config;
 
-	ADC12_Init(base, &(ADC::config[index].port));
+	if(base == ADC0){
+		CLOCK_SetIpSrc(kCLOCK_Adc0, ADC::config[index].clock_source);
+	}else if(base == ADC1){
+		CLOCK_SetIpSrc(kCLOCK_Adc1, ADC::config[index].clock_source);
+	}else if(base == ADC2){
+		CLOCK_SetIpSrc(kCLOCK_Adc2, ADC::config[index].clock_source);
+	}else{
+		assert(0);
+	}
+
+	ADC12_Init(base, &(ADC::config[index].base_config));
 }
 
-void ADC::config_channel(ADC_Type *base, uint32_t channel, adc12_channel_config_t *config){
+void ADC::config_channel(ADC_Type *base, uint32_t group, adc12_channel_config_t *config){
 	uint32_t index = get_index(base);
 
 	if(config)
-		ADC::config[index].channel = *config;
+		ADC::config[index].channel_config = *config;
 
-	ADC12_SetChannelConfig(base, channel, &(ADC::config[index].channel));
+	ADC12_SetChannelConfig(base, group, &(ADC::config[index].channel_config));
 }
 
 void ADC::config_hardware_compare(ADC_Type *base, adc12_hardware_compare_config_t *config){
 	uint32_t index = get_index(base);
 
 	if(config)
-		ADC::config[index].hardware_compare = *config;
+		ADC::config[index].hardware_compare_config = *config;
 
-	ADC12_SetHardwareCompareConfig(base, &(ADC::config[index].hardware_compare));
+	ADC12_SetHardwareCompareConfig(base, &(ADC::config[index].hardware_compare_config));
 }
 
 void ADC::set_callback(ADC_Type *base, adc_callback_t function){
@@ -83,12 +93,13 @@ void ADC::enable_hardware_trigger(ADC_Type *base, bool enable){
 
 void ADC::get_default_config(adc_config_t *config){
 	config->function = NULL;
-	config->port = {kADC12_ReferenceVoltageSourceVref, kADC12_ClockSourceAlt0, kADC12_ClockDivider1, kADC12_Resolution12Bit, 17U, true};
-	config->channel= {0, false};
-	config->hardware_compare = {kADC12_HardwareCompareMode0, 0, 0};
+	config->clock_source = kCLOCK_IpSrcFircAsync;
+	config->base_config = {kADC12_ReferenceVoltageSourceVref, kADC12_ClockSourceAlt0, kADC12_ClockDivider1, kADC12_Resolution12Bit, 17U, true};
+	config->channel_config = {0, false};
+	config->hardware_compare_config = {kADC12_HardwareCompareMode0, 0, 0};
 	config->hardware_average_mode = kADC12_HardwareAverageDisabled;
 	config->offset = 0;
-	config->gain = 0;
+	config->gain = 1;
 	config->dma = false;
 	config->hardware_trigger = false;
 }
@@ -97,16 +108,18 @@ uint32_t ADC::get_port_status_flags(ADC_Type *base){
 	return(ADC12_GetStatusFlags(base));
 }
 
-uint32_t ADC::get_channel_status_flags(ADC_Type *base, uint32_t channel){
-	return(ADC12_GetChannelStatusFlags(base, channel));
+uint32_t ADC::get_channel_status_flags(ADC_Type *base, uint32_t group){
+	return(ADC12_GetChannelStatusFlags(base, group));
 }
 
-status_t ADC::auto_calibration(ADC_Type *base){
+status_t ADC::calibrate(ADC_Type *base){
 	return(ADC12_DoAutoCalibration(base));
 }
 
-uint32_t ADC::read_channel(ADC_Type *base, uint32_t channel){
-	return(ADC12_GetChannelConversionValue(base, channel));
+uint32_t ADC::read(ADC_Type *base, uint32_t group){
+	ADC12_SetChannelConfig(base, group, &(ADC::config[get_index(base)].channel_config));
+    while(!(ADC12_GetChannelStatusFlags(base, group) & kADC12_ChannelConversionCompletedFlag)){}
+	return(ADC12_GetChannelConversionValue(base, group));
 }
 
 adc_callback_t ADC::get_callback(ADC_Type *base){
