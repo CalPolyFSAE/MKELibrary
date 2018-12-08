@@ -43,7 +43,7 @@ public:
     void enable_hardware_trigger(ADC_Type *base, bool enable);
 
     void get_default_config(adc_config *config);
-    uint32_t get_port_status_flags(ADC_Type *base);
+    uint32_t get_base_status_flags(ADC_Type *base);
     uint32_t get_channel_status_flags(ADC_Type *base, uint32_t group);
 
     status_t calibrate(ADC_Type *base);
