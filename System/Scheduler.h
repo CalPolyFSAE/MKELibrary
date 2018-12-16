@@ -24,9 +24,9 @@ public:
 
 	void runTask();
 
-	bool addTask(TASK_TYPE& t);
+	bool addTask(const TASK_TYPE& t);
 protected:
-	TASK_TYPE tasks[TASK_COUNT] = {};
+	TASK_TYPE taskList[TASK_COUNT] = {};
 	uint16_t taskindex = 0;
 };
 
@@ -41,9 +41,9 @@ void Scheduler<TASK_TYPE, TASK_COUNT, R>::runTask() {
 }
 
 template<class TASK_TYPE, int TASK_COUNT, class R>
-bool Scheduler<TASK_TYPE, TASK_COUNT, R>::addTask(TASK_TYPE& t) {
+bool Scheduler<TASK_TYPE, TASK_COUNT, R>::addTask(const TASK_TYPE& t) {
 	if (taskindex < TASK_COUNT) {
-		tasks[taskindex] = t;
+		taskList[taskindex] = t;
 		taskindex++;
 		return true;
 	} else
@@ -62,15 +62,42 @@ public:
 };
 
 template<typename TASK_TYPE, int TASK_COUNT>
-class PeriodicScheduler: public Scheduler<TASK_TYPE, TASK_COUNT,
+class PeriodicScheduler : public Scheduler<TASK_TYPE, TASK_COUNT,
 		PeriodicScheduler<TASK_TYPE, TASK_COUNT>> {
 public:
-	void doNextTask() {
+	static_assert(std::is_base_of<TaskPeriodic, TASK_TYPE>::value, "TASK_TYPE must derive from TaskPeriodic");
 
-	}
+	PeriodicScheduler();
+
+	void doNextTask();
+
+	void tick();
 private:
 	uint16_t currentTask;
 };
+
+template<typename TASK_TYPE, int TASK_COUNT>
+PeriodicScheduler<TASK_TYPE, TASK_COUNT>::PeriodicScheduler() {
+
+}
+
+// Execute next task if ready
+template<typename TASK_TYPE, int TASK_COUNT>
+void PeriodicScheduler<TASK_TYPE, TASK_COUNT>::doNextTask() {
+	// check that task needs to run
+	// get time
+	this->taskList[currentTask]();
+	// get time, check how long it took to run and record
+	currentTask++;
+	currentTask %= TASK_COUNT;
+}
+
+
+// this function is called at a fixed rate by external timing
+template<typename TASK_TYPE, int TASK_COUNT>
+void PeriodicScheduler<TASK_TYPE, TASK_COUNT>::tick() {
+	// decrement counters
+}
 
 }
 

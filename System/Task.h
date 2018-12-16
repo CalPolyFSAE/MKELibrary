@@ -31,6 +31,11 @@ struct Task : public TaskBase {
 
 	Task() : TaskBase(0) {
 	}
+
+	Task(entryPoint_t e) : TaskBase(0), entry(e) {
+
+	}
+
 	Task(const Task& other) = default;
 	Task(uint16_t id, entryPoint_t entry) :
 		TaskBase(id), entry(entry) {
@@ -43,7 +48,23 @@ struct Task : public TaskBase {
 };
 
 struct TaskPeriodic : public Task {
+private:
+	uint16_t period;
 
+public:
+	TaskPeriodic() : period(0) {
+
+	}
+
+	TaskPeriodic(entryPoint_t e, uint16_t period) : Task(e), period(period) {
+
+	}
+
+	TaskPeriodic(const TaskPeriodic& other) = default;
+
+	uint16_t getPeriod() {
+		return period;
+	}
 };
 
 template<int TaskCount>
