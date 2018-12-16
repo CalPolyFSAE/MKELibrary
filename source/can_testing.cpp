@@ -18,13 +18,6 @@ void test_RX_event(const uint8_t* data, uint8_t dlc, Controller bus) {
 
 }
 
-class A {
-public:
-	static void B(int a) {
-
-	}
-};
-
 uint8_t testCan() {
 
 	// enable loopback for testing
@@ -40,10 +33,8 @@ uint8_t testCan() {
 	// normally called by initializer
 	can.init();
 
-	se::Event<void(int)> d;
-	auto call = decltype(d)::create<&A::B>();
-	//auto callback = callback_type::create<&A::B>();
-	//can.rx_msg(Controller::bus_CAN0, 0xDF, false, 7, false, ~(0U), callback);
+	auto callback = BSP::CAN::callback_type::create<test_RX_event>();
+	can.rx_msg(Controller::bus_CAN0, 0xDF, false, 7, false, ~(0U), callback);
 
 	return 0;
 }
