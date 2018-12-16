@@ -40,14 +40,16 @@
 #include "clock_config.h"
 #include "MKE18F16.h"
 #include "fsl_debug_console.h"
-#include "gpio.h"
 /* TODO: insert other include files here. */
 
 /* TODO: insert other definitions and declarations here. */
 
+extern void TestSys();
+
+
 void tick(void){
 	//TestService::StaticClass().tick();
-	GPIO::StaticClass().tick();
+	//GPIO::StaticClass().tick();
 }
 
 /*
@@ -61,19 +63,19 @@ int main(void) {
   	/* Init FSL debug console. */
 	BOARD_InitDebugConsole();
 
-    PRINTF("Hello World\n");
+    PRINTF("Init0 complete\n");
 
     //TestService::ConstructStatic(1);
 
-    GPIO::ConstructStatic();
+    //GPIO::ConstructStatic();
 
-    BSP::CAN::can_config ar;
-    BSP::CAN::CAN_drv::ConstructStatic(&ar);
+    //BSP::CAN::can_config ar;
+    //BSP::CAN::CAN_drv::ConstructStatic(&ar);
 
-    tick();
+    TestSys();
 
     while(1) {
-        GPIO::StaticClass().toggle(GPIO_port::PortC, 10U);
+        tick();
     }
     return 0;
 }
