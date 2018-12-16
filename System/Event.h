@@ -78,7 +78,7 @@ public:
 	 * @param params variadic arguments
 	 * @retval specified function return value
 	 */
-	Ret operator()(Params... params) const {
+	inline Ret operator()(Params... params) const {
 		return (*method_ptr)(object, static_cast<Params&&>(params)...);
 	}
 
