@@ -32,7 +32,6 @@
  * @file    MKELibrary.cpp
  * @brief   Application entry point.
  */
-#include <candrv.h>
 #include <stdio.h>
 #include "board.h"
 #include "peripherals.h"
@@ -40,22 +39,19 @@
 #include "clock_config.h"
 #include "MKE18F16.h"
 #include "fsl_debug_console.h"
-<<<<<<< HEAD
-//#include "gpio.h"
-=======
-#include "gpio.h"
->>>>>>> e65f9e27a7b0532094b56c48b9508b555c638f11
-/* TODO: insert other include files here. */
+#include "lpit.h"
 
-/* TODO: insert other definitions and declarations here. */
+using namespace BSP;
+
+void callback0(){
+    uint8_t x = 1;
+    (void)x;
+}
 
 void tick(void){
 	//TestService::StaticClass().tick();
 }
 
-/*
- * @brief   Application entry point.
- */
 int main(void) {
   	/* Init board hardware. */
     BOARD_InitBootPins();
@@ -64,21 +60,16 @@ int main(void) {
   	/* Init FSL debug console. */
 	BOARD_InitDebugConsole();
 
-    PRINTF("Hello World\n");
+    lpit::lpit_config conf;
+    conf.clock = kCLOCK_IpSrcFircAsync;
 
-    //TestService::ConstructStatic(1);
+    lpit::LPIT::ConstructStatic(&conf);
+    lpit::LPIT& lpit = lpit::LPIT::StaticClass();
 
-<<<<<<< HEAD
-=======
-    GPIO::ConstructStatic();
-
-    BSP::CAN::can_config ar;
-    BSP::CAN::CAN_drv::ConstructStatic(&ar);
->>>>>>> e65f9e27a7b0532094b56c48b9508b555c638f11
-
-    tick();
+    lpit.init(0, 1000UL, callback0);
 
     while(1) {
     }
+
     return 0;
 }
