@@ -50,36 +50,38 @@ struct Task : public TaskBase {
 struct TaskPeriodic : public Task {
 private:
 	uint16_t period;
+	volatile uint16_t ticks;// timer
 
 public:
-	TaskPeriodic() : period(0) {
+	TaskPeriodic() : period(0), ticks(0) {
 
 	}
 
-	TaskPeriodic(entryPoint_t e, uint16_t period) : Task(e), period(period) {
+	TaskPeriodic(entryPoint_t e, uint16_t period) : Task(e), period(period), ticks(0) {
 
 	}
 
 	TaskPeriodic(const TaskPeriodic& other) = default;
 
-	uint16_t getPeriod() {
+	/*
+	 * @brief separate thread (ISR) decrements timer.
+	 */
+	void decrementTick() {
+		if(ticks > 0)
+			ticks--;
+	}
+
+	void resetTimer() {
+		ticks = period;
+	}
+
+	uint16_t getTicks() {
+		return ticks;
+	}
+
+	uint16_t getPeriod() const {
 		return period;
 	}
-};
-
-template<int TaskCount>
-class TaskManager {
-public:
-
-	TaskManager(uint16_t numTasks);
-
-	void addTask(entryPoint_t entry, ExeState runState);
-
-	void addTaskPeriodic(entryPoint_t entry, ExeState runState, uint16_t period);
-
-	void addTask(Task* t);
-private:
-	Task tasks[TaskCount] = {};
 };
 
 }

@@ -32,7 +32,6 @@
  * @file    MKELibrary.cpp
  * @brief   Application entry point.
  */
-#include <candrv.h>
 #include <stdio.h>
 #include "board.h"
 #include "peripherals.h"

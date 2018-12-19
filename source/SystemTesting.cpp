@@ -5,6 +5,7 @@
  *      Author: oneso
  */
 #include <stdio.h>
+#include <MKE18F16.h>
 
 #include <System/System.h>
 #include <System/Scheduler.h>
@@ -21,15 +22,24 @@ static void Task2() {
 	printf("Task2\n");
 }
 
+static System::PeriodicScheduler<System::TaskPeriodic, 5> a;
+
+extern "C" {
+void SysTick_Handler(void) {
+	a.tick();
+}
+}
+
 static void TestTasks() {
-	System::PeriodicScheduler<System::TaskPeriodic, 3> a;
 
-	a.addTask(System::TaskPeriodic(Task, 1));
-	a.addTask(System::TaskPeriodic(Task1, 1));
-	a.addTask(System::TaskPeriodic(Task2, 1));
+	SysTick_Config(1000000);
+
+	a.addTask(System::TaskPeriodic(Task, 10));
+	a.addTask(System::TaskPeriodic(Task1, 15));
+	a.addTask(System::TaskPeriodic(Task2, 2));
 
 
-	for(uint16_t i = 0; i < 5; ++i)
+	while(1)
 		a.doNextTask();
 }
 
