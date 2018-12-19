@@ -61,7 +61,7 @@ int main(void) {
 	BOARD_InitDebugConsole();
 
     lpit::lpit_config conf;
-    conf.clock = kCLOCK_IpSrcFircAsync;
+    conf.clock = kCLOCK_IpSrcSircAsync;
 
     lpit::LPIT::ConstructStatic(&conf);
     lpit::LPIT& lpit = lpit::LPIT::StaticClass();

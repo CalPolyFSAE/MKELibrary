@@ -5,6 +5,7 @@ using namespace BSP::lpit;
 LPIT::LPIT(const lpit_config* conf){
 
     CLOCK_SetIpSrc(kCLOCK_Lpit0, conf->clock);
+    CLOCK_EnableClock(kCLOCK_Lpit0);
 
     if(conf->interrupts){
         EnableIRQ(LPIT0_Ch0_IRQn);
@@ -43,10 +44,6 @@ void LPIT::tick(){
 
 }
 
-void LPIT0_Ch0_IRQHandler(){
-    LPIT::StaticClass().interrupt(0);
-}
-
 void LPIT::interrupt(uint8_t ch){
     if(ch == 0) base->MSR |= LPIT_MSR_TIF0(1);
     if(ch == 1) base->MSR |= LPIT_MSR_TIF1(1);
@@ -57,3 +54,10 @@ void LPIT::interrupt(uint8_t ch){
         callbacks[ch]();
 }
 
+extern "C" {
+
+void LPIT0_Ch0_IRQHandler(){
+    LPIT::StaticClass().interrupt(0);
+}
+
+}
