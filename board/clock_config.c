@@ -25,7 +25,7 @@
 !!GlobalInfo
 product: Clocks v4.1
 processor: MKE18F512xxx16
-package_id: MKE18F512VLL16
+package_id: MKE18F512VLH16
 mcu_data: ksdk2_0
 processor_version: 4.0.0
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
@@ -113,23 +113,13 @@ called_from_default_init: true
 outputs:
 - {id: Bus_clock.outFreq, value: 12 MHz}
 - {id: Core_clock.outFreq, value: 12 MHz}
-- {id: FIRCDIV1_CLK.outFreq, value: 48 MHz}
-- {id: FIRCDIV2_CLK.outFreq, value: 48 MHz}
 - {id: Flash_clock.outFreq, value: 6 MHz}
 - {id: LPO1KCLK.outFreq, value: 1 kHz}
 - {id: LPO_clock.outFreq, value: 128 kHz}
-- {id: PCC.PCC_LPIT0_CLK.outFreq, value: 8 MHz}
-- {id: SIRCDIV1_CLK.outFreq, value: 8 MHz}
-- {id: SIRCDIV2_CLK.outFreq, value: 8 MHz}
 - {id: SIRC_CLK.outFreq, value: 8 MHz}
 - {id: System_clock.outFreq, value: 12 MHz}
 settings:
-- {id: PCC.PCC_LPIT0_SEL.sel, value: SCG.SIRCDIV2_CLK}
 - {id: SCG.DIVCORE.scale, value: '4', locked: true}
-- {id: SCG.FIRCDIV1.scale, value: '1', locked: true}
-- {id: SCG.FIRCDIV2.scale, value: '1', locked: true}
-- {id: SCG.SIRCDIV1.scale, value: '1', locked: true}
-- {id: SCG.SIRCDIV2.scale, value: '1'}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 /* clang-format on */
 
@@ -155,15 +145,15 @@ const scg_sosc_config_t g_scgSysOscConfig_BOARD_BootClockRUN =
 const scg_sirc_config_t g_scgSircConfig_BOARD_BootClockRUN =
     {
         .enableMode = kSCG_SircEnable | kSCG_SircEnableInLowPower,/* Enable SIRC clock, Enable SIRC in low power mode */
-        .div1 = kSCG_AsyncClkDivBy1,              /* Slow IRC Clock Divider 1: divided by 1 */
-        .div2 = kSCG_AsyncClkDivBy1,              /* Slow IRC Clock Divider 2: divided by 1 */
+        .div1 = kSCG_AsyncClkDisable,             /* Slow IRC Clock Divider 1: Clock output is disabled */
+        .div2 = kSCG_AsyncClkDisable,             /* Slow IRC Clock Divider 2: Clock output is disabled */
         .range = kSCG_SircRangeHigh,              /* Slow IRC high range clock (8 MHz) */
     };
 const scg_firc_config_t g_scgFircConfig_BOARD_BootClockRUN =
     {
         .enableMode = kSCG_FircEnable,            /* Enable FIRC clock */
-        .div1 = kSCG_AsyncClkDivBy1,              /* Fast IRC Clock Divider 1: divided by 1 */
-        .div2 = kSCG_AsyncClkDivBy1,              /* Fast IRC Clock Divider 2: divided by 1 */
+        .div1 = kSCG_AsyncClkDisable,             /* Fast IRC Clock Divider 1: Clock output is disabled */
+        .div2 = kSCG_AsyncClkDisable,             /* Fast IRC Clock Divider 2: Clock output is disabled */
         .range = kSCG_FircRange48M,               /* Fast IRC is trimmed to 48MHz */
         .trimConfig = NULL,                       /* Fast IRC Trim disabled */
     };
@@ -197,7 +187,5 @@ void BOARD_BootClockRUN(void)
     } while (curConfig.src != g_sysClkConfig_BOARD_BootClockRUN.src);
     /* Set SystemCoreClock variable. */
     SystemCoreClock = BOARD_BOOTCLOCKRUN_CORE_CLOCK;
-    /* Set PCC LPIT0 selection */
-    CLOCK_SetIpSrc(kCLOCK_Lpit0, kCLOCK_IpSrcSircAsync);
 }
 

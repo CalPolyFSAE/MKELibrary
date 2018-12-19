@@ -44,8 +44,9 @@
 using namespace BSP;
 
 void callback0(){
-    uint8_t x = 1;
-    (void)x;
+	printf("hi\n");
+//    uint8_t x = 1;
+//    (void)x;
 }
 
 void tick(void){
@@ -66,7 +67,7 @@ int main(void) {
     lpit::LPIT::ConstructStatic(&conf);
     lpit::LPIT& lpit = lpit::LPIT::StaticClass();
 
-    lpit.init(0, 1000UL, callback0);
+    lpit.init(0, 0xffffff, callback0);
 
     while(1) {
     }
