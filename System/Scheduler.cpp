@@ -2,7 +2,7 @@
  * EventScheduler.cpp
  *
  *  Created on: Oct 24, 2018
- *      Author: oneso
+ *      Author: HB
  */
 
 #include <stdio.h>

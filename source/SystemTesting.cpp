@@ -2,7 +2,7 @@
  * SystemTesting.cpp
  *
  *  Created on: Dec 16, 2018
- *      Author: oneso
+ *      Author: HB
  */
 #include <stdio.h>
 #include <MKE18F16.h>
@@ -22,8 +22,15 @@ static void Task2() {
 	printf("Task2\n");
 }
 
-static System::PeriodicScheduler<System::TaskPeriodic, 5> a;
+using scheduler = System::PeriodicScheduler<System::TaskPeriodic, 5>;
 
+static void OnErrorHandler(uint16_t task) {
+	printf("Error %u\n", task);
+}
+
+static scheduler a;
+
+// ISR function for Systick
 extern "C" {
 void SysTick_Handler(void) {
 	a.tick();
@@ -32,15 +39,17 @@ void SysTick_Handler(void) {
 
 static void TestTasks() {
 
-	SysTick_Config(1000000);
+	SysTick_Config(500000);
 
-	a.addTask(System::TaskPeriodic(Task, 10));
-	a.addTask(System::TaskPeriodic(Task1, 15));
-	a.addTask(System::TaskPeriodic(Task2, 2));
+	a.setOnErrorHandler(scheduler::OnErrorHandler_t::create<OnErrorHandler>());
+	a.addTask(System::TaskPeriodic(Task, 1, 10, 10));
+	a.addTask(System::TaskPeriodic(Task1, 2, 15, 10));
+	a.addTask(System::TaskPeriodic(Task2, 3, 10, 10));
 
+	a.start();
 
 	while(1)
-		a.doNextTask();
+		a.onFrame();
 }
 
 void TestSys() {
