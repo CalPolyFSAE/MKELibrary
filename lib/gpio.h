@@ -9,34 +9,8 @@
 #include "fsl_port.h"
 #include "MKE18F16.h"
 
-/*
- * General notes
- *
- * The IO system is two peripherals; GPIO and PORT.
- * GPIO handles digital logic reading and writing.
- * PORT handles assigning pins to peripherals and pin interrupts.
- *
- * Pin config tool must be used to set up PORT utility and associated clocks.
- * This library does not do that, yet.
- *
- * Notes from part reference
- *
- * "Each 32-pin port supports one interrupt."
- * Interrupts defined in startup file for ports A through E
- *      PORTX_IRQHandler
- *
- * Pin configuration register
- * One register for each pin: PORTA_PCR0, etc.
- *  ISF: The pin has interrupted
- *      Every ISF is mirrored in port register PORTA_ISFR, etc.
- *  IRQC: When will the pin trigger interrupt?
- *  LK: Lock the register
- *  MUX: What is the pin's function?
- *  DSE: High or low drive strength?
- *  PFE: Passive filter?
- *  PE: Pull enable
- *  PS: Pull direction
- */
+namespace BSP{
+namespace gpio{
 
 /*! @brief GPIO port definition */
 enum  GPIO_port
@@ -49,18 +23,11 @@ enum  GPIO_port
 	PortCount = 5U,	/*!< GPIO Port Count*/
 };
 
-/*! @brief GPIO logic level definition */
-typedef enum _gpio_logic_level
-{
-    kGPIO_LogicLow = 0U,  /*!< Digital logic low*/
-    kGPIO_LogicHigh = 1U, /*!< Digital logic high*/
-} gpio_logic_level_t;
-
 class GPIO final : public StaticService<GPIO> {
 public:
 
 	/*! @brief function pointer callback type */
-	using ISR_func_ptr = se::Event<int(uint8_t)>;
+	using ISR_func_ptr = void (*)(void);
 
 	/*! @brief GPIO interrupt function pointers */
     ISR_func_ptr function [GPIO_port::PortCount];
@@ -70,6 +37,12 @@ public:
 	void tick() override {
 		printf("tock\n");
 	}
+
+    // Make pin an input
+    void in_dir(GPIO_port port, uint32_t pin);
+
+    // Make pin an output
+    void out_dir(GPIO_port port, uint32_t pin);
 
     /*!
      * @brief Sets the output level of a GPIO pin to logic '1'.
@@ -101,10 +74,8 @@ public:
      * @param port 	GPIO port name
      * @param pin	GPIO pin number
      * @retval GPIO port input value
-     *        - kGPIO_LogicLow: corresponding pin input low-logic level.
-     *        - kGPIO_LogicHigh: corresponding pin input high-logic level.
      */
-    gpio_logic_level_t read(GPIO_port port, uint32_t pin);
+    uint8_t read(GPIO_port port, uint32_t pin);
 
     /*!
      * @brief Sets the port PCR register.
@@ -160,12 +131,20 @@ public:
      */
     void config_function(GPIO_port port, ISR_func_ptr callback);
 
+    // Determine first source of an interrupt. Checks each pin in order from 0 to 31.
+    // Returns 32 (impossible source) if no source found.
+    uint8_t int_source(GPIO_port port);
+
+    // Acknowledge interrupt. This enables another interrupt from this source.
+    void ack_interrupt(GPIO_port, uint8_t pin);
+
 private:
 
     static PORT_Type* get_port(GPIO_port port);
     static GPIO_Type* get_gpio(GPIO_port port);
 
 };
-
+}
+}
 
 #endif
