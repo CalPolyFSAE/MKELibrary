@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 
-#include <Event.h>
 #include "Service.h"
 #include "fsl_gpio.h"
 #include "fsl_port.h"

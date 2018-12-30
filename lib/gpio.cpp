@@ -38,13 +38,13 @@ void GPIO::toggle(GPIO_port port, uint32_t pin) {
 }
 
 void GPIO::out_dir(GPIO_port port, uint32_t pin){
-    GPIO_Type* port = get_gpio(port);
-    port->PDDR |= 1<<pin;
+    GPIO_Type* portn = get_gpio(port);
+    portn->PDDR |= 1<<pin;
 }
 
 void GPIO::in_dir(GPIO_port port, uint32_t pin){
-    GPIO_Type* port = get_gpio(port);
-    port->PDDR &= ~(1<<pin);
+    GPIO_Type* portn = get_gpio(port);
+    portn->PDDR &= ~(1<<pin);
 }
 
 uint8_t GPIO::read(GPIO_port port, uint32_t pin){
@@ -64,7 +64,7 @@ void GPIO::config_interrupt(GPIO_port port, uint32_t pin, port_interrupt_t confi
 
 void GPIO::config_function(GPIO_port port, ISR_func_ptr callback)
 {
-	if(!callback.isNull())
+	if(callback)
 		function[port] = callback;
 	else
 		printf("GPIO::config_function got invalid callback");
@@ -80,7 +80,7 @@ uint8_t GPIO::int_source(GPIO_port port){
     return 32;
 }
 
-void ack_interrupt(GPIO_port port, uint8_t pin){
+void GPIO::ack_interrupt(GPIO_port port, uint8_t pin){
     PORT_Type* base = get_port(port);
     base->ISFR |= 1<<pin;
 }
@@ -122,28 +122,28 @@ GPIO_Type* GPIO::get_gpio(GPIO_port port) {
 extern "C" {
 
 void PORTA_IRQHandler(void) {
-	if (!GPIO::StaticClass().function[GPIO_port::PortA].isNull())
+	if (GPIO::StaticClass().function[GPIO_port::PortA])
 		GPIO::StaticClass().function[GPIO_port::PortA]();
 
 }
 
 void PORTB_IRQHandler(void) {
-	if (!GPIO::StaticClass().function[GPIO_port::PortB].isNull())
+	if (GPIO::StaticClass().function[GPIO_port::PortB])
 		GPIO::StaticClass().function[GPIO_port::PortB]();
 }
 
 void PORTC_IRQHandler(void) {
-	if (!GPIO::StaticClass().function[GPIO_port::PortC].isNull())
+	if (GPIO::StaticClass().function[GPIO_port::PortC])
 		GPIO::StaticClass().function[GPIO_port::PortC]();
 }
 
 void PORTD_IRQHandler(void) {
-	if (!GPIO::StaticClass().function[GPIO_port::PortD].isNull())
+	if (GPIO::StaticClass().function[GPIO_port::PortD])
 		GPIO::StaticClass().function[GPIO_port::PortD]();
 }
 
 void PORTE_IRQHandler(void) {
-	if (!GPIO::StaticClass().function[GPIO_port::PortE].isNull())
+	if (GPIO::StaticClass().function[GPIO_port::PortE])
 		GPIO::StaticClass().function[GPIO_port::PortE]();
 }
 }

@@ -46,6 +46,8 @@ BOARD_InitPins:
   - {pin_num: '58', peripheral: ADC0, signal: 'SE, 2', pin_signal: ADC0_SE2/ACMP1_IN0/PTA6/FTM0_FLT1/LPSPI1_PCS1/LPUART1_CTS}
   - {pin_num: '12', peripheral: ADC0, signal: VREFH, pin_signal: VREFH}
   - {pin_num: '13', peripheral: ADC0, signal: VREFL, pin_signal: VREFL}
+  - {pin_num: '75', peripheral: GPIOB, signal: 'GPIO, 10', pin_signal: ADC2_SE9/PTB10/FTM3_CH2/LPI2C0_SDAS}
+  - {pin_num: '74', peripheral: GPIOB, signal: 'GPIO, 11', pin_signal: ADC2_SE8/PTB11/FTM3_CH3/LPI2C0_HREQ}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -79,6 +81,12 @@ void BOARD_InitPins(void)
 
     /* PORTB1 (pin 53) is configured as LPUART0_TX */
     PORT_SetPinMux(PORTB, 1U, kPORT_MuxAlt2);
+
+    /* PORTB10 (pin 75) is configured as PTB10 */
+    PORT_SetPinMux(PORTB, 10U, kPORT_MuxAsGpio);
+
+    /* PORTB11 (pin 74) is configured as PTB11 */
+    PORT_SetPinMux(PORTB, 11U, kPORT_MuxAsGpio);
 
     /* PORTC2 (pin 30) is configured as CAN0_RX */
     PORT_SetPinMux(PORTC, 2U, kPORT_MuxAlt3);
