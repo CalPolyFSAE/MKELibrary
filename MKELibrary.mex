@@ -64,8 +64,11 @@
                   <pin peripheral="ADC0" signal="SE, 2" pin_num="58" pin_signal="ADC0_SE2/ACMP1_IN0/PTA6/FTM0_FLT1/LPSPI1_PCS1/LPUART1_CTS"/>
                   <pin peripheral="ADC0" signal="VREFH" pin_num="12" pin_signal="VREFH"/>
                   <pin peripheral="ADC0" signal="VREFL" pin_num="13" pin_signal="VREFL"/>
-                  <pin peripheral="GPIOB" signal="GPIO, 10" pin_num="75" pin_signal="ADC2_SE9/PTB10/FTM3_CH2/LPI2C0_SDAS"/>
                   <pin peripheral="GPIOB" signal="GPIO, 11" pin_num="74" pin_signal="ADC2_SE8/PTB11/FTM3_CH3/LPI2C0_HREQ"/>
+                  <pin peripheral="GPIOE" signal="GPIO, 11" pin_num="5" pin_signal="ADC2_SE13/PTE11/PWT_IN1/LPTMR0_ALT1/FTM2_CH5/FXIO_D5/TRGMUX_OUT5"/>
+                  <pin peripheral="GPIOD" signal="GPIO, 11" pin_num="35" pin_signal="PTD11/FTM2_CH1/FTM2_QD_PHA/LPUART2_CTS"/>
+                  <pin peripheral="GPIOC" signal="GPIO, 11" pin_num="51" pin_signal="PTC11/FTM3_CH5"/>
+                  <pin peripheral="GPIOA" signal="GPIO, 11" pin_num="91" pin_signal="PTA11/FTM1_CH5/LPUART0_RX/FXIO_D1"/>
                </pins>
             </function>
          </functions_list>

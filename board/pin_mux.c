@@ -46,8 +46,11 @@ BOARD_InitPins:
   - {pin_num: '58', peripheral: ADC0, signal: 'SE, 2', pin_signal: ADC0_SE2/ACMP1_IN0/PTA6/FTM0_FLT1/LPSPI1_PCS1/LPUART1_CTS}
   - {pin_num: '12', peripheral: ADC0, signal: VREFH, pin_signal: VREFH}
   - {pin_num: '13', peripheral: ADC0, signal: VREFL, pin_signal: VREFL}
-  - {pin_num: '75', peripheral: GPIOB, signal: 'GPIO, 10', pin_signal: ADC2_SE9/PTB10/FTM3_CH2/LPI2C0_SDAS}
   - {pin_num: '74', peripheral: GPIOB, signal: 'GPIO, 11', pin_signal: ADC2_SE8/PTB11/FTM3_CH3/LPI2C0_HREQ}
+  - {pin_num: '5', peripheral: GPIOE, signal: 'GPIO, 11', pin_signal: ADC2_SE13/PTE11/PWT_IN1/LPTMR0_ALT1/FTM2_CH5/FXIO_D5/TRGMUX_OUT5}
+  - {pin_num: '35', peripheral: GPIOD, signal: 'GPIO, 11', pin_signal: PTD11/FTM2_CH1/FTM2_QD_PHA/LPUART2_CTS}
+  - {pin_num: '51', peripheral: GPIOC, signal: 'GPIO, 11', pin_signal: PTC11/FTM3_CH5}
+  - {pin_num: '91', peripheral: GPIOA, signal: 'GPIO, 11', pin_signal: PTA11/FTM1_CH5/LPUART0_RX/FXIO_D1}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -66,12 +69,19 @@ void BOARD_InitPins(void)
     CLOCK_EnableClock(kCLOCK_PortB);
     /* Clock Control: 0x01u */
     CLOCK_EnableClock(kCLOCK_PortC);
+    /* Clock Control: 0x01u */
+    CLOCK_EnableClock(kCLOCK_PortD);
+    /* Clock Control: 0x01u */
+    CLOCK_EnableClock(kCLOCK_PortE);
 
     /* PORTA0 (pin 79) is configured as ADC0_SE0 */
     PORT_SetPinMux(PORTA, 0U, kPORT_PinDisabledOrAnalog);
 
     /* PORTA1 (pin 78) is configured as ADC0_SE1 */
     PORT_SetPinMux(PORTA, 1U, kPORT_PinDisabledOrAnalog);
+
+    /* PORTA11 (pin 91) is configured as PTA11 */
+    PORT_SetPinMux(PORTA, 11U, kPORT_MuxAsGpio);
 
     /* PORTA6 (pin 58) is configured as ADC0_SE2 */
     PORT_SetPinMux(PORTA, 6U, kPORT_PinDisabledOrAnalog);
@@ -82,17 +92,23 @@ void BOARD_InitPins(void)
     /* PORTB1 (pin 53) is configured as LPUART0_TX */
     PORT_SetPinMux(PORTB, 1U, kPORT_MuxAlt2);
 
-    /* PORTB10 (pin 75) is configured as PTB10 */
-    PORT_SetPinMux(PORTB, 10U, kPORT_MuxAsGpio);
-
     /* PORTB11 (pin 74) is configured as PTB11 */
     PORT_SetPinMux(PORTB, 11U, kPORT_MuxAsGpio);
+
+    /* PORTC11 (pin 51) is configured as PTC11 */
+    PORT_SetPinMux(PORTC, 11U, kPORT_MuxAsGpio);
 
     /* PORTC2 (pin 30) is configured as CAN0_RX */
     PORT_SetPinMux(PORTC, 2U, kPORT_MuxAlt3);
 
     /* PORTC3 (pin 29) is configured as CAN0_TX */
     PORT_SetPinMux(PORTC, 3U, kPORT_MuxAlt3);
+
+    /* PORTD11 (pin 35) is configured as PTD11 */
+    PORT_SetPinMux(PORTD, 11U, kPORT_MuxAsGpio);
+
+    /* PORTE11 (pin 5) is configured as PTE11 */
+    PORT_SetPinMux(PORTE, 11U, kPORT_MuxAsGpio);
 }
 /***********************************************************************************************************************
  * EOF

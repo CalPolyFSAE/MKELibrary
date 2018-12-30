@@ -22,15 +22,21 @@ int main(void) {
     BOARD_InitBootPeripherals();
 	BOARD_InitDebugConsole();
 
+	EnableIRQ(PORTA_IRQn);
 	EnableIRQ(PORTB_IRQn);
+	EnableIRQ(PORTC_IRQn);
+	EnableIRQ(PORTD_IRQn);
+	EnableIRQ(PORTE_IRQn);
 
     tick();
 
     BSP::gpio::GPIO::ConstructStatic();
 
-    tests::toggleonce();
+//    tests::toggleonce();
 
-    tests::togglemany();
+//    tests::togglemany();
+
+    tests::toggleevery();
 
     while(1) {
     }
