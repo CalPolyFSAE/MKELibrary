@@ -74,7 +74,7 @@ void SPI::initMaster(uint8_t no, masterConfig* mc){
     fslmc.pinCfg = mc->pincfg;
     fslmc.dataOutConfig = mc->datacfg;
     
-    return LPSPI_MasterInit(bases[no], &fslmc, freqs[no]);
+    LPSPI_MasterInit(bases[no], &fslmc, freqs[no]);
 
     handles[no] = new lpspi_master_handle_t;
 
