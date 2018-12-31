@@ -82,7 +82,39 @@ void loop(){
 
 }
 
+void mastersend(){
 
+    uint16_t bytes = 255;
+    uint16_t i;
+
+    mastertransferdone = false;
+
+    spi::spi_config spiconf;
+    spiconf.callbacks[0] = loop_mastercb;
+    spiconf.clocks[0] = kCLOCK_IpSrcFircAsync;
+
+    spi::SPI::ConstructStatic(&spiconf);
+    spi::SPI& spi = spi::SPI::StaticClass();
+
+    spi::SPI::masterConfig mconf;
+    mconf.baudRate = 500000U;
+    mconf.frameLength = 8 * bytes;
+    mconf.pcs = kLPSPI_Pcs2;
+    spi.initMaster(0, &mconf);
+
+    uint8_t mastertx[bytes];
+
+    for (i = 0; i < bytes; i++){
+        mastertx[i] = i;
+    }
+
+    spi.mastertx(0, mastertx, bytes);
+
+    while(!mastertransferdone);
+
+    printf("sent.\n");
+
+}
 
 
 }
