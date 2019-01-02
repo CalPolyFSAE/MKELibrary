@@ -46,7 +46,8 @@ BOARD_InitPins:
   - {pin_num: '3', peripheral: LPSPI1, signal: SIN, pin_signal: ADC2_SE1/PTD1/FTM0_CH3/LPSPI1_SIN/FTM2_CH1/FXIO_D1/TRGMUX_OUT2}
   - {pin_num: '64', peripheral: LPSPI1, signal: SOUT, pin_signal: ADC1_SE15/PTB16/FTM0_CH4/LPSPI1_SOUT}
   - {pin_num: '70', peripheral: LPSPI1, signal: PCS0, pin_signal: ADC1_SE3/PTD3/FTM3_CH5/LPSPI1_PCS0/FXIO_D5/TRGMUX_IN4/NMI_b}
-  - {pin_num: '84', peripheral: LPSPI0, signal: PCS2, pin_signal: ADC1_SE11/ACMP0_IN6/PTE6/LPSPI0_PCS2/FTM3_CH7/LPUART1_RTS}
+  - {pin_num: '84', peripheral: GPIOE, signal: 'GPIO, 6', pin_signal: ADC1_SE11/ACMP0_IN6/PTE6/LPSPI0_PCS2/FTM3_CH7/LPUART1_RTS}
+  - {pin_num: '83', peripheral: LPSPI0, signal: PCS3, pin_signal: ADC1_SE12/PTA15/FTM1_CH2/LPSPI0_PCS3}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -60,11 +61,16 @@ BOARD_InitPins:
 void BOARD_InitPins(void)
 {
     /* Clock Control: 0x01u */
+    CLOCK_EnableClock(kCLOCK_PortA);
+    /* Clock Control: 0x01u */
     CLOCK_EnableClock(kCLOCK_PortB);
     /* Clock Control: 0x01u */
     CLOCK_EnableClock(kCLOCK_PortD);
     /* Clock Control: 0x01u */
     CLOCK_EnableClock(kCLOCK_PortE);
+
+    /* PORTA15 (pin 83) is configured as LPSPI0_PCS3 */
+    PORT_SetPinMux(PORTA, 15U, kPORT_MuxAlt3);
 
     /* PORTB0 (pin 54) is configured as LPUART0_RX */
     PORT_SetPinMux(PORTB, 0U, kPORT_MuxAlt2);
@@ -93,8 +99,8 @@ void BOARD_InitPins(void)
     /* PORTD3 (pin 70) is configured as LPSPI1_PCS0 */
     PORT_SetPinMux(PORTD, 3U, kPORT_MuxAlt3);
 
-    /* PORTE6 (pin 84) is configured as LPSPI0_PCS2 */
-    PORT_SetPinMux(PORTE, 6U, kPORT_MuxAlt2);
+    /* PORTE6 (pin 84) is configured as PTE6 */
+    PORT_SetPinMux(PORTE, 6U, kPORT_MuxAsGpio);
 }
 /***********************************************************************************************************************
  * EOF

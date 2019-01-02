@@ -64,7 +64,8 @@
                   <pin peripheral="LPSPI1" signal="SIN" pin_num="3" pin_signal="ADC2_SE1/PTD1/FTM0_CH3/LPSPI1_SIN/FTM2_CH1/FXIO_D1/TRGMUX_OUT2"/>
                   <pin peripheral="LPSPI1" signal="SOUT" pin_num="64" pin_signal="ADC1_SE15/PTB16/FTM0_CH4/LPSPI1_SOUT"/>
                   <pin peripheral="LPSPI1" signal="PCS0" pin_num="70" pin_signal="ADC1_SE3/PTD3/FTM3_CH5/LPSPI1_PCS0/FXIO_D5/TRGMUX_IN4/NMI_b"/>
-                  <pin peripheral="LPSPI0" signal="PCS2" pin_num="84" pin_signal="ADC1_SE11/ACMP0_IN6/PTE6/LPSPI0_PCS2/FTM3_CH7/LPUART1_RTS"/>
+                  <pin peripheral="GPIOE" signal="GPIO, 6" pin_num="84" pin_signal="ADC1_SE11/ACMP0_IN6/PTE6/LPSPI0_PCS2/FTM3_CH7/LPUART1_RTS"/>
+                  <pin peripheral="LPSPI0" signal="PCS3" pin_num="83" pin_signal="ADC1_SE12/PTA15/FTM1_CH2/LPSPI0_PCS3"/>
                </pins>
             </function>
          </functions_list>

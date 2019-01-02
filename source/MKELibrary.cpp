@@ -19,7 +19,7 @@ int main(void) {
     BOARD_InitBootPeripherals();
 	BOARD_InitDebugConsole();
 
-    tests::mastersend();
+    tests::loop();
 
 	while(1){}
 
