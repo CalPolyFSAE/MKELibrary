@@ -152,13 +152,18 @@ void PeriodicScheduler<TASK_TYPE, TASK_COUNT>::doNextTask() {
 		uint32_t taskCount = this->getTaskCount();
 
 		// find task that needs to run
-		for (uint32_t st = (currentTask + 1) % taskCount; st != currentTask;
-				st = (st + 1) % taskCount) {
-			if (this->taskList[st].isReady()) {
-				currentTask = st;
-				task = &this->taskList[st];
-				break;
+		if (taskCount > 1) {
+			for (uint32_t st = (currentTask + 1) % taskCount; st != currentTask;
+					st = (st + 1) % taskCount) {
+				if (this->taskList[st].isReady()) {
+					currentTask = st;
+					task = &this->taskList[st];
+					break;
+				}
 			}
+		} else {
+			if(this->taskList[0].isReady())
+				task = &this->taskList[0];
 		}
 
 		if (task) {
@@ -174,8 +179,7 @@ void PeriodicScheduler<TASK_TYPE, TASK_COUNT>::tick() {
 	if (this->runState == Super::SchedulerState::Run) {
 		// decrement counters
 		uint32_t taskCount = this->getTaskCount();
-		for (uint32_t st = (currentTask + 1) % taskCount; st != currentTask;
-						st = (st + 1) % taskCount) {
+		for (uint32_t st = 0; st != taskCount; st++) {
 			TaskPeriodic& t = this->taskList[st];
 			if (t.deadlineIn() == 0 && t.isReady()) {
 				this->OnError(t.id);

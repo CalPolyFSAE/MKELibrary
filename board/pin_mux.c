@@ -85,6 +85,9 @@ void BOARD_InitPins(void)
 
     /* PORTC3 (pin 29) is configured as CAN0_TX */
     PORT_SetPinMux(PORTC, 3U, kPORT_MuxAlt3);
+
+    // PORTC12 (pin 50) for GPIO
+    PORT_SetPinMux(PORTC, 12U, kPORT_MuxAsGpio);
 }
 /***********************************************************************************************************************
  * EOF
