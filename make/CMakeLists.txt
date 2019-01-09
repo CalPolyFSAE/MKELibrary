@@ -334,6 +334,10 @@ include_directories(${ProjDirPath}/../lib)
 
 include_directories(${ProjDirPath}/../source)
 
+include_directories(${ProjDirPath}/../System)
+
+include_directories(${ProjDirPath}/..)
+
 FILE(GLOB source_board ../board/*.c)
 FILE(GLOB source_CMSIS ../CMSIS/*.c)
 FILE(GLOB source_drivers ../drivers/*.c)
@@ -343,6 +347,8 @@ FILE(GLOB source_source_c ../source/*.c)
 FILE(GLOB source_source_cpp ../source/*.cpp)
 FILE(GLOB source_utilities ../utilities/*.c)
 FILE(GLOB source_lib ../lib/*.cpp)
+FILE(GLOB source_system_cpp ../System/*.cpp)
+FILE(GLOB source_system_c ../System/*.c)
 
 add_executable(MKELibrary.elf 
   ${source_board}
@@ -354,6 +360,8 @@ add_executable(MKELibrary.elf
   ${source_asm}
   ${source_utilities}
   ${source_lib}
+  ${source_system_c}
+  ${source_system_cpp}
 )
 
 SET(old_files

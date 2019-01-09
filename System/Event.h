@@ -2,6 +2,9 @@
  * Event.h
  *
  *  Created on: Oct 3, 2018
+ *
+ *  Description: This is a faster drop in replacement for std::function
+ *  TODO: rename to delegate and namespace should be util
  */
 
 #ifndef EVENT_H_
@@ -22,9 +25,17 @@ public:
 	/*!
 	 * @brief copy constructor
 	 */
-	Event(const Event& other) {
-		this->object = other.object;
-		this->method_ptr = other.method_ptr;
+	Event(const Event& other) : object(other.object), method_ptr(other.method_ptr) {
+
+	}
+
+	/*!
+	 * @brief assignment operator
+	 */
+	Event& operator=(Event rhs) {
+		object = std::move(rhs.object);
+		method_ptr = std::move(rhs.method_ptr);
+		return *this;
 	}
 
 	/*!
@@ -32,8 +43,18 @@ public:
 	 *
 	 * @retval Is the Event pointer null
 	 */
-	bool isNull() const {
+	bool isNull() const noexcept {
 		return method_ptr == nullptr;
+	}
+
+	/*!
+	 * @brief Check if the object pointer is valid.
+	 */
+	bool operator==(std::nullptr_t) const noexcept {
+		return object == nullptr;
+	}
+	bool operator!=(std::nullptr_t) const noexcept {
+		return object != nullptr;
 	}
 
 	bool operator==(const Event& other) const {
@@ -79,7 +100,9 @@ public:
 	 * @param params variadic arguments
 	 * @retval specified function return value
 	 */
-	Ret operator()(Params&&... params){
+	template<typename ...T>
+	inline Ret operator()(T&&... params) const {
+		// static cast <Params&&>(params)... is the same as std::forward
 		return (*method_ptr)(object, static_cast<Params&&>(params)...);
 	}
 
