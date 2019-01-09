@@ -32,6 +32,7 @@ public:
     void interrupt(uint8_t ch);
 
 private:
+
     LPIT() = default;
 
     callback callbacks[4] = {NULL};

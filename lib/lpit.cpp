@@ -60,4 +60,16 @@ void LPIT0_Ch0_IRQHandler(){
     LPIT::StaticClass().interrupt(0);
 }
 
+void LPIT0_Ch1_IRQHandler(){
+    LPIT::StaticClass().interrupt(1);
+}
+
+void LPIT0_Ch2_IRQHandler(){
+    LPIT::StaticClass().interrupt(2);
+}
+
+void LPIT0_Ch3_IRQHandler(){
+    LPIT::StaticClass().interrupt(3);
+}
+
 }
