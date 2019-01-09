@@ -37,8 +37,6 @@ void BOARD_InitBootPins(void)
 BOARD_InitPins:
 - options: {callFromInitBoot: 'true', coreID: core0, enableClock: 'true'}
 - pin_list:
-  - {pin_num: '30', peripheral: CAN0, signal: RX, pin_signal: ADC0_SE10/ACMP0_IN5/XTAL32/PTC2/FTM0_CH2/CAN0_RX}
-  - {pin_num: '29', peripheral: CAN0, signal: TX, pin_signal: ADC0_SE11/ACMP0_IN4/EXTAL32/PTC3/FTM0_CH3/CAN0_TX}
   - {pin_num: '54', peripheral: LPUART0, signal: RX, pin_signal: ADC0_SE4/ADC1_SE14/PTB0/LPUART0_RX/LPSPI0_PCS0/LPTMR0_ALT3/PWT_IN3}
   - {pin_num: '53', peripheral: LPUART0, signal: TX, pin_signal: ADC0_SE5/ADC1_SE15/PTB1/LPUART0_TX/LPSPI0_SOUT/TCLK0}
   - {pin_num: '79', peripheral: ADC0, signal: 'SE, 0', pin_signal: ADC0_SE0/ACMP0_IN0/PTA0/FTM2_CH1/LPI2C0_SCLS/FXIO_D2/FTM2_QD_PHA/LPUART0_CTS/TRGMUX_OUT3}
@@ -66,7 +64,7 @@ void BOARD_InitPins(void)
     /* Clock Control: 0x01u */
     CLOCK_EnableClock(kCLOCK_PortA);
     /* Clock Control: 0x01u */
-    CLOCK_EnableClock(kCLOCK_PortC);
+    CLOCK_EnableClock(kCLOCK_PortB);
     /* Clock Control: 0x01u */
     CLOCK_EnableClock(kCLOCK_PortD);
     /* Clock Control: 0x01u */
@@ -96,8 +94,26 @@ void BOARD_InitPins(void)
     /* PORTC11 (pin 51) is configured as PTC11 */
     PORT_SetPinMux(PORTC, 11U, kPORT_MuxAsGpio);
 
-    /* PORTC2 (pin 30) is configured as CAN0_RX */
-    PORT_SetPinMux(PORTC, 2U, kPORT_MuxAlt3);
+    /* PORTB16 (pin 64) is configured as LPSPI1_SOUT */
+    PORT_SetPinMux(PORTB, 16U, kPORT_MuxAlt3);
+
+    /* PORTB2 (pin 48) is configured as LPSPI0_SCK */
+    PORT_SetPinMux(PORTB, 2U, kPORT_MuxAlt3);
+
+    /* PORTB3 (pin 47) is configured as LPSPI0_SIN */
+    PORT_SetPinMux(PORTB, 3U, kPORT_MuxAlt3);
+
+    /* PORTB4 (pin 28) is configured as LPSPI0_SOUT */
+    PORT_SetPinMux(PORTB, 4U, kPORT_MuxAlt3);
+
+    /* PORTD0 (pin 4) is configured as LPSPI1_SCK */
+    PORT_SetPinMux(PORTD, 0U, kPORT_MuxAlt3);
+
+    /* PORTD1 (pin 3) is configured as LPSPI1_SIN */
+    PORT_SetPinMux(PORTD, 1U, kPORT_MuxAlt3);
+
+    /* PORTD3 (pin 70) is configured as LPSPI1_PCS0 */
+    PORT_SetPinMux(PORTD, 3U, kPORT_MuxAlt3);
 
     /* PORTC3 (pin 20) is configured as CAN0_TX */
     PORT_SetPinMux(PORTC, 3U, kPORT_MuxAlt3);

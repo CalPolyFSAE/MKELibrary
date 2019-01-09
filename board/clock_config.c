@@ -111,15 +111,27 @@ void BOARD_InitBootClocks(void)
 name: BOARD_BootClockRUN
 called_from_default_init: true
 outputs:
-- {id: Bus_clock.outFreq, value: 12 MHz}
-- {id: Core_clock.outFreq, value: 12 MHz}
-- {id: Flash_clock.outFreq, value: 6 MHz}
+- {id: Bus_clock.outFreq, value: 15 MHz}
+- {id: Core_clock.outFreq, value: 15 MHz}
+- {id: FIRCDIV1_CLK.outFreq, value: 60 MHz}
+- {id: FIRCDIV2_CLK.outFreq, value: 60 MHz}
+- {id: Flash_clock.outFreq, value: 7.5 MHz}
 - {id: LPO1KCLK.outFreq, value: 1 kHz}
 - {id: LPO_clock.outFreq, value: 128 kHz}
+- {id: PCC.PCC_LPSPI0_CLK.outFreq, value: 60 MHz}
+- {id: PCC.PCC_LPSPI1_CLK.outFreq, value: 60 MHz}
 - {id: SIRC_CLK.outFreq, value: 8 MHz}
-- {id: System_clock.outFreq, value: 12 MHz}
+- {id: System_clock.outFreq, value: 15 MHz}
 settings:
+- {id: PCC.PCC_LPSPI0_SEL.sel, value: SCG.FIRCDIV2_CLK}
+- {id: PCC.PCC_LPSPI1_SEL.sel, value: SCG.FIRCDIV2_CLK}
 - {id: SCG.DIVCORE.scale, value: '4', locked: true}
+- {id: SCG.FIRCDIV1.scale, value: '1', locked: true}
+- {id: SCG.FIRCDIV2.scale, value: '1', locked: true}
+- {id: SCG_FIRCCSR_FIRCLPEN_CFG, value: Enabled}
+- {id: SCG_FIRCCSR_FIRCSTEN_CFG, value: Enabled}
+sources:
+- {id: SCG.FIRC.outFreq, value: 60 MHz}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 /* clang-format on */
 
@@ -151,10 +163,10 @@ const scg_sirc_config_t g_scgSircConfig_BOARD_BootClockRUN =
     };
 const scg_firc_config_t g_scgFircConfig_BOARD_BootClockRUN =
     {
-        .enableMode = kSCG_FircEnable,            /* Enable FIRC clock */
-        .div1 = kSCG_AsyncClkDisable,             /* Fast IRC Clock Divider 1: Clock output is disabled */
-        .div2 = kSCG_AsyncClkDisable,             /* Fast IRC Clock Divider 2: Clock output is disabled */
-        .range = kSCG_FircRange48M,               /* Fast IRC is trimmed to 48MHz */
+        .enableMode = kSCG_FircEnable | kSCG_FircEnableInStop | kSCG_FircEnableInLowPower,/* Enable FIRC clock, Enable FIRC in stop mode, Enable FIRC in low power mode */
+        .div1 = kSCG_AsyncClkDivBy1,              /* Fast IRC Clock Divider 1: divided by 1 */
+        .div2 = kSCG_AsyncClkDivBy1,              /* Fast IRC Clock Divider 2: divided by 1 */
+        .range = kSCG_FircRange60M,               /* Fast IRC is trimmed to 60MHz */
         .trimConfig = NULL,                       /* Fast IRC Trim disabled */
     };
 const scg_spll_config_t g_scgSysPllConfig_BOARD_BootClockRUN =
@@ -187,5 +199,9 @@ void BOARD_BootClockRUN(void)
     } while (curConfig.src != g_sysClkConfig_BOARD_BootClockRUN.src);
     /* Set SystemCoreClock variable. */
     SystemCoreClock = BOARD_BOOTCLOCKRUN_CORE_CLOCK;
+    /* Set PCC LPSPI0 selection */
+    CLOCK_SetIpSrc(kCLOCK_Lpspi0, kCLOCK_IpSrcFircAsync);
+    /* Set PCC LPSPI1 selection */
+    CLOCK_SetIpSrc(kCLOCK_Lpspi1, kCLOCK_IpSrcFircAsync);
 }
 

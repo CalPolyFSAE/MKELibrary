@@ -9,6 +9,11 @@
 
 void tick(void){
 }
+#include "spi.h"
+#include "spitests.h"
+
+
+using namespace BSP;
 
 int main(void) {
     BOARD_InitBootPins();
