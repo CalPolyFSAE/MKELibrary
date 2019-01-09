@@ -5,7 +5,12 @@
 #include "clock_config.h"
 #include "MKE18F16.h"
 #include "fsl_debug_console.h"
+
 #include "gpio.h"
+#include "adc.h"
+#include "candrv.h"
+#include "lpit.h"
+#include "spi.h"
 
 void tick(void){
 }
