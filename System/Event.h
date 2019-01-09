@@ -89,8 +89,8 @@ public:
 	 *
 	 * @retval Event created
 	 */
-	template<Ret(*TMethod)(Params...)>
-	static Event create(){
+	template<Ret (*TMethod)(Params...)>
+	static Event create() {
 		return Event(nullptr, function_stub<TMethod>);
 	}
 
@@ -112,21 +112,21 @@ private:
 			object(this_ptr), method_ptr(stub) {
 	}
 
-	template<class T, Ret(T::*TMethod)(Params...)>
-	static Ret method_stub(void* this_ptr, Params&&... params){
+	template<class T, Ret (T::*TMethod)(Params...)>
+	static Ret method_stub(void* this_ptr, Params&&... params) {
 		T* obj = static_cast<T*>(this_ptr);
 		return (obj->*TMethod)(static_cast<Params&&>(params)...);
 	}
 
-	template<class T, Ret(T::*TMethod)(Params...) const>
-	static Ret method_stub_const(void* this_ptr, Params&&... params){
+	template<class T, Ret (T::*TMethod)(Params...) const>
+	static Ret method_stub_const(void* this_ptr, Params&&... params) {
 		T* const obj = static_cast<T*>(this_ptr);
 		return (obj->*TMethod)(static_cast<Params&&>(params)...);
 	}
 
-	template<Ret(*TMethod)(Params...)>
-	static Ret function_stub(Params&&... params){
-		return (*TMethod)(static_cast<Params&&>(params)...);
+	template<Ret (*TMethod)(Params...)>
+	static Ret function_stub(void* this_ptr, Params&&... params) {
+		return (TMethod)(static_cast<Params&&>(params)...);
 	}
 
 	void* object = nullptr;

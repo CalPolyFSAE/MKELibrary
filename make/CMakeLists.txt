@@ -347,8 +347,7 @@ FILE(GLOB source_source_c ../source/*.c)
 FILE(GLOB source_source_cpp ../source/*.cpp)
 FILE(GLOB source_utilities ../utilities/*.c)
 FILE(GLOB source_lib ../lib/*.cpp)
-FILE(GLOB source_system_cpp ../System/*.cpp)
-FILE(GLOB source_system_c ../System/*.c)
+FILE(GLOB source_system ../system/*.cpp)
 
 add_executable(MKELibrary.elf 
   ${source_board}
@@ -360,8 +359,7 @@ add_executable(MKELibrary.elf
   ${source_asm}
   ${source_utilities}
   ${source_lib}
-  ${source_system_c}
-  ${source_system_cpp}
+  ${source_system}
 )
 
 SET(old_files
