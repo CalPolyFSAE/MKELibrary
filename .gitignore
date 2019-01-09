@@ -6,7 +6,7 @@
 
 *.swp
 
-CMakeCache.txt
-Makefile
-cmake_install.cmake
+make/CMakeCache.txt
+make/Makefile
+make/cmake_install.cmake
 **/debug
