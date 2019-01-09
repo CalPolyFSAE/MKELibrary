@@ -1,7 +1,12 @@
 *.launch
 **/Debug
+**/debug
 **/Release
 **/CMakeFiles
+
+CMakeCache.txt
+Makefile
+cmake_install.cmake
 
 *.swp
 

@@ -9,7 +9,7 @@
 !!GlobalInfo
 product: Pins v4.1
 processor: MKE18F512xxx16
-package_id: MKE18F512VLL16
+package_id: MKE18F512VLH16
 mcu_data: ksdk2_0
 processor_version: 4.0.0
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
@@ -66,8 +66,6 @@ void BOARD_InitPins(void)
     /* Clock Control: 0x01u */
     CLOCK_EnableClock(kCLOCK_PortA);
     /* Clock Control: 0x01u */
-    CLOCK_EnableClock(kCLOCK_PortB);
-    /* Clock Control: 0x01u */
     CLOCK_EnableClock(kCLOCK_PortC);
     /* Clock Control: 0x01u */
     CLOCK_EnableClock(kCLOCK_PortD);
@@ -89,8 +87,8 @@ void BOARD_InitPins(void)
     /* PORTB0 (pin 54) is configured as LPUART0_RX */
     PORT_SetPinMux(PORTB, 0U, kPORT_MuxAlt2);
 
-    /* PORTB1 (pin 53) is configured as LPUART0_TX */
-    PORT_SetPinMux(PORTB, 1U, kPORT_MuxAlt2);
+    /* PORTA11 (pin 57) is configured as LPUART0_RX */
+    PORT_SetPinMux(PORTA, 11U, kPORT_MuxAlt3);
 
     /* PORTB11 (pin 74) is configured as PTB11 */
     PORT_SetPinMux(PORTB, 11U, kPORT_MuxAsGpio);
@@ -101,7 +99,7 @@ void BOARD_InitPins(void)
     /* PORTC2 (pin 30) is configured as CAN0_RX */
     PORT_SetPinMux(PORTC, 2U, kPORT_MuxAlt3);
 
-    /* PORTC3 (pin 29) is configured as CAN0_TX */
+    /* PORTC3 (pin 20) is configured as CAN0_TX */
     PORT_SetPinMux(PORTC, 3U, kPORT_MuxAlt3);
 
     /* PORTD11 (pin 35) is configured as PTD11 */

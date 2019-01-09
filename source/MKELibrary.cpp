@@ -11,7 +11,6 @@
 
 //#include "tests.h"
 
-
 void tick(void){
 
 }
@@ -40,5 +39,6 @@ int main(void) {
 
     while(1) {
     }
+
     return 0;
 }
