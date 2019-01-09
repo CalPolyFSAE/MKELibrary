@@ -2,7 +2,8 @@
 <configuration name="MKE18F512xxx16" version="1.4" xsi:schemaLocation="http://mcuxpresso.nxp.com/XSD/mex_configuration_1.4 http://mcuxpresso.nxp.com/XSD/mex_configuration_1.4.xsd" uuid="e3cce8c2-98fe-4dbd-9ddb-e17fdf345d42" xmlns="http://mcuxpresso.nxp.com/XSD/mex_configuration_1.4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <common>
       <processor>MKE18F512xxx16</processor>
-      <package>MKE18F512VLH16</package>
+      <package>MKE18F512VLL16</package>
+      <board></board>
       <mcu_data>ksdk2_0</mcu_data>
       <cores selected="core0">
          <core name="Cortex-M4F" id="core0" description="M4 core"/>
@@ -49,10 +50,20 @@
                   </dependency>
                </dependencies>
                <pins>
-                  <pin peripheral="CAN0" signal="RX" pin_num="21" pin_signal="ADC0_SE10/ACMP0_IN5/XTAL32/PTC2/FTM0_CH2/CAN0_RX"/>
-                  <pin peripheral="CAN0" signal="TX" pin_num="20" pin_signal="ADC0_SE11/ACMP0_IN4/EXTAL32/PTC3/FTM0_CH3/CAN0_TX"/>
-                  <pin peripheral="LPUART0" signal="RX" pin_num="57" pin_signal="PTA11/FTM1_CH5/LPUART0_RX/FXIO_D1"/>
-                  <pin peripheral="LPUART0" signal="TX" pin_num="58" pin_signal="PTA10/FTM1_CH4/LPUART0_TX/FXIO_D0/JTAG_TDO/noetm_Trace_SWO"/>
+                  <pin peripheral="CAN0" signal="RX" pin_num="30" pin_signal="ADC0_SE10/ACMP0_IN5/XTAL32/PTC2/FTM0_CH2/CAN0_RX"/>
+                  <pin peripheral="CAN0" signal="TX" pin_num="29" pin_signal="ADC0_SE11/ACMP0_IN4/EXTAL32/PTC3/FTM0_CH3/CAN0_TX"/>
+                  <pin peripheral="LPUART0" signal="RX" pin_num="54" pin_signal="ADC0_SE4/ADC1_SE14/PTB0/LPUART0_RX/LPSPI0_PCS0/LPTMR0_ALT3/PWT_IN3"/>
+                  <pin peripheral="LPUART0" signal="TX" pin_num="53" pin_signal="ADC0_SE5/ADC1_SE15/PTB1/LPUART0_TX/LPSPI0_SOUT/TCLK0"/>
+                  <pin peripheral="ADC0" signal="SE, 0" pin_num="79" pin_signal="ADC0_SE0/ACMP0_IN0/PTA0/FTM2_CH1/LPI2C0_SCLS/FXIO_D2/FTM2_QD_PHA/LPUART0_CTS/TRGMUX_OUT3"/>
+                  <pin peripheral="ADC0" signal="SE, 1" pin_num="78" pin_signal="ADC0_SE1/ACMP0_IN1/PTA1/FTM1_CH1/LPI2C0_SDAS/FXIO_D3/FTM1_QD_PHA/LPUART0_RTS/TRGMUX_OUT0"/>
+                  <pin peripheral="ADC0" signal="SE, 2" pin_num="58" pin_signal="ADC0_SE2/ACMP1_IN0/PTA6/FTM0_FLT1/LPSPI1_PCS1/LPUART1_CTS"/>
+                  <pin peripheral="ADC0" signal="VREFH" pin_num="12" pin_signal="VREFH"/>
+                  <pin peripheral="ADC0" signal="VREFL" pin_num="13" pin_signal="VREFL"/>
+                  <pin peripheral="GPIOB" signal="GPIO, 11" pin_num="74" pin_signal="ADC2_SE8/PTB11/FTM3_CH3/LPI2C0_HREQ"/>
+                  <pin peripheral="GPIOE" signal="GPIO, 11" pin_num="5" pin_signal="ADC2_SE13/PTE11/PWT_IN1/LPTMR0_ALT1/FTM2_CH5/FXIO_D5/TRGMUX_OUT5"/>
+                  <pin peripheral="GPIOD" signal="GPIO, 11" pin_num="35" pin_signal="PTD11/FTM2_CH1/FTM2_QD_PHA/LPUART2_CTS"/>
+                  <pin peripheral="GPIOC" signal="GPIO, 11" pin_num="51" pin_signal="PTC11/FTM3_CH5"/>
+                  <pin peripheral="GPIOA" signal="GPIO, 11" pin_num="91" pin_signal="PTA11/FTM1_CH5/LPUART0_RX/FXIO_D1"/>
                </pins>
             </function>
          </functions_list>

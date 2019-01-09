@@ -37,10 +37,20 @@ void BOARD_InitBootPins(void)
 BOARD_InitPins:
 - options: {callFromInitBoot: 'true', coreID: core0, enableClock: 'true'}
 - pin_list:
-  - {pin_num: '21', peripheral: CAN0, signal: RX, pin_signal: ADC0_SE10/ACMP0_IN5/XTAL32/PTC2/FTM0_CH2/CAN0_RX}
-  - {pin_num: '20', peripheral: CAN0, signal: TX, pin_signal: ADC0_SE11/ACMP0_IN4/EXTAL32/PTC3/FTM0_CH3/CAN0_TX}
-  - {pin_num: '57', peripheral: LPUART0, signal: RX, pin_signal: PTA11/FTM1_CH5/LPUART0_RX/FXIO_D1}
-  - {pin_num: '58', peripheral: LPUART0, signal: TX, pin_signal: PTA10/FTM1_CH4/LPUART0_TX/FXIO_D0/JTAG_TDO/noetm_Trace_SWO}
+  - {pin_num: '30', peripheral: CAN0, signal: RX, pin_signal: ADC0_SE10/ACMP0_IN5/XTAL32/PTC2/FTM0_CH2/CAN0_RX}
+  - {pin_num: '29', peripheral: CAN0, signal: TX, pin_signal: ADC0_SE11/ACMP0_IN4/EXTAL32/PTC3/FTM0_CH3/CAN0_TX}
+  - {pin_num: '54', peripheral: LPUART0, signal: RX, pin_signal: ADC0_SE4/ADC1_SE14/PTB0/LPUART0_RX/LPSPI0_PCS0/LPTMR0_ALT3/PWT_IN3}
+  - {pin_num: '53', peripheral: LPUART0, signal: TX, pin_signal: ADC0_SE5/ADC1_SE15/PTB1/LPUART0_TX/LPSPI0_SOUT/TCLK0}
+  - {pin_num: '79', peripheral: ADC0, signal: 'SE, 0', pin_signal: ADC0_SE0/ACMP0_IN0/PTA0/FTM2_CH1/LPI2C0_SCLS/FXIO_D2/FTM2_QD_PHA/LPUART0_CTS/TRGMUX_OUT3}
+  - {pin_num: '78', peripheral: ADC0, signal: 'SE, 1', pin_signal: ADC0_SE1/ACMP0_IN1/PTA1/FTM1_CH1/LPI2C0_SDAS/FXIO_D3/FTM1_QD_PHA/LPUART0_RTS/TRGMUX_OUT0}
+  - {pin_num: '58', peripheral: ADC0, signal: 'SE, 2', pin_signal: ADC0_SE2/ACMP1_IN0/PTA6/FTM0_FLT1/LPSPI1_PCS1/LPUART1_CTS}
+  - {pin_num: '12', peripheral: ADC0, signal: VREFH, pin_signal: VREFH}
+  - {pin_num: '13', peripheral: ADC0, signal: VREFL, pin_signal: VREFL}
+  - {pin_num: '74', peripheral: GPIOB, signal: 'GPIO, 11', pin_signal: ADC2_SE8/PTB11/FTM3_CH3/LPI2C0_HREQ}
+  - {pin_num: '5', peripheral: GPIOE, signal: 'GPIO, 11', pin_signal: ADC2_SE13/PTE11/PWT_IN1/LPTMR0_ALT1/FTM2_CH5/FXIO_D5/TRGMUX_OUT5}
+  - {pin_num: '35', peripheral: GPIOD, signal: 'GPIO, 11', pin_signal: PTD11/FTM2_CH1/FTM2_QD_PHA/LPUART2_CTS}
+  - {pin_num: '51', peripheral: GPIOC, signal: 'GPIO, 11', pin_signal: PTC11/FTM3_CH5}
+  - {pin_num: '91', peripheral: GPIOA, signal: 'GPIO, 11', pin_signal: PTA11/FTM1_CH5/LPUART0_RX/FXIO_D1}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -57,18 +67,46 @@ void BOARD_InitPins(void)
     CLOCK_EnableClock(kCLOCK_PortA);
     /* Clock Control: 0x01u */
     CLOCK_EnableClock(kCLOCK_PortC);
+    /* Clock Control: 0x01u */
+    CLOCK_EnableClock(kCLOCK_PortD);
+    /* Clock Control: 0x01u */
+    CLOCK_EnableClock(kCLOCK_PortE);
 
-    /* PORTA10 (pin 58) is configured as LPUART0_TX */
-    PORT_SetPinMux(PORTA, 10U, kPORT_MuxAlt3);
+    /* PORTA0 (pin 79) is configured as ADC0_SE0 */
+    PORT_SetPinMux(PORTA, 0U, kPORT_PinDisabledOrAnalog);
+
+    /* PORTA1 (pin 78) is configured as ADC0_SE1 */
+    PORT_SetPinMux(PORTA, 1U, kPORT_PinDisabledOrAnalog);
+
+    /* PORTA11 (pin 91) is configured as PTA11 */
+    PORT_SetPinMux(PORTA, 11U, kPORT_MuxAsGpio);
+
+    /* PORTA6 (pin 58) is configured as ADC0_SE2 */
+    PORT_SetPinMux(PORTA, 6U, kPORT_PinDisabledOrAnalog);
+
+    /* PORTB0 (pin 54) is configured as LPUART0_RX */
+    PORT_SetPinMux(PORTB, 0U, kPORT_MuxAlt2);
 
     /* PORTA11 (pin 57) is configured as LPUART0_RX */
     PORT_SetPinMux(PORTA, 11U, kPORT_MuxAlt3);
 
-    /* PORTC2 (pin 21) is configured as CAN0_RX */
+    /* PORTB11 (pin 74) is configured as PTB11 */
+    PORT_SetPinMux(PORTB, 11U, kPORT_MuxAsGpio);
+
+    /* PORTC11 (pin 51) is configured as PTC11 */
+    PORT_SetPinMux(PORTC, 11U, kPORT_MuxAsGpio);
+
+    /* PORTC2 (pin 30) is configured as CAN0_RX */
     PORT_SetPinMux(PORTC, 2U, kPORT_MuxAlt3);
 
     /* PORTC3 (pin 20) is configured as CAN0_TX */
     PORT_SetPinMux(PORTC, 3U, kPORT_MuxAlt3);
+
+    /* PORTD11 (pin 35) is configured as PTD11 */
+    PORT_SetPinMux(PORTD, 11U, kPORT_MuxAsGpio);
+
+    /* PORTE11 (pin 5) is configured as PTE11 */
+    PORT_SetPinMux(PORTE, 11U, kPORT_MuxAsGpio);
 }
 /***********************************************************************************************************************
  * EOF
