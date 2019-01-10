@@ -30,11 +30,24 @@ public:
 
 	Scheduler();
 
+	/*
+	 * @brief set scheduler state to run.
+	 */
 	void start();
+
+	/*
+	 * @brief set scheduler state to pause.
+	 */
 	void pause();
 
+	/*
+	 * @brief call doNextTask if state is set to run.
+	 */
 	void onFrame();
 
+	/*
+	 * @brief add another task.
+	 */
 	bool addTask(const TASK_TYPE& t);
 
 	uint32_t getTaskCount();

@@ -90,7 +90,7 @@ public:
 		overrunTimer = 0;
 	}
 
-	bool isReady() {
+	bool isReady() const {
 		return ready;
 	}
 
