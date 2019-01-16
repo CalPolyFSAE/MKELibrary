@@ -38,12 +38,21 @@
 #include "clock_config.h"
 #include "fsl_debug_console.h"
 
-/* TODO: insert other include files here. */
 #include "adc.h"
 
-/* TODO: insert other definitions and declarations here. */
-#define ADC_BASE ADC2
-#define ADC_CH 13
+#define DEMO
+
+#ifdef DEMO
+#define DEMO_ADC12_BASE ADC0
+#define DEMO_ADC12_CLOCK_SOURCE kADC12_ClockSourceAlt0
+#define DEMO_ADC12_IRQn ADC0_IRQn
+#define DEMO_ADC12_IRQ_HANDLER_FUNC ADC0_IRQHandler
+#define DEMO_ADC12_USER_CHANNEL 12U
+#define DEMO_ADC12_CHANNEL_GROUP 0U
+#else
+#define ADC_BASE ADC0
+#define ADC_CH 12
+#endif
 
 using namespace BSP;
 
@@ -51,6 +60,50 @@ using namespace BSP;
  * @brief   Application entry point.
  */
 int main(void) {
+#ifdef DEMO
+    adc12_config_t adc12ConfigStruct;
+    adc12_channel_config_t adc12ChannelConfigStruct;
+
+    BOARD_InitPins();
+    BOARD_BootClockRUN();
+    BOARD_InitDebugConsole();
+
+    /* Set ADC12's clock source to be Fast IRC async clock. */
+    CLOCK_SetIpSrc(kCLOCK_Adc0, kCLOCK_IpSrcFircAsync);
+
+    PRINTF("\r\nADC12 polling Example.\r\n");
+
+    /* Initialize ADC. */
+    ADC12_GetDefaultConfig(&adc12ConfigStruct);
+    adc12ConfigStruct.clockSource = DEMO_ADC12_CLOCK_SOURCE;
+    ADC12_Init(DEMO_ADC12_BASE, &adc12ConfigStruct);
+
+    /* Set to software trigger mode. */
+    ADC12_EnableHardwareTrigger(DEMO_ADC12_BASE, false);
+
+    /* Calibrate ADC. */
+    if (kStatus_Success != ADC12_DoAutoCalibration(DEMO_ADC12_BASE))
+    {
+        PRINTF("ADC calibration failed!\r\n");
+    }
+
+    /* Trigger the conversion. */
+    adc12ChannelConfigStruct.channelNumber = DEMO_ADC12_USER_CHANNEL;
+    adc12ChannelConfigStruct.enableInterruptOnConversionCompleted = false;
+
+    while(true)
+    {
+        /*
+         When in software trigger mode, each conversion would be launched once calling the "ADC12_SetChannelConfig()"
+         function, which works like writing a conversion command and executing it. For another channel's conversion,
+         just to change the "channelNumber" field in channel's configuration structure, and call the
+         "ADC12_SetChannelConfig() again.
+        */
+        ADC12_SetChannelConfig(DEMO_ADC12_BASE, DEMO_ADC12_CHANNEL_GROUP, &adc12ChannelConfigStruct);
+        while (0U == (kADC12_ChannelConversionCompletedFlag & ADC12_GetChannelStatusFlags(DEMO_ADC12_BASE, DEMO_ADC12_CHANNEL_GROUP))){}
+        PRINTF("ADC Value: %lu\r\n", ADC12_GetChannelConversionValue(DEMO_ADC12_BASE, DEMO_ADC12_CHANNEL_GROUP));
+    }
+#else
 	adc12_channel_config_t config;
 	uint32_t data;
 
@@ -61,7 +114,6 @@ int main(void) {
 
   	/* Init FSL debug console. */
 	BOARD_InitDebugConsole();
-
 
 	PRINTF("constructing ADC driver.....");
 	ADC::ADC::ConstructStatic(NULL);
@@ -84,10 +136,11 @@ int main(void) {
 	else
 		PRINTF("done\n");
 
-    while(1){
+    while(true){
     	data = adc.read(ADC_BASE, 0);
     	PRINTF("ADC = %lu\n", data);
     }
 
     return 0;
+#endif
 }

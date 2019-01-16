@@ -152,12 +152,6 @@
 									<listOptionValue builtIn="false" value="../utilities"/>
 									<listOptionValue builtIn="false" value="../startup"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/MKELibrary/lib}&quot;"/>
-									<listOptionValue builtIn="false" value="/usr/local/mcuxpressoide-10.2.1_795/ide/tools/arm-none-eabi/include/c++/7.2.1"/>
-									<listOptionValue builtIn="false" value="/usr/local/mcuxpressoide-10.2.1_795/ide/tools/arm-none-eabi/include/c++/7.2.1/arm-none-eabi"/>
-									<listOptionValue builtIn="false" value="/usr/local/mcuxpressoide-10.2.1_795/ide/tools/arm-none-eabi/include/c++/7.2.1/backward"/>
-									<listOptionValue builtIn="false" value="/usr/local/mcuxpressoide-10.2.1_795/ide/tools/lib/gcc/arm-none-eabi/7.2.1/include"/>
-									<listOptionValue builtIn="false" value="/usr/local/mcuxpressoide-10.2.1_795/ide/tools/lib/gcc/arm-none-eabi/7.2.1/include-fixed"/>
-									<listOptionValue builtIn="false" value="/usr/local/mcuxpressoide-10.2.1_795/ide/tools/arm-none-eabi/include"/>
 								</option>
 								<option id="gnu.both.asm.option.warnings.nowarn.686668734" name="Suppress warnings (-W)" superClass="gnu.both.asm.option.warnings.nowarn"/>
 								<option id="gnu.both.asm.option.version.1868662171" name="Announce version (-v)" superClass="gnu.both.asm.option.version"/>

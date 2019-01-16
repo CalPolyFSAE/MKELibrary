@@ -176,11 +176,17 @@ void BOARD_BootClockRUN(void)
 {
     scg_sys_clk_config_t curConfig;
 
+    /* Init SOSC according to board configuration. */
+    CLOCK_InitSysOsc(&g_scgSysOscConfig_BOARD_BootClockRUN);
+    /* Set the XTAL0 frequency based on board settings. */
+    CLOCK_SetXtal0Freq(g_scgSysOscConfig_BOARD_BootClockRUN.freq);
     /* Init FIRC. */
     CLOCK_CONFIG_FircSafeConfig(&g_scgFircConfig_BOARD_BootClockRUN);
     /* Init SIRC. */
     CLOCK_InitSirc(&g_scgSircConfig_BOARD_BootClockRUN);
-    /* Set SCG to FIRC mode. */
+    /* Init SysPll. */
+    CLOCK_InitSysPll(&g_scgSysPllConfig_BOARD_BootClockRUN);
+    /* Set SCG to SPLL mode. */
     CLOCK_SetRunModeSysClkConfig(&g_sysClkConfig_BOARD_BootClockRUN);
     /* Wait for clock source switch finished. */
     do

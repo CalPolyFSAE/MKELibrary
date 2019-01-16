@@ -51,10 +51,19 @@ BOARD_InitPins:
 void BOARD_InitPins(void)
 {
     /* Clock Control: 0x01u */
-    CLOCK_EnableClock(kCLOCK_PortE);
+    CLOCK_EnableClock(kCLOCK_PortB);
 
-    /* PORTE11 (pin 5) is configured as ADC2_SE13 */
-    PORT_SetPinMux(PORTE, 11U, kPORT_PinDisabledOrAnalog);
+    /* Clock Control: 0x01u */
+    CLOCK_EnableClock(kCLOCK_PortC);
+
+    /* PORTB0 (pin 54) is configured as LPUART0_RX */
+    PORT_SetPinMux(PORTB, 0U, kPORT_MuxAlt2);
+
+    /* PORTB1 (pin 53) is configured as LPUART0_TX */
+    PORT_SetPinMux(PORTB, 1U, kPORT_MuxAlt2);
+
+    /* PORTC14 (pin 46) is configured as ADC0_SE12 */
+    PORT_SetPinMux(PORTC, 14U, kPORT_PinDisabledOrAnalog);
 }
 /***********************************************************************************************************************
  * EOF
