@@ -17,9 +17,7 @@ ADC::ADC(const adc_config_t *config){
 }
 
 // routine ADC procedures
-void ADC::tick(){
-	// TODO
-}
+void ADC::tick(){}
 
 // configures an ADC
 void ADC::config_base(ADC_Type *base, adc12_config_t *config){
@@ -116,6 +114,11 @@ void ADC::get_default_config(adc_config_t *config){
 	config->hardware_trigger = false;
 }
 
+// returns the callback function of an ADC
+adc_callback_t ADC::get_callback(ADC_Type *base){
+	return(ADC::config[get_index(base)].function);
+}
+
 // returns the status flags of an ADC
 uint32_t ADC::get_base_status_flags(ADC_Type *base){
 	return(ADC12_GetStatusFlags(base));
@@ -143,11 +146,6 @@ uint32_t ADC::read(ADC_Type *base, uint32_t group){
 	return(ADC12_GetChannelConversionValue(base, group));
 }
 
-// returns the callback function of an ADC
-adc_callback_t ADC::get_callback(ADC_Type *base){
-	return(ADC::config[get_index(base)].function);
-}
-
 // maps each ADC base to an array index
 uint32_t ADC::get_index(ADC_Type *base){
 	if(base == ADC0){
@@ -165,12 +163,12 @@ extern "C" {
 
 // interrupt handler for ADC1
 void ADC1_IRQHandler(){
-	// TODO
+	ADC::StaticClass().get_callback(ADC1)(ADC1, NULL);
 }
 
 // interrupt handler for ADC2
 void ADC2_IRQHandler(){
-	// TODO
+	ADC::StaticClass().get_callback(ADC2)(ADC2, NULL);
 }
 
 }

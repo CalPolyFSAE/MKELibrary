@@ -28,7 +28,7 @@
                   <enableClock>true</enableClock>
                </options>
                <dependencies>
-                  <dependency resourceType="Peripheral" resourceId="ADC2" description="Peripheral ADC2 is not initialized" problem_level="1" source="Pins:BOARD_InitPins">
+                  <dependency resourceType="Peripheral" resourceId="ADC0" description="Peripheral ADC0 is not initialized" problem_level="1" source="Pins:BOARD_InitPins">
                      <feature name="initialized" evaluation="equal">
                         <data>true</data>
                      </feature>
@@ -45,7 +45,7 @@
                   </dependency>
                </dependencies>
                <pins>
-                  <pin peripheral="ADC2" signal="SE, 13" pin_num="5" pin_signal="ADC2_SE13/PTE11/PWT_IN1/LPTMR0_ALT1/FTM2_CH5/FXIO_D5/TRGMUX_OUT5"/>
+                  <pin peripheral="ADC0" signal="SE, 12" pin_num="46" pin_signal="ADC0_SE12/ACMP2_IN5/PTC14/FTM1_CH2"/>
                </pins>
             </function>
          </functions_list>
@@ -59,26 +59,60 @@
                <description></description>
                <options/>
                <dependencies>
+                  <dependency resourceType="PinSignal" resourceId="SCG.EXTAL0" description="&apos;EXTAL0&apos; (Pins tool id: SCG.EXTAL0, Clocks tool id: SCG.EXTAL0) needs to be routed" problem_level="1" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="routed" evaluation="">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="PinSignal" resourceId="SCG.XTAL0" description="&apos;XTAL0&apos; (Pins tool id: SCG.XTAL0, Clocks tool id: SCG.XTAL0) needs to be routed" problem_level="1" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="routed" evaluation="">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
                   <dependency resourceType="SWComponent" resourceId="platform.drivers.common" description="Clocks initialization requires the COMMON Driver in the project." problem_level="2" source="Clocks:BOARD_BootClockRUN">
                      <feature name="enabled" evaluation="equal" configuration="core0">
                         <data>true</data>
                      </feature>
                   </dependency>
                </dependencies>
-               <clock_sources/>
+               <clock_sources>
+                  <clock_source id="SCG.SOSC.outFreq" value="8 MHz" locked="false" enabled="true"/>
+               </clock_sources>
                <clock_outputs>
-                  <clock_output id="Bus_clock.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="Bus_clock.outFreq" value="24 MHz" locked="false" accuracy=""/>
                   <clock_output id="Core_clock.outFreq" value="48 MHz" locked="false" accuracy=""/>
                   <clock_output id="FIRCDIV1_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
-                  <clock_output id="Flash_clock.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FIRCDIV2_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="Flash_clock.outFreq" value="9.6 MHz" locked="false" accuracy=""/>
                   <clock_output id="LPO1KCLK.outFreq" value="1 kHz" locked="false" accuracy=""/>
                   <clock_output id="LPO_clock.outFreq" value="128 kHz" locked="false" accuracy=""/>
+                  <clock_output id="PLLDIV1_CLK.outFreq" value="120 MHz" locked="false" accuracy=""/>
+                  <clock_output id="PLLDIV2_CLK.outFreq" value="60 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SIRCDIV1_CLK.outFreq" value="8 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SIRCDIV2_CLK.outFreq" value="4 MHz" locked="false" accuracy=""/>
                   <clock_output id="SIRC_CLK.outFreq" value="8 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SOSCDIV1_CLK.outFreq" value="8 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SOSCDIV2_CLK.outFreq" value="8 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SOSC_CLK.outFreq" value="8 MHz" locked="false" accuracy=""/>
                   <clock_output id="System_clock.outFreq" value="48 MHz" locked="false" accuracy=""/>
                </clock_outputs>
                <clock_settings>
-                  <setting id="SCG.DIVCORE.scale" value="1" locked="true"/>
+                  <setting id="SCG.DIVBUS.scale" value="2" locked="false"/>
+                  <setting id="SCG.DIVSLOW.scale" value="5" locked="false"/>
                   <setting id="SCG.FIRCDIV1.scale" value="1" locked="true"/>
+                  <setting id="SCG.FIRCDIV2.scale" value="1" locked="false"/>
+                  <setting id="SCG.SIRCDIV1.scale" value="1" locked="false"/>
+                  <setting id="SCG.SIRCDIV2.scale" value="2" locked="true"/>
+                  <setting id="SCG.SOSCDIV1.scale" value="1" locked="true"/>
+                  <setting id="SCG.SOSCDIV2.scale" value="1" locked="true"/>
+                  <setting id="SCG.SPLLDIV1.scale" value="1" locked="false"/>
+                  <setting id="SCG.SPLLDIV2.scale" value="2" locked="false"/>
+                  <setting id="SCG.SPLL_mul.scale" value="30" locked="false"/>
+                  <setting id="SCG_SOSCCFG_OSC_MODE_CFG" value="ModeOscLowPower" locked="false"/>
+                  <setting id="SCG_SOSCCFG_RANGE_CFG" value="Medium" locked="false"/>
+                  <setting id="SCG_SOSCCSR_SOSCEN_CFG" value="Enabled" locked="false"/>
+                  <setting id="SCG_SOSCCSR_SOSCLPEN_CFG" value="Enabled" locked="false"/>
+                  <setting id="SCG_SPLLCSR_SPLLEN_CFG" value="Enabled" locked="false"/>
                </clock_settings>
                <called_from_default_init>true</called_from_default_init>
             </clock_configuration>

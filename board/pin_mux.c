@@ -37,7 +37,7 @@ void BOARD_InitBootPins(void)
 BOARD_InitPins:
 - options: {callFromInitBoot: 'true', coreID: core0, enableClock: 'true'}
 - pin_list:
-  - {pin_num: '5', peripheral: ADC2, signal: 'SE, 13', pin_signal: ADC2_SE13/PTE11/PWT_IN1/LPTMR0_ALT1/FTM2_CH5/FXIO_D5/TRGMUX_OUT5}
+  - {pin_num: '46', peripheral: ADC0, signal: 'SE, 12', pin_signal: ADC0_SE12/ACMP2_IN5/PTC14/FTM1_CH2}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -51,16 +51,7 @@ BOARD_InitPins:
 void BOARD_InitPins(void)
 {
     /* Clock Control: 0x01u */
-    CLOCK_EnableClock(kCLOCK_PortB);
-
-    /* Clock Control: 0x01u */
     CLOCK_EnableClock(kCLOCK_PortC);
-
-    /* PORTB0 (pin 54) is configured as LPUART0_RX */
-    PORT_SetPinMux(PORTB, 0U, kPORT_MuxAlt2);
-
-    /* PORTB1 (pin 53) is configured as LPUART0_TX */
-    PORT_SetPinMux(PORTB, 1U, kPORT_MuxAlt2);
 
     /* PORTC14 (pin 46) is configured as ADC0_SE12 */
     PORT_SetPinMux(PORTC, 14U, kPORT_PinDisabledOrAnalog);

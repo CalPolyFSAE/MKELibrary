@@ -37,22 +37,10 @@
 #include "pin_mux.h"
 #include "clock_config.h"
 #include "fsl_debug_console.h"
-
 #include "adc.h"
 
-#define DEMO
-
-#ifdef DEMO
-#define DEMO_ADC12_BASE ADC0
-#define DEMO_ADC12_CLOCK_SOURCE kADC12_ClockSourceAlt0
-#define DEMO_ADC12_IRQn ADC0_IRQn
-#define DEMO_ADC12_IRQ_HANDLER_FUNC ADC0_IRQHandler
-#define DEMO_ADC12_USER_CHANNEL 12U
-#define DEMO_ADC12_CHANNEL_GROUP 0U
-#else
-#define ADC_BASE ADC0
-#define ADC_CH 12
-#endif
+#define ADC_BASE 		ADC0
+#define ADC_CHANNEL		12
 
 using namespace BSP;
 
@@ -60,87 +48,54 @@ using namespace BSP;
  * @brief   Application entry point.
  */
 int main(void) {
-#ifdef DEMO
-    adc12_config_t adc12ConfigStruct;
-    adc12_channel_config_t adc12ChannelConfigStruct;
-
-    BOARD_InitPins();
-    BOARD_BootClockRUN();
-    BOARD_InitDebugConsole();
-
-    /* Set ADC12's clock source to be Fast IRC async clock. */
-    CLOCK_SetIpSrc(kCLOCK_Adc0, kCLOCK_IpSrcFircAsync);
-
-    PRINTF("\r\nADC12 polling Example.\r\n");
-
-    /* Initialize ADC. */
-    ADC12_GetDefaultConfig(&adc12ConfigStruct);
-    adc12ConfigStruct.clockSource = DEMO_ADC12_CLOCK_SOURCE;
-    ADC12_Init(DEMO_ADC12_BASE, &adc12ConfigStruct);
-
-    /* Set to software trigger mode. */
-    ADC12_EnableHardwareTrigger(DEMO_ADC12_BASE, false);
-
-    /* Calibrate ADC. */
-    if (kStatus_Success != ADC12_DoAutoCalibration(DEMO_ADC12_BASE))
-    {
-        PRINTF("ADC calibration failed!\r\n");
-    }
-
-    /* Trigger the conversion. */
-    adc12ChannelConfigStruct.channelNumber = DEMO_ADC12_USER_CHANNEL;
-    adc12ChannelConfigStruct.enableInterruptOnConversionCompleted = false;
-
-    while(true)
-    {
-        /*
-         When in software trigger mode, each conversion would be launched once calling the "ADC12_SetChannelConfig()"
-         function, which works like writing a conversion command and executing it. For another channel's conversion,
-         just to change the "channelNumber" field in channel's configuration structure, and call the
-         "ADC12_SetChannelConfig() again.
-        */
-        ADC12_SetChannelConfig(DEMO_ADC12_BASE, DEMO_ADC12_CHANNEL_GROUP, &adc12ChannelConfigStruct);
-        while (0U == (kADC12_ChannelConversionCompletedFlag & ADC12_GetChannelStatusFlags(DEMO_ADC12_BASE, DEMO_ADC12_CHANNEL_GROUP))){}
-        PRINTF("ADC Value: %lu\r\n", ADC12_GetChannelConversionValue(DEMO_ADC12_BASE, DEMO_ADC12_CHANNEL_GROUP));
-    }
-#else
-	adc12_channel_config_t config;
+	adc12_channel_config_t channel_config;
 	uint32_t data;
 
-	/* Init board hardware. */
+	// board initializations
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
     BOARD_InitBootPeripherals();
-
-  	/* Init FSL debug console. */
 	BOARD_InitDebugConsole();
 
+	// create ADC driver
 	PRINTF("constructing ADC driver.....");
 	ADC::ADC::ConstructStatic(NULL);
 	ADC::ADC& adc = ADC::ADC::StaticClass();
 	PRINTF("done\n");
 
-	PRINTF("configuring ADC.....\n");
-	config.channelNumber = ADC_CH;
-	config.enableInterruptOnConversionCompleted = false;
-	adc.config_base(ADC_BASE, NULL);
-	adc.config_channel(ADC_BASE, 0, &config);
-	adc.config_hardware_compare(ADC_BASE, NULL);
-	adc.enable_dma(ADC_BASE, false);
-	adc.enable_hardware_trigger(ADC_BASE, false);
+	// configure ADC base
+	PRINTF("configuring ADC.....");
+    adc.config_base(ADC_BASE, NULL);
+    adc.set_offset(ADC_BASE, 0);
+    adc.set_gain(ADC_BASE, 1);
+    adc.set_hardware_average(ADC_BASE, kADC12_HardwareAverageDisabled);
+    adc.enable_dma(ADC_BASE, false);
+    adc.enable_hardware_trigger(ADC_BASE, false);
+    PRINTF("done\n");
+
+    // calibrate ADC
+	PRINTF("calibrating ADC.....");
+	if(adc.calibrate(ADC_BASE) != kStatus_Success)
+	{
+		PRINTF("FAILED\n");
+		assert(0);
+	}
 	PRINTF("done\n");
 
-	PRINTF("calibrating ADC.....\n");
-	if(adc.calibrate(ADC_BASE) != kStatus_Success)
-		PRINTF("FAILED\n");
-	else
-		PRINTF("done\n");
+	// configure ADC channel
+	PRINTF("configuring ADC channel.....");
+	channel_config.channelNumber = ADC_CHANNEL;
+	channel_config.enableInterruptOnConversionCompleted = false;
+	adc.config_channel(ADC_BASE, 0, &channel_config);
+	PRINTF("done\n");
 
-    while(true){
+    PRINTF("\npress enter to get ADC value\n");
+    while(true)
+    {
+    	GETCHAR();
     	data = adc.read(ADC_BASE, 0);
     	PRINTF("ADC = %lu\n", data);
     }
 
     return 0;
-#endif
 }

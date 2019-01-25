@@ -8,7 +8,7 @@
 namespace BSP {
 namespace ADC {
 
-typedef void (*adc_callback_t)(ADC_Type *, void *, status_t, void *);
+typedef void (*adc_callback_t)(ADC_Type *, void *);
 
 typedef struct adc_config {
 	adc_callback_t function;
@@ -43,6 +43,7 @@ public:
     void enable_hardware_trigger(ADC_Type *base, bool enable);
 
     void get_default_config(adc_config *config);
+    adc_callback_t get_callback(ADC_Type *base);
     uint32_t get_base_status_flags(ADC_Type *base);
     uint32_t get_channel_status_flags(ADC_Type *base, uint32_t group);
 
@@ -55,7 +56,6 @@ private:
 
     adc_config_t config[3];
 
-    adc_callback_t get_callback(ADC_Type *base);
     uint32_t get_index(ADC_Type *base);
 };
 
