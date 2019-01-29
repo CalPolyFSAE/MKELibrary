@@ -5,6 +5,8 @@ using namespace BSP::ADC;
 
 // constructs ADC driver
 ADC::ADC(const adc_config_t *config){
+    // g: is this wise to have the same config for all three?
+    // g: i think at least having discrete callbacks is useful.
 	if(config){
 		ADC::config[0] = *config;
 		ADC::config[1] = *config;
@@ -160,6 +162,11 @@ uint32_t ADC::get_index(ADC_Type *base){
 }
 
 extern "C" {
+
+// interrupt handler for ADC0
+void ADC0_IRQHandler(){
+	ADC::StaticClass().get_callback(ADC0)(ADC0, NULL);
+}
 
 // interrupt handler for ADC1
 void ADC1_IRQHandler(){
