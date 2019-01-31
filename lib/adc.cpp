@@ -22,6 +22,14 @@ ADC::ADC(const adc_config_t *config){
 void ADC::tick(){}
 
 // configures an ADC
+// g: I think it's kind of inconsistent that if you don't use NULL as the
+// g: adc_config_t argument when calling ConstructStatic, you can't use
+// g: NULL here to get a default base_config. (specifically, if(config) will
+// g: fail, so NULL will get passed to ADC12_Init, which will assert(NULL) and fail) 
+//
+// g: also small thing here but using fsl type adc12_config_t means some 
+// g: configuration types will be in namespace ADC and some won't. can we 
+// g: forward-declare this into ADC namespace or something?
 void ADC::config_base(ADC_Type *base, adc12_config_t *config){
 	uint32_t index = get_index(base);
 
@@ -42,6 +50,11 @@ void ADC::config_base(ADC_Type *base, adc12_config_t *config){
 }
 
 // configures an ADC channel and binds it to the specified group
+// g: same comment here as in config_base() about mixing custom and fsl config types
+//
+// g: also: maybe this function shouldn't call ADC12_SetChannelConfig when the channel
+// g: is 0, as it automatically triggers a conversion in that case. 
+// g: It might be misleading for a config function to do that.
 void ADC::config_channel(ADC_Type *base, uint32_t group, adc12_channel_config_t *config){
 	uint32_t index = get_index(base);
 
@@ -137,6 +150,10 @@ status_t ADC::calibrate(ADC_Type *base){
 }
 
 // reads data from the conversion register of the specified group
+// g: By my understanding this will only work if group = 0. Otherwise, because other
+// g: groups only do hardware triggering, I think it'll hang in the while loop.
+// g: It might be a cleaner workflow to pass the pin number in here, instead of the
+// g: group? I can't picture a scenario where group != 0 when calling this.
 uint32_t ADC::read(ADC_Type *base, uint32_t group){
 	uint32_t index = get_index(base);
 
