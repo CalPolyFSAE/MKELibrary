@@ -5,6 +5,8 @@ using namespace BSP::ADC;
 
 // constructs ADC driver
 ADC::ADC(const adc_config_t *config){
+    // g: is this wise to have the same config for all three?
+    // g: i think at least having discrete callbacks is useful.
 	if(config){
 		ADC::config[0] = *config;
 		ADC::config[1] = *config;
@@ -17,11 +19,17 @@ ADC::ADC(const adc_config_t *config){
 }
 
 // routine ADC procedures
-void ADC::tick(){
-	// TODO
-}
+void ADC::tick(){}
 
 // configures an ADC
+// g: I think it's kind of inconsistent that if you don't use NULL as the
+// g: adc_config_t argument when calling ConstructStatic, you can't use
+// g: NULL here to get a default base_config. (specifically, if(config) will
+// g: fail, so NULL will get passed to ADC12_Init, which will assert(NULL) and fail) 
+//
+// g: also small thing here but using fsl type adc12_config_t means some 
+// g: configuration types will be in namespace ADC and some won't. can we 
+// g: forward-declare this into ADC namespace or something?
 void ADC::config_base(ADC_Type *base, adc12_config_t *config){
 	uint32_t index = get_index(base);
 
@@ -42,6 +50,11 @@ void ADC::config_base(ADC_Type *base, adc12_config_t *config){
 }
 
 // configures an ADC channel and binds it to the specified group
+// g: same comment here as in config_base() about mixing custom and fsl config types
+//
+// g: also: maybe this function shouldn't call ADC12_SetChannelConfig when the channel
+// g: is 0, as it automatically triggers a conversion in that case. 
+// g: It might be misleading for a config function to do that.
 void ADC::config_channel(ADC_Type *base, uint32_t group, adc12_channel_config_t *config){
 	uint32_t index = get_index(base);
 
@@ -116,6 +129,11 @@ void ADC::get_default_config(adc_config_t *config){
 	config->hardware_trigger = false;
 }
 
+// returns the callback function of an ADC
+adc_callback_t ADC::get_callback(ADC_Type *base){
+	return(ADC::config[get_index(base)].function);
+}
+
 // returns the status flags of an ADC
 uint32_t ADC::get_base_status_flags(ADC_Type *base){
 	return(ADC12_GetStatusFlags(base));
@@ -132,6 +150,10 @@ status_t ADC::calibrate(ADC_Type *base){
 }
 
 // reads data from the conversion register of the specified group
+// g: By my understanding this will only work if group = 0. Otherwise, because other
+// g: groups only do hardware triggering, I think it'll hang in the while loop.
+// g: It might be a cleaner workflow to pass the pin number in here, instead of the
+// g: group? I can't picture a scenario where group != 0 when calling this.
 uint32_t ADC::read(ADC_Type *base, uint32_t group){
 	uint32_t index = get_index(base);
 
@@ -141,11 +163,6 @@ uint32_t ADC::read(ADC_Type *base, uint32_t group){
     while(!(ADC12_GetChannelStatusFlags(base, group) & kADC12_ChannelConversionCompletedFlag)){}
 
 	return(ADC12_GetChannelConversionValue(base, group));
-}
-
-// returns the callback function of an ADC
-adc_callback_t ADC::get_callback(ADC_Type *base){
-	return(ADC::config[get_index(base)].function);
 }
 
 // maps each ADC base to an array index
@@ -163,14 +180,19 @@ uint32_t ADC::get_index(ADC_Type *base){
 
 extern "C" {
 
+// interrupt handler for ADC0
+void ADC0_IRQHandler(){
+	ADC::StaticClass().get_callback(ADC0)(ADC0, NULL);
+}
+
 // interrupt handler for ADC1
 void ADC1_IRQHandler(){
-	// TODO
+	ADC::StaticClass().get_callback(ADC1)(ADC1, NULL);
 }
 
 // interrupt handler for ADC2
 void ADC2_IRQHandler(){
-	// TODO
+	ADC::StaticClass().get_callback(ADC2)(ADC2, NULL);
 }
 
 }
