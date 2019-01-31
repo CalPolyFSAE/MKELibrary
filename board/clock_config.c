@@ -37,7 +37,6 @@ processor_version: 5.0.0
  * Definitions
  ******************************************************************************/
 #define SCG_SOSC_DISABLE                                  0U  /*!< System OSC disabled */
-#define SCG_SPLL_DISABLE                                  0U  /*!< System PLL disabled */
 
 /*******************************************************************************
  * Variables
@@ -111,25 +110,69 @@ void BOARD_InitBootClocks(void)
 name: BOARD_BootClockRUN
 called_from_default_init: true
 outputs:
-- {id: Bus_clock.outFreq, value: 15 MHz}
-- {id: Core_clock.outFreq, value: 15 MHz}
+- {id: Bus_clock.outFreq, value: 60 MHz}
+- {id: Core_clock.outFreq, value: 60 MHz}
 - {id: FIRCDIV1_CLK.outFreq, value: 60 MHz}
-- {id: FIRCDIV2_CLK.outFreq, value: 60 MHz}
-- {id: Flash_clock.outFreq, value: 7.5 MHz}
+- {id: FIRCDIV2_CLK.outFreq, value: 30 MHz}
+- {id: Flash_clock.outFreq, value: 12 MHz}
 - {id: LPO1KCLK.outFreq, value: 1 kHz}
 - {id: LPO_clock.outFreq, value: 128 kHz}
-- {id: PCC.PCC_LPSPI0_CLK.outFreq, value: 60 MHz}
-- {id: PCC.PCC_LPSPI1_CLK.outFreq, value: 60 MHz}
+- {id: PCC.PCC_ADC0_CLK.outFreq, value: 30 MHz}
+- {id: PCC.PCC_ADC1_CLK.outFreq, value: 30 MHz}
+- {id: PCC.PCC_ADC2_CLK.outFreq, value: 30 MHz}
+- {id: PCC.PCC_FLEXIO_CLK.outFreq, value: 30 MHz}
+- {id: PCC.PCC_FTM0_CLK.outFreq, value: 60 MHz}
+- {id: PCC.PCC_FTM1_CLK.outFreq, value: 60 MHz}
+- {id: PCC.PCC_FTM2_CLK.outFreq, value: 60 MHz}
+- {id: PCC.PCC_FTM3_CLK.outFreq, value: 60 MHz}
+- {id: PCC.PCC_LPI2C0_CLK.outFreq, value: 30 MHz}
+- {id: PCC.PCC_LPI2C1_CLK.outFreq, value: 30 MHz}
+- {id: PCC.PCC_LPIT0_CLK.outFreq, value: 30 MHz}
+- {id: PCC.PCC_LPSPI0_CLK.outFreq, value: 30 MHz}
+- {id: PCC.PCC_LPSPI1_CLK.outFreq, value: 30 MHz}
+- {id: PCC.PCC_LPTMR0_CLK.outFreq, value: 30 MHz}
+- {id: PCC.PCC_LPUART0_CLK.outFreq, value: 30 MHz}
+- {id: PCC.PCC_LPUART1_CLK.outFreq, value: 30 MHz}
+- {id: PCC.PCC_LPUART2_CLK.outFreq, value: 30 MHz}
+- {id: PLLDIV1_CLK.outFreq, value: 180 MHz}
+- {id: PLLDIV2_CLK.outFreq, value: 90 MHz}
+- {id: SIRCDIV1_CLK.outFreq, value: 8 MHz}
+- {id: SIRCDIV2_CLK.outFreq, value: 4 MHz}
 - {id: SIRC_CLK.outFreq, value: 8 MHz}
-- {id: System_clock.outFreq, value: 15 MHz}
+- {id: System_clock.outFreq, value: 60 MHz}
 settings:
+- {id: PCC.PCC_ADC0_SEL.sel, value: SCG.FIRCDIV2_CLK}
+- {id: PCC.PCC_ADC1_SEL.sel, value: SCG.FIRCDIV2_CLK}
+- {id: PCC.PCC_ADC2_SEL.sel, value: SCG.FIRCDIV2_CLK}
+- {id: PCC.PCC_FLEXIO_SEL.sel, value: SCG.FIRCDIV2_CLK}
+- {id: PCC.PCC_FTM0_SEL.sel, value: SCG.FIRCDIV1_CLK}
+- {id: PCC.PCC_FTM1_SEL.sel, value: SCG.FIRCDIV1_CLK}
+- {id: PCC.PCC_FTM2_SEL.sel, value: SCG.FIRCDIV1_CLK}
+- {id: PCC.PCC_FTM3_SEL.sel, value: SCG.FIRCDIV1_CLK}
+- {id: PCC.PCC_LPI2C0_SEL.sel, value: SCG.FIRCDIV2_CLK}
+- {id: PCC.PCC_LPI2C1_SEL.sel, value: SCG.FIRCDIV2_CLK}
+- {id: PCC.PCC_LPIT0_SEL.sel, value: SCG.FIRCDIV2_CLK}
 - {id: PCC.PCC_LPSPI0_SEL.sel, value: SCG.FIRCDIV2_CLK}
 - {id: PCC.PCC_LPSPI1_SEL.sel, value: SCG.FIRCDIV2_CLK}
-- {id: SCG.DIVCORE.scale, value: '4', locked: true}
+- {id: PCC.PCC_LPTMR0_SEL.sel, value: SCG.FIRCDIV2_CLK}
+- {id: PCC.PCC_LPUART0_SEL.sel, value: SCG.FIRCDIV2_CLK}
+- {id: PCC.PCC_LPUART1_SEL.sel, value: SCG.FIRCDIV2_CLK}
+- {id: PCC.PCC_LPUART2_SEL.sel, value: SCG.FIRCDIV2_CLK}
+- {id: SCG.DIVCORE.scale, value: '1', locked: true}
+- {id: SCG.DIVSLOW.scale, value: '5'}
 - {id: SCG.FIRCDIV1.scale, value: '1', locked: true}
-- {id: SCG.FIRCDIV2.scale, value: '1', locked: true}
+- {id: SCG.FIRCDIV2.scale, value: '2', locked: true}
+- {id: SCG.PREDIV.scale, value: '3', locked: true}
+- {id: SCG.SIRCDIV1.scale, value: '1', locked: true}
+- {id: SCG.SIRCDIV2.scale, value: '2', locked: true}
+- {id: SCG.SPLLDIV1.scale, value: '1', locked: true}
+- {id: SCG.SPLLDIV2.scale, value: '2', locked: true}
+- {id: SCG.SPLLSRCSEL.sel, value: SCG.FIRC}
+- {id: SCG.SPLL_mul.scale, value: '18', locked: true}
 - {id: SCG_FIRCCSR_FIRCLPEN_CFG, value: Enabled}
 - {id: SCG_FIRCCSR_FIRCSTEN_CFG, value: Enabled}
+- {id: SCG_SOSCCFG_OSC_MODE_CFG, value: ModeOscLowPower}
+- {id: SCG_SPLLCSR_SPLLEN_CFG, value: Enabled}
 sources:
 - {id: SCG.FIRC.outFreq, value: 60 MHz}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
@@ -140,9 +183,9 @@ sources:
  ******************************************************************************/
 const scg_sys_clk_config_t g_sysClkConfig_BOARD_BootClockRUN =
     {
-        .divSlow = kSCG_SysClkDivBy2,             /* Slow Clock Divider: divided by 2 */
+        .divSlow = kSCG_SysClkDivBy5,             /* Slow Clock Divider: divided by 5 */
         .divBus = kSCG_SysClkDivBy1,              /* Bus Clock Divider: divided by 1 */
-        .divCore = kSCG_SysClkDivBy4,             /* Core Clock Divider: divided by 4 */
+        .divCore = kSCG_SysClkDivBy1,             /* Core Clock Divider: divided by 1 */
         .src = kSCG_SysClkSrcFirc,                /* Fast IRC is selected as System Clock Source */
     };
 const scg_sosc_config_t g_scgSysOscConfig_BOARD_BootClockRUN =
@@ -152,32 +195,32 @@ const scg_sosc_config_t g_scgSysOscConfig_BOARD_BootClockRUN =
         .monitorMode = kSCG_SysOscMonitorDisable, /* Monitor disabled */
         .div1 = kSCG_AsyncClkDisable,             /* System OSC Clock Divider 1: Clock output is disabled */
         .div2 = kSCG_AsyncClkDisable,             /* System OSC Clock Divider 2: Clock output is disabled */
-        .workMode = kSCG_SysOscModeExt,           /* Use external clock */
+        .workMode = kSCG_SysOscModeOscLowPower,   /* Oscillator low power */
     };
 const scg_sirc_config_t g_scgSircConfig_BOARD_BootClockRUN =
     {
         .enableMode = kSCG_SircEnable | kSCG_SircEnableInLowPower,/* Enable SIRC clock, Enable SIRC in low power mode */
-        .div1 = kSCG_AsyncClkDisable,             /* Slow IRC Clock Divider 1: Clock output is disabled */
-        .div2 = kSCG_AsyncClkDisable,             /* Slow IRC Clock Divider 2: Clock output is disabled */
+        .div1 = kSCG_AsyncClkDivBy1,              /* Slow IRC Clock Divider 1: divided by 1 */
+        .div2 = kSCG_AsyncClkDivBy2,              /* Slow IRC Clock Divider 2: divided by 2 */
         .range = kSCG_SircRangeHigh,              /* Slow IRC high range clock (8 MHz) */
     };
 const scg_firc_config_t g_scgFircConfig_BOARD_BootClockRUN =
     {
         .enableMode = kSCG_FircEnable | kSCG_FircEnableInStop | kSCG_FircEnableInLowPower,/* Enable FIRC clock, Enable FIRC in stop mode, Enable FIRC in low power mode */
         .div1 = kSCG_AsyncClkDivBy1,              /* Fast IRC Clock Divider 1: divided by 1 */
-        .div2 = kSCG_AsyncClkDivBy1,              /* Fast IRC Clock Divider 2: divided by 1 */
+        .div2 = kSCG_AsyncClkDivBy2,              /* Fast IRC Clock Divider 2: divided by 2 */
         .range = kSCG_FircRange60M,               /* Fast IRC is trimmed to 60MHz */
         .trimConfig = NULL,                       /* Fast IRC Trim disabled */
     };
 const scg_spll_config_t g_scgSysPllConfig_BOARD_BootClockRUN =
     {
-        .enableMode = SCG_SPLL_DISABLE,           /* System PLL disabled */
+        .enableMode = kSCG_SysPllEnable,          /* Enable SPLL clock */
         .monitorMode = kSCG_SysPllMonitorDisable, /* Monitor disabled */
-        .div1 = kSCG_AsyncClkDisable,             /* System PLL Clock Divider 1: Clock output is disabled */
-        .div2 = kSCG_AsyncClkDisable,             /* System PLL Clock Divider 2: Clock output is disabled */
-        .src = kSCG_SysPllSrcSysOsc,              /* System PLL clock source is System OSC */
-        .prediv = 0,                              /* Divided by 1 */
-        .mult = 0,                                /* Multiply Factor is 16 */
+        .div1 = kSCG_AsyncClkDivBy1,              /* System PLL Clock Divider 1: divided by 1 */
+        .div2 = kSCG_AsyncClkDivBy2,              /* System PLL Clock Divider 2: divided by 2 */
+        .src = kSCG_SysPllSrcFirc,                /* System PLL clock source is Fast IRC */
+        .prediv = 2,                              /* Divided by 3 */
+        .mult = 2,                                /* Multiply Factor is 18 */
     };
 /*******************************************************************************
  * Code for BOARD_BootClockRUN configuration
@@ -190,6 +233,8 @@ void BOARD_BootClockRUN(void)
     CLOCK_CONFIG_FircSafeConfig(&g_scgFircConfig_BOARD_BootClockRUN);
     /* Init SIRC. */
     CLOCK_InitSirc(&g_scgSircConfig_BOARD_BootClockRUN);
+    /* Init SysPll. */
+    CLOCK_InitSysPll(&g_scgSysPllConfig_BOARD_BootClockRUN);
     /* Set SCG to FIRC mode. */
     CLOCK_SetRunModeSysClkConfig(&g_sysClkConfig_BOARD_BootClockRUN);
     /* Wait for clock source switch finished. */
@@ -199,9 +244,39 @@ void BOARD_BootClockRUN(void)
     } while (curConfig.src != g_sysClkConfig_BOARD_BootClockRUN.src);
     /* Set SystemCoreClock variable. */
     SystemCoreClock = BOARD_BOOTCLOCKRUN_CORE_CLOCK;
+    /* Set PCC ADC0 selection */
+    CLOCK_SetIpSrc(kCLOCK_Adc0, kCLOCK_IpSrcFircAsync);
+    /* Set PCC ADC1 selection */
+    CLOCK_SetIpSrc(kCLOCK_Adc1, kCLOCK_IpSrcFircAsync);
+    /* Set PCC ADC2 selection */
+    CLOCK_SetIpSrc(kCLOCK_Adc2, kCLOCK_IpSrcFircAsync);
     /* Set PCC LPSPI0 selection */
     CLOCK_SetIpSrc(kCLOCK_Lpspi0, kCLOCK_IpSrcFircAsync);
     /* Set PCC LPSPI1 selection */
     CLOCK_SetIpSrc(kCLOCK_Lpspi1, kCLOCK_IpSrcFircAsync);
+    /* Set PCC LPI2C0 selection */
+    CLOCK_SetIpSrc(kCLOCK_Lpi2c0, kCLOCK_IpSrcFircAsync);
+    /* Set PCC LPI2C1 selection */
+    CLOCK_SetIpSrc(kCLOCK_Lpi2c1, kCLOCK_IpSrcFircAsync);
+    /* Set PCC LPUART0 selection */
+    CLOCK_SetIpSrc(kCLOCK_Lpuart0, kCLOCK_IpSrcFircAsync);
+    /* Set PCC LPUART1 selection */
+    CLOCK_SetIpSrc(kCLOCK_Lpuart1, kCLOCK_IpSrcFircAsync);
+    /* Set PCC LPUART2 selection */
+    CLOCK_SetIpSrc(kCLOCK_Lpuart2, kCLOCK_IpSrcFircAsync);
+    /* Set PCC FLEXIO selection */
+    CLOCK_SetIpSrc(kCLOCK_Flexio0, kCLOCK_IpSrcFircAsync);
+    /* Set PCC LPTMR0 selection */
+    CLOCK_SetIpSrc(kCLOCK_Lptmr0, kCLOCK_IpSrcFircAsync);
+    /* Set PCC LPIT0 selection */
+    CLOCK_SetIpSrc(kCLOCK_Lpit0, kCLOCK_IpSrcFircAsync);
+    /* Set PCC FTM0 selection */
+    CLOCK_SetIpSrc(kCLOCK_Ftm0, kCLOCK_IpSrcFircAsync);
+    /* Set PCC FTM1 selection */
+    CLOCK_SetIpSrc(kCLOCK_Ftm1, kCLOCK_IpSrcFircAsync);
+    /* Set PCC FTM2 selection */
+    CLOCK_SetIpSrc(kCLOCK_Ftm2, kCLOCK_IpSrcFircAsync);
+    /* Set PCC FTM3 selection */
+    CLOCK_SetIpSrc(kCLOCK_Ftm3, kCLOCK_IpSrcFircAsync);
 }
 

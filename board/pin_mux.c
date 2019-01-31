@@ -79,7 +79,6 @@ BOARD_InitPins:
   - {pin_num: '79', peripheral: LPUART0, signal: CTS, pin_signal: ADC0_SE0/ACMP0_IN0/PTA0/FTM2_CH1/LPI2C0_SCLS/FXIO_D2/FTM2_QD_PHA/LPUART0_CTS/TRGMUX_OUT3}
   - {pin_num: '81', peripheral: GPIOC, signal: 'GPIO, 6', pin_signal: ADC1_SE4/PTC6/LPUART1_RX/CAN1_RX/FTM3_CH2}
   - {pin_num: '80', peripheral: GPIOC, signal: 'GPIO, 7', pin_signal: ADC1_SE5/PTC7/LPUART1_TX/CAN1_TX/FTM3_CH3}
-  - {pin_num: '53', peripheral: GPIOB, signal: 'GPIO, 1', pin_signal: ADC0_SE5/ADC1_SE15/PTB1/LPUART0_TX/LPSPI0_SOUT/TCLK0}
   - {pin_num: '84', peripheral: LPSPI0, signal: PCS2, pin_signal: ADC1_SE11/ACMP0_IN6/PTE6/LPSPI0_PCS2/FTM3_CH7/LPUART1_RTS}
   - {pin_num: '85', peripheral: GPIOE, signal: 'GPIO, 2', pin_signal: ADC1_SE10/PTE2/LPSPI0_SOUT/LPTMR0_ALT3/FTM3_CH6/PWT_IN3/LPUART1_CTS}
   - {pin_num: '89', peripheral: CAN1, signal: TX, pin_signal: ADC2_SE4/PTA13/FTM1_CH7/CAN1_TX/LPI2C1_SCLS}
@@ -95,6 +94,7 @@ BOARD_InitPins:
   - {pin_num: '33', peripheral: GPIOD, signal: 'GPIO, 5', pin_signal: PTD5/FTM2_CH3/LPTMR0_ALT2/FTM2_FLT1/PWT_IN2/TRGMUX_IN7}
   - {pin_num: '9', peripheral: CAN0, signal: RX, pin_signal: PTE4/BUSOUT/FTM2_QD_PHB/FTM2_CH2/CAN0_RX/FXIO_D6/EWM_OUT_b}
   - {pin_num: '8', peripheral: CAN0, signal: TX, pin_signal: PTE5/TCLK2/FTM2_QD_PHA/FTM2_CH3/CAN0_TX/FXIO_D7/EWM_IN}
+  - {pin_num: '53', peripheral: GPIOB, signal: 'GPIO, 1', pin_signal: ADC0_SE5/ADC1_SE15/PTB1/LPUART0_TX/LPSPI0_SOUT/TCLK0}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
