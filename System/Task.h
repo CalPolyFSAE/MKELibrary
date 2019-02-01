@@ -74,7 +74,9 @@ public:
 
 		if (ticks > 0) {
 			ticks--;
-		} else if (ticks == 0) {
+		}
+
+		if (ticks == 0) {
 			ready = true;
 			ticks = period;
 		}
