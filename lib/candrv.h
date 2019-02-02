@@ -36,7 +36,7 @@
 #include "Event.h"
 
 namespace BSP {
-namespace CAN {
+namespace can {
 
 template<typename T>
 T byteSwap(const T& val);

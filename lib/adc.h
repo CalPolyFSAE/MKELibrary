@@ -6,7 +6,7 @@
 #include "fsl_clock.h"
 
 namespace BSP {
-namespace ADC {
+namespace adc {
 
 typedef void (*adc_callback_t)(ADC_Type *, void *);
 

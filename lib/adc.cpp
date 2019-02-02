@@ -1,7 +1,7 @@
 #include "MKE18F16.h"
 #include "adc.h"
 
-using namespace BSP::ADC;
+using namespace BSP::adc;
 
 // constructs ADC driver
 ADC::ADC(const adc_config_t *config){

@@ -9,15 +9,15 @@
 #include "fsl_flexcan.h"
 #include "fsl_clock.h"
 
-using namespace BSP::CAN;
+using namespace BSP::can;
 
 template<>
-uint16_t BSP::CAN::byteSwap<uint16_t>(const uint16_t& val) {
+uint16_t BSP::can::byteSwap<uint16_t>(const uint16_t& val) {
 	return (val >> 8) | (val << 8);
 }
 
 template<>
-uint32_t BSP::CAN::byteSwap<uint32_t>(const uint32_t& val) {
+uint32_t BSP::can::byteSwap<uint32_t>(const uint32_t& val) {
 	return uint32_t(byteSwap<uint16_t>(val) << 16) | byteSwap<uint16_t>(val >> 16);
 }
 
