@@ -50,6 +50,7 @@ private:
 	uint16_t period;
 	uint16_t deadline;
 	volatile bool ready = false;
+	volatile bool error = false;
 	volatile uint16_t ticks;// timer
 	volatile int16_t overrunTimer = 0;// timer, how long since task became active
 
@@ -70,6 +71,8 @@ public:
 	void decrementTick() {
 		if (ready) {
 			overrunTimer++;
+			if(overrunTimer >= deadline)
+				error = true;
 		}
 
 		if (ticks > 0) {
@@ -79,21 +82,21 @@ public:
 		if (ticks == 0) {
 			ready = true;
 			ticks = period;
+			overrunTimer = 0;
 		}
 	}
 
 	void operator()() {
 		Task::operator ()();
-		reset();
-	}
-
-	void reset() {
 		ready = false;
-		overrunTimer = 0;
 	}
 
 	bool isReady() const {
 		return ready;
+	}
+
+	bool isError() const {
+		return error;
 	}
 
 	uint16_t getTicks() const {

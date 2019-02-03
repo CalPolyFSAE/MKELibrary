@@ -95,12 +95,12 @@ static void TestTasks() {
 	GPIO_PinWrite(GPIOC, 13U, 1);
 	GPIOC->PDDR |= (1U << 13);
 
-	SysTick_Config(6000);
+	SysTick_Config(12000);
 
 	a.setOnErrorHandler(scheduler::OnErrorHandler_t::create<OnErrorHandler>());
 	a.addTask(System::TaskPeriodic(Task, 1, 4, 20));
 	a.addTask(System::TaskPeriodic(Task1, 2, 50, 30));
-	//a.addTask(System::TaskPeriodic(Task2, 3, 50, 40));
+	a.addTask(System::TaskPeriodic(Task2, 3, 1000, 30));
 
 	a.start();
 
