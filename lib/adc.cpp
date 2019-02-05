@@ -49,21 +49,6 @@ void ADC::config_base(ADC_Type *base, adc12_config_t *config){
 	ADC12_Init(base, &(ADC::config[index].base_config));
 }
 
-// configures an ADC channel and binds it to the specified group
-// g: same comment here as in config_base() about mixing custom and fsl config types
-//
-// g: also: maybe this function shouldn't call ADC12_SetChannelConfig when the channel
-// g: is 0, as it automatically triggers a conversion in that case. 
-// g: It might be misleading for a config function to do that.
-void ADC::config_channel(ADC_Type *base, uint32_t group, adc12_channel_config_t *config){
-	uint32_t index = get_index(base);
-
-	if(config)
-		ADC::config[index].channel_config = *config;
-
-	ADC12_SetChannelConfig(base, group, &(ADC::config[index].channel_config));
-}
-
 // configures the hardware compare for an ADC
 void ADC::config_hardware_compare(ADC_Type *base, adc12_hardware_compare_config_t *config){
 	uint32_t index = get_index(base);
@@ -149,20 +134,12 @@ status_t ADC::calibrate(ADC_Type *base){
 	return(ADC12_DoAutoCalibration(base));
 }
 
-// reads data from the conversion register of the specified group
-// g: By my understanding this will only work if group = 0. Otherwise, because other
-// g: groups only do hardware triggering, I think it'll hang in the while loop.
-// g: It might be a cleaner workflow to pass the pin number in here, instead of the
-// g: group? I can't picture a scenario where group != 0 when calling this.
-uint32_t ADC::read(ADC_Type *base, uint32_t group){
+// reads data from the specified ADC channel
+uint32_t ADC::read(ADC_Type *base, uint32_t ch){
 	uint32_t index = get_index(base);
-
-	if(!(ADC::config[index].hardware_trigger))
-		ADC12_SetChannelConfig(base, group, &(ADC::config[index].channel_config));
-
-    while(!(ADC12_GetChannelStatusFlags(base, group) & kADC12_ChannelConversionCompletedFlag)){}
-
-	return(ADC12_GetChannelConversionValue(base, group));
+	ADC::config[index].channel_config = {ch, false};
+    while(!(ADC12_GetChannelStatusFlags(base, 0) & kADC12_ChannelConversionCompletedFlag)){}
+	return(ADC12_GetChannelConversionValue(base, 0));
 }
 
 // maps each ADC base to an array index
