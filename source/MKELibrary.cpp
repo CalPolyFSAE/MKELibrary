@@ -15,7 +15,6 @@
 void tick(void){
 }
 
-
 using namespace BSP;
 
 int main(void) {
