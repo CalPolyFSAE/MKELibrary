@@ -5,8 +5,6 @@ using namespace BSP::adc;
 
 // constructs ADC driver
 ADC::ADC(const adc_config_t *config){
-    // g: is this wise to have the same config for all three?
-    // g: i think at least having discrete callbacks is useful.
 	if(config){
 		ADC::config[0] = *config;
 		ADC::config[1] = *config;
@@ -16,6 +14,24 @@ ADC::ADC(const adc_config_t *config){
 		ADC::get_default_config(&(ADC::config[1]));
 		ADC::get_default_config(&(ADC::config[2]));
 	}
+
+	ADC::config_base(ADC0, &(ADC::config[0].base_config));
+	ADC::config_hardware_compare(ADC0, &(ADC::config[0].hardware_compare_config));
+	ADC::set_hardware_average(ADC0, ADC::config[0].hardware_average_mode);
+	ADC::enable_dma(ADC0, ADC::config[0].dma);
+	ADC::enable_hardware_trigger(ADC0, ADC::config[0].hardware_trigger);
+
+	ADC::config_base(ADC1, &(ADC::config[1].base_config));
+	ADC::config_hardware_compare(ADC1, &(ADC::config[1].hardware_compare_config));
+	ADC::set_hardware_average(ADC1, ADC::config[1].hardware_average_mode);
+	ADC::enable_dma(ADC1, ADC::config[1].dma);
+	ADC::enable_hardware_trigger(ADC1, ADC::config[1].hardware_trigger);
+
+	ADC::config_base(ADC2, &(ADC::config[2].base_config));
+	ADC::config_hardware_compare(ADC2, &(ADC::config[2].hardware_compare_config));
+	ADC::set_hardware_average(ADC2, ADC::config[2].hardware_average_mode);
+	ADC::enable_dma(ADC2, ADC::config[2].dma);
+	ADC::enable_hardware_trigger(ADC2, ADC::config[2].hardware_trigger);
 }
 
 // routine ADC procedures
