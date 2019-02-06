@@ -2,6 +2,7 @@
 #define SPI_H_
 
 #include "Service.h"
+#include "gpio.h"
 #include "fsl_lpspi.h"
 
 /* 
@@ -26,6 +27,8 @@
  * 
  */
 
+
+
 namespace BSP{
 
 namespace spi{
@@ -36,11 +39,8 @@ struct spi_config {
 
     // Callback functions
     callback callbacks[2] = {NULL, NULL};
-    // A good choice for this is kCLOCK_IpSrcFircAsync
-    // But really, make sure your clock mux is configured correctly
-    // Just use the IDE for that for now
-    // These defaults just keep you honest. You can't make a handle passing these
-    clock_ip_src_t clocks[2] = {kCLOCK_IpSrcNoneOrExt, kCLOCK_IpSrcNoneOrExt};
+    // Clocks; default behavior invokes kCLOCK_IpSrcFircAsync
+    clock_ip_src_t clocks[2] = {kCLOCK_IpSrcFircAsync, kCLOCK_IpSrcFircAsync};
 
 };
 
@@ -48,15 +48,12 @@ struct spi_config {
 class SPI final : public StaticService<SPI, const spi_config*> {
 public:
 
-    
     void tick() override;
 
     struct masterConfig {
 
         uint32_t baudRate = 500000;
         // Number of bits during one Frame, or set of clock pulses
-        // bounty: someone write an explanation of how exactly frame lengths work.
-        // It is bizzarre
         uint32_t frameLength = 8;
 
         // SPI Mode; clock polarity/phase, chip select polarity, and bit direction
@@ -77,8 +74,12 @@ public:
         lpspi_pin_config_t pincfg = kLPSPI_SdiInSdoOut;
         lpspi_data_out_config_t datacfg = kLpspiDataOutRetained;
 
-    };
+        // Defaults for CS
+        gpio::GPIO_port csport = gpio::PortA;
+        uint8_t cspin = 0;
 
+    };
+/*
     struct slaveConfig {
 
         // Absolutely no idea what this means in a slave context.
@@ -98,30 +99,55 @@ public:
         lpspi_pin_config_t pincfg = kLPSPI_SdiInSdoOut;
         lpspi_data_out_config_t datacfg = kLpspiDataOutRetained;
     };
-
+*/
     SPI(const spi_config*);
 
-
-    void initSlave(uint8_t no, slaveConfig*);
+    // void initSlave(uint8_t no, slaveConfig*);
     void initMaster(uint8_t no, masterConfig*);
 
     // Arguments: SPI module; data buffer; expected data length
     // Returns state of linked FSL function. 0 is good, not 0 is not good.
-    uint32_t mastertx(uint8_t no, uint8_t* data, uint8_t size);
+    uint32_t mastertx(uint8_t no, uint8_t* txdata, uint8_t* rxdata, uint8_t size);
+    
+    // Phasing out
     uint32_t masterrx(uint8_t no, uint8_t* data, uint8_t size);
-    uint32_t slaverx(uint8_t no, uint8_t* data, uint8_t size);
-    uint32_t slavetx(uint8_t no, uint8_t* data, uint8_t size);
 
-private:
+    // uint32_t slaverx(uint8_t no, uint8_t* data, uint8_t size);
+    // uint32_t slavetx(uint8_t no, uint8_t* data, uint8_t size);
+    uint8_t master[2] = {1, 1};
+
+    // General callback functions, need to be public to be called from ISR
+    void mastercb(uint8_t no);
+    void slavecb(uint8_t no);
+
+// private:
     SPI() = default;
 
-    // Handles for each SPI module. Void so as to allow master or slave handle pointers.
-    void* handles[2] = {NULL, NULL};
+    // Flags and info for use during transceiving
+    struct transceiver {
+        uint8_t txsize = 0;
+        uint8_t txcount = 0;
+        uint8_t rxcount = 0;
+        uint8_t rxwatermark = 0;
+        uint8_t transmitting = 0;
+        uint8_t* rx = NULL;
+        uint8_t* tx = NULL;
+        gpio::GPIO_port csport;
+        uint8_t cspin;
+        uint8_t csactive;
+    };
 
+
+    // Turn CS on or off
+    void cson(transceiver*);
+    void csoff(transceiver*);
+
+    struct transceiver xcvrs[2];
+
+    // Internal configuration
     callback callbacks[2] = {NULL, NULL};
     uint32_t freqs[2];
     LPSPI_Type* bases[2] = {LPSPI0, LPSPI1};
-    lpspi_which_pcs_t pcs[2] = {kLPSPI_Pcs0, kLPSPI_Pcs0};
 
 };
 

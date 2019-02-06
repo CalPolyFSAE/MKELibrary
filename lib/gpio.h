@@ -38,10 +38,10 @@ public:
 	}
 
     // Make pin an input
-    void in_dir(GPIO_port port, uint32_t pin);
+    static void in_dir(GPIO_port port, uint32_t pin);
 
     // Make pin an output
-    void out_dir(GPIO_port port, uint32_t pin);
+    static void out_dir(GPIO_port port, uint32_t pin);
 
     /*!
      * @brief Sets the output level of a GPIO pin to logic '1'.
@@ -49,7 +49,7 @@ public:
      * @param port 	GPIO port name
      * @param pin	GPIO pin number
      */
-    void set(GPIO_port port, uint32_t pin);
+    static void set(GPIO_port port, uint32_t pin);
 
     /*!
      * @brief Sets the output level of a GPIO pin to logic '0'.
@@ -57,7 +57,7 @@ public:
      * @param port 	GPIO port name
      * @param pin	GPIO pin number
      */
-    void clear(GPIO_port port, uint32_t pin);
+    static void clear(GPIO_port port, uint32_t pin);
 
     /*!
      * @brief Toggles the output logic of a GPIO pin.
@@ -65,7 +65,7 @@ public:
      * @param port 	GPIO port name
      * @param pin	GPIO pin number
      */
-    void toggle(GPIO_port port, uint32_t pin);
+    static void toggle(GPIO_port port, uint32_t pin);
 
     /*!
      * @brief Reads the current value of a GPIO pin.
@@ -74,7 +74,7 @@ public:
      * @param pin	GPIO pin number
      * @retval GPIO port input value
      */
-    uint8_t read(GPIO_port port, uint32_t pin);
+    static uint8_t read(GPIO_port port, uint32_t pin);
 
     /*!
      * @brief Sets the port PCR register.
