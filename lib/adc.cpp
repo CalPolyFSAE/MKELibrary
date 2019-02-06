@@ -5,8 +5,6 @@ using namespace BSP::adc;
 
 // constructs ADC driver
 ADC::ADC(const adc_config_t *config){
-    // g: is this wise to have the same config for all three?
-    // g: i think at least having discrete callbacks is useful.
 	if(config){
 		ADC::config[0] = *config;
 		ADC::config[1] = *config;
@@ -16,6 +14,24 @@ ADC::ADC(const adc_config_t *config){
 		ADC::get_default_config(&(ADC::config[1]));
 		ADC::get_default_config(&(ADC::config[2]));
 	}
+
+	ADC::config_base(ADC0, &(ADC::config[0].base_config));
+	ADC::config_hardware_compare(ADC0, &(ADC::config[0].hardware_compare_config));
+	ADC::set_hardware_average(ADC0, ADC::config[0].hardware_average_mode);
+	ADC::enable_dma(ADC0, ADC::config[0].dma);
+	ADC::enable_hardware_trigger(ADC0, ADC::config[0].hardware_trigger);
+
+	ADC::config_base(ADC1, &(ADC::config[1].base_config));
+	ADC::config_hardware_compare(ADC1, &(ADC::config[1].hardware_compare_config));
+	ADC::set_hardware_average(ADC1, ADC::config[1].hardware_average_mode);
+	ADC::enable_dma(ADC1, ADC::config[1].dma);
+	ADC::enable_hardware_trigger(ADC1, ADC::config[1].hardware_trigger);
+
+	ADC::config_base(ADC2, &(ADC::config[2].base_config));
+	ADC::config_hardware_compare(ADC2, &(ADC::config[2].hardware_compare_config));
+	ADC::set_hardware_average(ADC2, ADC::config[2].hardware_average_mode);
+	ADC::enable_dma(ADC2, ADC::config[2].dma);
+	ADC::enable_hardware_trigger(ADC2, ADC::config[2].hardware_trigger);
 }
 
 // routine ADC procedures
@@ -47,21 +63,6 @@ void ADC::config_base(ADC_Type *base, adc12_config_t *config){
 	}
 
 	ADC12_Init(base, &(ADC::config[index].base_config));
-}
-
-// configures an ADC channel and binds it to the specified group
-// g: same comment here as in config_base() about mixing custom and fsl config types
-//
-// g: also: maybe this function shouldn't call ADC12_SetChannelConfig when the channel
-// g: is 0, as it automatically triggers a conversion in that case. 
-// g: It might be misleading for a config function to do that.
-void ADC::config_channel(ADC_Type *base, uint32_t group, adc12_channel_config_t *config){
-	uint32_t index = get_index(base);
-
-	if(config)
-		ADC::config[index].channel_config = *config;
-
-	ADC12_SetChannelConfig(base, group, &(ADC::config[index].channel_config));
 }
 
 // configures the hardware compare for an ADC
@@ -149,20 +150,12 @@ status_t ADC::calibrate(ADC_Type *base){
 	return(ADC12_DoAutoCalibration(base));
 }
 
-// reads data from the conversion register of the specified group
-// g: By my understanding this will only work if group = 0. Otherwise, because other
-// g: groups only do hardware triggering, I think it'll hang in the while loop.
-// g: It might be a cleaner workflow to pass the pin number in here, instead of the
-// g: group? I can't picture a scenario where group != 0 when calling this.
-uint32_t ADC::read(ADC_Type *base, uint32_t group){
+// reads data from the specified ADC channel
+uint32_t ADC::read(ADC_Type *base, uint32_t ch){
 	uint32_t index = get_index(base);
-
-	if(!(ADC::config[index].hardware_trigger))
-		ADC12_SetChannelConfig(base, group, &(ADC::config[index].channel_config));
-
-    while(!(ADC12_GetChannelStatusFlags(base, group) & kADC12_ChannelConversionCompletedFlag)){}
-
-	return(ADC12_GetChannelConversionValue(base, group));
+	ADC::config[index].channel_config = {ch, false};
+    while(!(ADC12_GetChannelStatusFlags(base, 0) & kADC12_ChannelConversionCompletedFlag)){}
+	return(ADC12_GetChannelConversionValue(base, 0));
 }
 
 // maps each ADC base to an array index

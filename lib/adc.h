@@ -31,7 +31,6 @@ public:
     void tick() override;
 
     void config_base(ADC_Type *base, adc12_config_t *config);
-    void config_channel(ADC_Type *base, uint32_t group, adc12_channel_config_t *config);
     void config_hardware_compare(ADC_Type *base, adc12_hardware_compare_config_t *config);
 
     void set_callback(ADC_Type *base, adc_callback_t function);
@@ -48,7 +47,7 @@ public:
     uint32_t get_channel_status_flags(ADC_Type *base, uint32_t group);
 
     status_t calibrate(ADC_Type *base);
-    uint32_t read(ADC_Type *base, uint32_t group);
+    uint32_t read(ADC_Type *base, uint32_t ch);
 
 private:
 
