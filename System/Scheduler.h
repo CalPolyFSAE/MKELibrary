@@ -114,6 +114,115 @@ public:
 	}
 };
 
+
+/* 
+ * @brief Scheduler for inconsistent tasks
+ */
+
+template<typename TASK_TYPE, uint32_t TASK_COUNT>
+class SetFireScheduler : public Scheduler<TASK_TYPE, TASK_COUNT,
+    SetFireScheduler<TASK_TYPE, TASK_COUNT>> {
+
+private:
+    using Super = Scheduler<TASK_TYPE, TASK_COUNT, SetFireScheduler<TASK_TYPE, TASK_COUNT>>;
+
+public:
+
+   static_assert(std::is_base_of<TaskFinite, TASK_TYPE>::value, "TASK_TYPE must derive from TaskFinine");
+
+   SetFireScheduler();
+
+   // Decrement timers
+   void tick();
+
+   // Fire ready task
+   void doNextTask();
+
+   void SetTask(uint16_t id, uint32_t fires);
+
+   void SetAll(uint32_t fires);
+
+private:
+   uint16_t currentTask = 0;
+
+};
+
+template<typename TASK_TYPE, uint32_t TASK_COUNT>
+SetFireScheduler<TASK_TYPE, TASK_COUNT>::SetFireScheduler(){
+
+}
+
+template<typename TASK_TYPE, uint32_t TASK_COUNT>
+void SetFireScheduler<TASK_TYPE, TASK_COUNT>::SetTask(uint16_t id, uint32_t fires){
+    if(this->runState == Super::SchedulerState::Run) {
+        uint32_t taskCount = this->getTaskCount();
+        for(uint32_t st = 0; st < taskCount; st++) {
+            TaskFinite& t = this->taskList[st];
+            if(t.id == id) t.setFires(fires);
+        }
+    }
+}
+
+template<typename TASK_TYPE, uint32_t TASK_COUNT>
+void SetFireScheduler<TASK_TYPE, TASK_COUNT>::SetAll(uint32_t fires){
+    if(this->runState == Super::SchedulerState::Run) {
+        TaskFinite* task = nullptr;
+        uint32_t taskCount = this->getTaskCount();
+        for(uint32_t st = 0; st < taskCount; st++) {
+            TaskFinite& t = this->taskList[st];
+            t.setFires(fires);
+        }
+    }
+}
+
+template<typename TASK_TYPE, uint32_t TASK_COUNT>
+void SetFireScheduler<TASK_TYPE, TASK_COUNT>::tick(){
+    if(this->runState == Super::SchedulerState::Run) {
+        uint32_t taskCount = this->getTaskCount();
+        for(uint32_t st = 0; st < taskCount; st++) {
+            TaskFinite& t = this->taskList[st];
+            t.decrementTick();
+        }
+    }
+
+}
+
+template<typename TASK_TYPE, uint32_t TASK_COUNT>
+void SetFireScheduler<TASK_TYPE, TASK_COUNT>::doNextTask() {
+	if (this->runState == Super::SchedulerState::Run) {
+		TaskFinite* task = nullptr;
+		uint32_t taskCount = this->getTaskCount();
+
+		//printf("%u\n", currentTask);
+
+		// find task that needs to run
+		if (taskCount > 1) {
+			for (uint32_t st = (currentTask + 1) % taskCount; ;
+					st = (st + 1) % taskCount) {
+				TaskFinite& t = this->taskList[st];
+				//printf("task: %u, ticks: %u\n", st, t.getTicks());
+				if (t.isReady()) {
+					currentTask = st;
+					task = &this->taskList[st];
+					break;
+				}
+
+				// only wrap around once
+				if(st == currentTask)
+					break;
+			}
+		} else {
+			if(this->taskList[0].isReady())
+				task = &this->taskList[0];
+		}
+
+		if (task) {
+			(*task)();
+		} else {
+            (void)task;
+        }
+	}
+}
 /*
  * @brief Non-preemptive Periodic Task Scheduler
  */

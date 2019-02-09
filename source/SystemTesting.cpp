@@ -40,25 +40,27 @@ static void Task1() {
 
 static void Task2() {
 	//printf("Task2\n");
-	if (GPIO_PinRead(GPIOC, 13U)) {
-		GPIO_PinWrite(GPIOC, 13U, 0);
+	if (GPIO_PinRead(GPIOD, 15U)) {
+		GPIO_PinWrite(GPIOD, 15U, 0);
 	} else {
-		GPIO_PinWrite(GPIOC, 13U, 1);
+		GPIO_PinWrite(GPIOD, 15U, 1);
 	}
 }
 
 using scheduler = System::PeriodicScheduler<System::TaskPeriodic, 5>;
+using schedulerfinite = System::SetFireScheduler<System::TaskFinite, 5>;
 
 static void OnErrorHandler(uint16_t task) {
 	printf("Error task %u\n", task);
 }
 
 static scheduler a;
+static schedulerfinite b;
 
 // ISR function for Systick
 extern "C" {
 void SysTick_Handler(void) {
-	a.tick();
+	b.tick();
 }
 }
 
@@ -109,7 +111,31 @@ static void TestTasks() {
 	}
 }
 
+void Task3(){
+    b.SetTask(1, 3);
+}
+
+void TestTasksFinite() {
+	port_pin_config_t conf = {};
+	conf.driveStrength = kPORT_LowDriveStrength;
+	conf.mux = kPORT_MuxAsGpio;
+	conf.pullSelect = kPORT_PullDisable;
+	conf.lockRegister = kPORT_UnlockRegister;
+	conf.passiveFilterEnable = kPORT_PassiveFilterDisable;
+	PORT_SetPinConfig(PORTD, 15U, &conf);
+	GPIO_PinWrite(GPIOD, 15U, 1);
+	GPIOD->PDDR |= (1U << 15);
+	SysTick_Config(12000);
+
+    b.addTask(System::TaskFinite(Task2, 1, 500, 0));
+    b.addTask(System::TaskFinite(Task3, 2, 3000, 3));
+    b.start();
+	while(1) {
+		b.onFrame();
+	}
+}
+
 void TestSys() {
-	TestTasks();
+	TestTasksFinite();
 }
 
