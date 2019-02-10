@@ -45,11 +45,74 @@ public:
 
 };
 
+struct TaskFinite : public Task {
+private:
+    uint32_t delay;
+    volatile uint32_t fires;
+    volatile bool ready = false;
+    volatile bool error = false;
+    volatile uint32_t ticks;
+    volatile uint32_t overrunTimer = 0;
+
+public:
+    TaskFinite() : delay(0), fires(0), ticks(0) {
+
+    }
+
+    TaskFinite(entryPoint_t e, uint16_t id, uint32_t delay, uint32_t fires) : Task(id, e), 
+        delay(delay), fires(fires), ticks(delay) {
+
+    }
+
+    void decrementTick() {
+        if(ready){
+            overrunTimer++;
+        }
+        if(ticks > 0){
+            ticks--;
+        }
+        else if(ticks == 0){
+            if(fires){
+                ready = true;
+                fires--;
+                ticks = delay;
+            }
+        }
+    }
+
+    void operator()(){
+        Task::operator()();
+        ready = false;
+    }
+
+	bool isReady() const {
+		return ready;
+	}
+
+	uint16_t getTicks() const {
+		return ticks;
+	}
+
+	uint16_t getDelay() const {
+		return delay;
+	}
+
+	uint16_t getOverrun() const {
+		return overrunTimer;
+	}
+
+    void setFires(uint32_t f){
+        fires = f;
+        if(ticks == 0) ticks = delay;
+    }
+};
+
 struct TaskPeriodic : public Task {
 private:
 	uint16_t period;
 	uint16_t deadline;
 	volatile bool ready = false;
+	volatile bool error = false;
 	volatile uint16_t ticks;// timer
 	volatile int16_t overrunTimer = 0;// timer, how long since task became active
 
@@ -70,28 +133,32 @@ public:
 	void decrementTick() {
 		if (ready) {
 			overrunTimer++;
+			if(overrunTimer >= deadline)
+				error = true;
 		}
 
 		if (ticks > 0) {
 			ticks--;
-		} else if (ticks == 0) {
+		}
+
+		if (ticks == 0) {
 			ready = true;
 			ticks = period;
+			overrunTimer = 0;
 		}
 	}
 
 	void operator()() {
 		Task::operator ()();
-		reset();
-	}
-
-	void reset() {
 		ready = false;
-		overrunTimer = 0;
 	}
 
-	bool isReady() {
+	bool isReady() const {
 		return ready;
+	}
+
+	bool isError() const {
+		return error;
 	}
 
 	uint16_t getTicks() const {
