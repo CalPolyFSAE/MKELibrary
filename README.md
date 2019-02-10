@@ -1,3 +1,5 @@
-# MKELibrary
+# MKE18F Board Support Package
 
-Read the [wiki](https://github.com/CalPolyFSAE/MKELibrary/wiki)
+## Release v1.0
+
+Read the doc/
