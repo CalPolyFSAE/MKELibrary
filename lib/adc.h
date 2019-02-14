@@ -25,7 +25,6 @@ typedef struct adc_config {
 
 class ADC final : public StaticService<ADC, const adc_config_t *> {
 public:
-
     ADC(const adc_config_t *);
 
     void tick() override;

@@ -16,22 +16,13 @@ ADC::ADC(const adc_config_t *config){
 	}
 
 	ADC::config_base(ADC0, &(ADC::config[0].base_config));
-	ADC::config_hardware_compare(ADC0, &(ADC::config[0].hardware_compare_config));
-	ADC::set_hardware_average(ADC0, ADC::config[0].hardware_average_mode);
-	ADC::enable_dma(ADC0, ADC::config[0].dma);
-	ADC::enable_hardware_trigger(ADC0, ADC::config[0].hardware_trigger);
+	if(ADC::calibrate(ADC0) != kStatus_Success) assert(0);
 
 	ADC::config_base(ADC1, &(ADC::config[1].base_config));
-	ADC::config_hardware_compare(ADC1, &(ADC::config[1].hardware_compare_config));
-	ADC::set_hardware_average(ADC1, ADC::config[1].hardware_average_mode);
-	ADC::enable_dma(ADC1, ADC::config[1].dma);
-	ADC::enable_hardware_trigger(ADC1, ADC::config[1].hardware_trigger);
+	if(ADC::calibrate(ADC1) != kStatus_Success) assert(0);
 
 	ADC::config_base(ADC2, &(ADC::config[2].base_config));
-	ADC::config_hardware_compare(ADC2, &(ADC::config[2].hardware_compare_config));
-	ADC::set_hardware_average(ADC2, ADC::config[2].hardware_average_mode);
-	ADC::enable_dma(ADC2, ADC::config[2].dma);
-	ADC::enable_hardware_trigger(ADC2, ADC::config[2].hardware_trigger);
+	if(ADC::calibrate(ADC2) != kStatus_Success) assert(0);
 }
 
 // routine ADC procedures
@@ -153,8 +144,14 @@ status_t ADC::calibrate(ADC_Type *base){
 // reads data from the specified ADC channel
 uint32_t ADC::read(ADC_Type *base, uint32_t ch){
 	uint32_t index = get_index(base);
+
 	ADC::config[index].channel_config = {ch, false};
+
+	if(!(ADC::config[index].hardware_trigger))
+		ADC12_SetChannelConfig(base, 0, &(ADC::config[index].channel_config));
+
     while(!(ADC12_GetChannelStatusFlags(base, 0) & kADC12_ChannelConversionCompletedFlag)){}
+
 	return(ADC12_GetChannelConversionValue(base, 0));
 }
 
