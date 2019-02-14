@@ -39,17 +39,13 @@
 #include "clock_config.h"
 #include "MKE18F16.h"
 #include "fsl_debug_console.h"
-/* TODO: insert other include files here. */
 
-/* TODO: insert other definitions and declarations here. */
-
-extern void TestSys();
-
+#include "canlighttests.h"
 
 void tick(void){
-	//TestService::StaticClass().tick();
-	//GPIO::StaticClass().tick();
+
 }
+
 
 /*
  * @brief   Application entry point.
@@ -62,19 +58,7 @@ int main(void) {
   	/* Init FSL debug console. */
 	BOARD_InitDebugConsole();
 
-    PRINTF("Init0 complete\n");
-
-    //TestService::ConstructStatic(1);
-
-    //GPIO::ConstructStatic();
-
-    //BSP::CAN::can_config ar;
-    //BSP::CAN::CAN_drv::ConstructStatic(&ar);
-
-    TestSys();
-
     while(1) {
-        tick();
     }
     return 0;
 }
