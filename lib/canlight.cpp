@@ -23,7 +23,8 @@ void CANlight::mbinterrupt(uint8_t bus){
             flexcan_frame_t* rxbuffer = bus ? &rxbuffer1 : &rxbuffer0;
             FLEXCAN_ReadRxMb(c, i, rxbuffer);
             // Set unread data flag
-            unread = 1;
+            if(bus) unread1 = 1;
+            else unread0 = 1;
             // Break out of for loop
             i = 16;
         }
@@ -105,7 +106,8 @@ CANlight::frame CANlight::readrx(uint8_t bus){
 	f.data[5] = rxbuffer.dataByte5;
 	f.data[6] = rxbuffer.dataByte6;
 	f.data[7] = rxbuffer.dataByte7;
-	unread = 0;
+    if(bus) unread1 = 0;
+    else unread0 = 0;
 	return f;
 }
 

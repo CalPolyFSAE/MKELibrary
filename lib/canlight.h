@@ -59,7 +59,8 @@ public:
     void mbinterrupt(uint8_t bus);
 
     // Public flag for unread rx data
-    uint8_t unread = 0;
+    uint8_t unread0 = 0;
+    uint8_t unread1 = 0;
 
 private:
 
