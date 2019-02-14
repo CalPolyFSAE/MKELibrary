@@ -26,6 +26,7 @@ public:
         uint8_t enLoopback = 0;
         uint8_t enSelfWake = 0;
         uint8_t enIndividualMask = 0;
+        void (*callback)(void) = NULL;
 
     } canx_config;
 
@@ -50,9 +51,15 @@ public:
     // Transmit frame
     uint8_t tx(uint8_t bus, frame f);
 
+    //
+    frame readrx(uint8_t bus);
+
     // Callback for interrupt handlers,
     // don't ever call this function
     void mbinterrupt(uint8_t bus);
+
+    // Public flag for unread rx data
+    uint8_t unread = 0;
 
 private:
 
@@ -66,7 +73,10 @@ private:
     canlight_config driverConfig;
     uint32_t clockhz = 0;
 
-    flexcan_frame_t rxbuffer;
+    flexcan_frame_t rxbuffer0;
+    flexcan_frame_t rxbuffer1;
+
+    void (*callback[2])(void) = {NULL, NULL};
 
 };
 

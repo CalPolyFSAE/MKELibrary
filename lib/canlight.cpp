@@ -20,17 +20,25 @@ void CANlight::mbinterrupt(uint8_t bus){
             // Acknowledge the correct one
             c->IFLAG1 |= 1<<i;
             // Read incoming data
-            FLEXCAN_ReadRxMb(c, i, &rxbuffer);
+            flexcan_frame_t* rxbuffer = bus ? &rxbuffer1 : &rxbuffer0;
+            FLEXCAN_ReadRxMb(c, i, rxbuffer);
+            // Set unread data flag
+            unread = 1;
             // Break out of for loop
             i = 16;
         }
     }
     
+    if(callback[bus]) callback[bus]();
+
     __DSB(); // for good luck
 }
 
 // Initialize FLEXCAN driver
 uint8_t CANlight::init(uint8_t bus, canx_config* conf){
+
+	callback[bus] = conf->callback;
+
     flexcan_config_t fconf;
 
     FLEXCAN_GetDefaultConfig(&fconf);
@@ -80,6 +88,25 @@ uint8_t CANlight::tx(uint8_t bus, frame f){
 
     return 0;
 
+}
+
+CANlight::frame CANlight::readrx(uint8_t bus){
+	frame f;
+	flexcan_frame_t rxbuffer = bus ? rxbuffer1 : rxbuffer0;
+	f.ext = rxbuffer.format;
+	f.rtr = rxbuffer.type;
+	f.id = rxbuffer.id;
+	f.dlc = rxbuffer.length;
+	f.data[0] = rxbuffer.dataByte0;
+	f.data[1] = rxbuffer.dataByte1;
+	f.data[2] = rxbuffer.dataByte2;
+	f.data[3] = rxbuffer.dataByte3;
+	f.data[4] = rxbuffer.dataByte4;
+	f.data[5] = rxbuffer.dataByte5;
+	f.data[6] = rxbuffer.dataByte6;
+	f.data[7] = rxbuffer.dataByte7;
+	unread = 0;
+	return f;
 }
 
 void CANlight::tick(){
