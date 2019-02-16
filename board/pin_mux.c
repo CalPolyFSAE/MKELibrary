@@ -7,11 +7,11 @@
 /*
  * TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 !!GlobalInfo
-product: Pins v4.1
+product: Pins v5.0
 processor: MKE18F512xxx16
 package_id: MKE18F512VLH16
 mcu_data: ksdk2_0
-processor_version: 4.0.0
+processor_version: 5.0.0
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -107,15 +107,15 @@ BOARD_InitPins:
  * END ****************************************************************************************************************/
 void BOARD_InitPins(void)
 {
-    /* Clock Control: 0x01u */
+    /* Clock Control: Clock enabled */
     CLOCK_EnableClock(kCLOCK_PortA);
-    /* Clock Control: 0x01u */
+    /* Clock Control: Clock enabled */
     CLOCK_EnableClock(kCLOCK_PortB);
-    /* Clock Control: 0x01u */
+    /* Clock Control: Clock enabled */
     CLOCK_EnableClock(kCLOCK_PortC);
-    /* Clock Control: 0x01u */
+    /* Clock Control: Clock enabled */
     CLOCK_EnableClock(kCLOCK_PortD);
-    /* Clock Control: 0x01u */
+    /* Clock Control: Clock enabled */
     CLOCK_EnableClock(kCLOCK_PortE);
 
     /* PORTA0 (pin 50) is configured as LPUART0_CTS */

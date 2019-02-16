@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding= "UTF-8" ?>
-<configuration name="MKE18F512xxx16" version="1.4" xsi:schemaLocation="http://mcuxpresso.nxp.com/XSD/mex_configuration_1.4 http://mcuxpresso.nxp.com/XSD/mex_configuration_1.4.xsd" uuid="e3cce8c2-98fe-4dbd-9ddb-e17fdf345d42" xmlns="http://mcuxpresso.nxp.com/XSD/mex_configuration_1.4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<configuration name="MKE18F512xxx16" version="1.5" xsi:schemaLocation="http://mcuxpresso.nxp.com/XSD/mex_configuration_1.5 http://mcuxpresso.nxp.com/XSD/mex_configuration_1.5.xsd" uuid="e3cce8c2-98fe-4dbd-9ddb-e17fdf345d42" xmlns="http://mcuxpresso.nxp.com/XSD/mex_configuration_1.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <common>
       <processor>MKE18F512xxx16</processor>
       <package>MKE18F512VLH16</package>
+      <board></board>
       <mcu_data>ksdk2_0</mcu_data>
       <cores selected="core0">
          <core name="Cortex-M4F" id="core0" description="M4 core"/>
@@ -15,12 +16,16 @@
    </preferences>
    <tools>
       <pins name="Pins" version="5.0" enabled="true" update_project_code="true">
+         <generated_project_files>
+            <file path="board/pin_mux.c" update_enabled="true"/>
+            <file path="board/pin_mux.h" update_enabled="true"/>
+         </generated_project_files>
          <pins_profile>
-            <processor_version>4.0.0</processor_version>
+            <processor_version>5.0.0</processor_version>
          </pins_profile>
          <functions_list>
             <function name="BOARD_InitPins">
-               <description>Configures pin routing and optionally pin electrical features.&amp;lt;br/&amp;gt;</description>
+               <description>Configures pin routing and optionally pin electrical features.</description>
                <options>
                   <callFromInitBoot>true</callFromInitBoot>
                   <coreID>core0</coreID>
@@ -166,9 +171,13 @@
             </function>
          </functions_list>
       </pins>
-      <clocks name="Clocks" version="4.1" enabled="true" update_project_code="true">
+      <clocks name="Clocks" version="5.0" enabled="true" update_project_code="true">
+         <generated_project_files>
+            <file path="board/clock_config.c" update_enabled="true"/>
+            <file path="board/clock_config.h" update_enabled="true"/>
+         </generated_project_files>
          <clocks_profile>
-            <processor_version>4.0.0</processor_version>
+            <processor_version>5.0.0</processor_version>
          </clocks_profile>
          <clock_configurations>
             <clock_configuration name="BOARD_BootClockRUN">
@@ -255,6 +264,7 @@
          </clock_configurations>
       </clocks>
       <periphs name="Peripherals" version="4.1" enabled="true" update_project_code="true">
+         <generated_project_files/>
          <peripherals_profile>
             <processor_version>N/A</processor_version>
          </peripherals_profile>

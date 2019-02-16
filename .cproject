@@ -153,12 +153,6 @@
 									<listOptionValue builtIn="false" value="../source"/>
 									<listOptionValue builtIn="false" value="../"/>
 									<listOptionValue builtIn="false" value="../startup"/>
-									<listOptionValue builtIn="false" value="/usr/local/mcuxpressoide-10.2.1_795/ide/tools/arm-none-eabi/include/c++/7.2.1"/>
-									<listOptionValue builtIn="false" value="/usr/local/mcuxpressoide-10.2.1_795/ide/tools/arm-none-eabi/include/c++/7.2.1/arm-none-eabi"/>
-									<listOptionValue builtIn="false" value="/usr/local/mcuxpressoide-10.2.1_795/ide/tools/arm-none-eabi/include/c++/7.2.1/backward"/>
-									<listOptionValue builtIn="false" value="/usr/local/mcuxpressoide-10.2.1_795/ide/tools/lib/gcc/arm-none-eabi/7.2.1/include"/>
-									<listOptionValue builtIn="false" value="/usr/local/mcuxpressoide-10.2.1_795/ide/tools/lib/gcc/arm-none-eabi/7.2.1/include-fixed"/>
-									<listOptionValue builtIn="false" value="/usr/local/mcuxpressoide-10.2.1_795/ide/tools/arm-none-eabi/include"/>
 									<listOptionValue builtIn="false" value="../lib"/>
 									<listOptionValue builtIn="false" value="../System"/>
 								</option>
@@ -272,7 +266,7 @@
 								<option id="com.crt.advproject.link.config.2133774706" name="Obsolete (Config)" superClass="com.crt.advproject.link.config"/>
 								<option id="com.crt.advproject.link.store.26491837" name="Obsolete (Store)" superClass="com.crt.advproject.link.store"/>
 							</tool>
-							<tool id="com.crt.advproject.tool.debug.debug.1193034505" name="MCU Debugger" superClass="com.crt.advproject.tool.debug.debug"/>
+							<tool id="com.crt.advproject.tool.debug.debug.86070088" name="MCU Debugger" superClass="com.crt.advproject.tool.debug.debug"/>
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
@@ -567,7 +561,7 @@
 								<option id="com.crt.advproject.link.config.1769620741" name="Obsolete (Config)" superClass="com.crt.advproject.link.config"/>
 								<option id="com.crt.advproject.link.store.725321903" name="Obsolete (Store)" superClass="com.crt.advproject.link.store"/>
 							</tool>
-							<tool id="com.crt.advproject.tool.debug.release.519302619" name="MCU Debugger" superClass="com.crt.advproject.tool.debug.release"/>
+							<tool id="com.crt.advproject.tool.debug.release.225873756" name="MCU Debugger" superClass="com.crt.advproject.tool.debug.release"/>
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
