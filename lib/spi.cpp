@@ -216,6 +216,7 @@ void SPI::mastercb(uint8_t no){
        x->transmitting = 0;
        LPSPI_DisableInterrupts(bases[no], kLPSPI_AllInterruptEnable);
        csoff(x);
+       if(callbacks[no]) callbacks[no]();
     }
 
    __DSB();

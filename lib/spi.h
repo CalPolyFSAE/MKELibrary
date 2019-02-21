@@ -33,7 +33,7 @@ namespace BSP{
 
 namespace spi{
 
-typedef void (*callback)(LPSPI_Type*, void*, status_t, void*);
+typedef void (*callback)(void);
 
 struct spi_config {
 
@@ -110,7 +110,7 @@ public:
     uint32_t mastertx(uint8_t no, uint8_t* txdata, uint8_t* rxdata, uint8_t size);
     
     // Phasing out
-    uint32_t masterrx(uint8_t no, uint8_t* data, uint8_t size);
+    // uint32_t masterrx(uint8_t no, uint8_t* data, uint8_t size);
 
     // uint32_t slaverx(uint8_t no, uint8_t* data, uint8_t size);
     // uint32_t slavetx(uint8_t no, uint8_t* data, uint8_t size);
