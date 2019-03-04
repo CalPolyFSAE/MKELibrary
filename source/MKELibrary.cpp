@@ -5,14 +5,15 @@
 #include "clock_config.h"
 #include "MKE18F16.h"
 #include "fsl_debug_console.h"
+#include "uarttests.h"
 
 using namespace BSP;
 
-#include "canlighttests.h"
 
 void tick(void){
 
 }
+
 
 int main(void) {
     BOARD_InitBootPins();
@@ -20,6 +21,7 @@ int main(void) {
     BOARD_InitBootPeripherals();
 	BOARD_InitDebugConsole();
 
+	uarttest();
     while(1) {
     }
     return 0;
