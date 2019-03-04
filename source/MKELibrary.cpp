@@ -21,7 +21,6 @@ int main(void) {
     BOARD_InitBootPeripherals();
 	BOARD_InitDebugConsole();
 
-	uarttest();
     while(1) {
     }
     return 0;
