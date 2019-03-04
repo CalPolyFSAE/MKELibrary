@@ -2,7 +2,7 @@
  * can.cpp
  *
  *  Created on: Oct 27, 2018
- *      Author: oneso
+ *      Author: HB
  */
 
 #include <candrv.h>
@@ -21,12 +21,13 @@ uint32_t BSP::can::byteSwap<uint32_t>(const uint32_t& val) {
 	return uint32_t(byteSwap<uint16_t>(val) << 16) | byteSwap<uint16_t>(val >> 16);
 }
 
-// controller configuration information
+// @brief Hidden internal struct to hold CAN controller information specific to fsl_can
 struct CAN_drv::Controller_data {
-	Controller_data(const Controller_config& config) :
-			flexcanHandle(), config(config) {
+	Controller_data(CAN_Type* base, const Controller_config& config) :
+			base{base}, flexcanHandle{}, config{config} {
 
 	}
+	CAN_Type* base;
 	flexcan_handle_t flexcanHandle;
 	Controller_config config;
 };
@@ -34,57 +35,73 @@ struct CAN_drv::Controller_data {
 // fsl_can driver function for callback
 static void flexcan_callback(CAN_Type* base, flexcan_handle_t* handle, status_t status, uint32_t result, void* userData);
 
-
-struct MB_info::Frame_data {
-	flexcan_handle_t* handle;
-	::flexcan_frame_t fsl_frame = {};
-	Frame_data(flexcan_handle_t* handle) : handle(handle) {
-
-	}
+struct MB_info::Config_data {
+	CAN_Type* base = nullptr;
+	flexcan_handle_t* flexcanHandle = {};
 };
 
-MB_info::MB_info(Controller bus, uint8_t mb_id) : mb_id(mb_id), bus(bus) {
+// @brief Hidden internal struct to hold fsl_can specific data structures
+struct MB_info::Frame_data {
+	::flexcan_frame_t fsl_frame = {};
+
+	flexcan_rx_mb_config_t rxTransfer = {};
+	flexcan_mb_transfer_t txTransfer = {};
+
+	Frame_data() = default;
+};
+
+MB_info::MB_info(const Config_data* conf, uint8_t mb_id) : mb_id{mb_id} {
     // Make sure id is sane
     assert(mb_id < number_MBs);
 
-    // Get relevant configuration from CAN driver
-	CAN_drv::Controller_data* conf =
-			(bus == Controller::bus_CAN0) ?
-					CAN_drv::StaticClass().CAN0_config :
-					CAN_drv::StaticClass().CAN1_config;
-
-	flexcan_handle_t* handle = &(conf->flexcanHandle);
+    assert(conf);
 
     // Associate handle with MB
-	frame_data = new Frame_data(handle);
+	// TODO: better memory allocation
+	frame_data = new Frame_data();
+	config_data = new Config_data(*conf);
 }
 
 MB_info::~MB_info() {
 	delete frame_data;
 }
 
-void MB_info::reset() {
-	CAN_Type* base = bus == Controller::bus_CAN0 ? CAN0 : CAN1;
+// @brief reset the MB to a known state based on mode
+void MB_info::reset(bool disable) {
+	CAN_Type* base = config_data->base;
 
-	flexcan_handle_t* handle = frame_data->handle;
+	flexcan_handle_t* handle = config_data->flexcanHandle;
+
+	if(disable) {
+		mode = MB_transfer_mode::disabled;
+	}
 
 	switch(mode) {
 
     // Similar behavior for any RX, ditto TX
 	case MB_transfer_mode::RX_continuous:
-	case MB_transfer_mode::RX_single:
-		FLEXCAN_SetRxMbConfig(base, mb_id, nullptr, false);
 		FLEXCAN_TransferAbortReceive(base, handle, mb_id);
+		FLEXCAN_SetRxMbConfig(base, mb_id, &frame_data->rxTransfer, !disable);
+		break;
+	case MB_transfer_mode::RX_single:
+		// disable the message buffer
+		mode = MB_transfer_mode::disabled;
+		FLEXCAN_TransferAbortReceive(base, handle, mb_id);
+		FLEXCAN_SetRxMbConfig(base, mb_id, nullptr, false);
 		break;
 	case MB_transfer_mode::TX_continuous:
-	case MB_transfer_mode::TX_single:
-		FLEXCAN_SetTxMbConfig(base, mb_id, false);
 		FLEXCAN_TransferAbortSend(base, handle, mb_id);
+		FLEXCAN_SetTxMbConfig(base, mb_id, !disable);
+		break;
+	case MB_transfer_mode::TX_single:
+		// disable the message buffer
+		mode = MB_transfer_mode::disabled;
+		FLEXCAN_TransferAbortSend(base, handle, mb_id);
+		FLEXCAN_SetTxMbConfig(base, mb_id, false);
 		break;
 	default:
 		break;
 	}
-	mode = MB_transfer_mode::disabled;
 }
 
 void MB_info::do_callback() {
@@ -99,32 +116,56 @@ void MB_info::do_callback() {
 					byteSwap<uint32_t>(frame_data->fsl_frame.dataWord0),
 					byteSwap<uint32_t>(frame_data->fsl_frame.dataWord1)
 			};
-			callback((uint8_t*)data, frame_data->fsl_frame.length, bus);
+			callback((uint8_t*)data, frame_data->fsl_frame.length);
 		}
 	}
 }
 
-/*TODO Check that remote frame is formatted properly
- * it may still need a dlc
+/* @brief set mb config for tx data
  */
-bool MB_info::set_frame_data_tx(uint32_t id,
-		const uint8_t (&data)[max_msg_size], uint8_t dlc, bool remote,
-		bool extended_id) {
+bool MB_info::set_frame_tx(uint32_t id, bool extended_id, bool tx_continuous) {
 
-	assert(mode == MB_transfer_mode::TX_continuous || mode == MB_transfer_mode::TX_single);
+	assert(mode == MB_transfer_mode::disabled);
 
-    // TODO < or <= ?
-	assert(dlc <= max_msg_size);
-
-    // Determine which CAN module
-	CAN_Type* base = (bus == Controller::bus_CAN0) ? CAN0 : CAN1;
+	CAN_Type* base = config_data->base;
 
     // Assemble frame from arguments
-	::flexcan_frame_t frame = {};
-	frame.length = remote ? 0 : dlc;
+	::flexcan_frame_t& frame = frame_data->fsl_frame;
+	frame = {};
+	//frame.length = 0; //remote ? 0 : dlc; set this later
 	frame.format = extended_id ? kFLEXCAN_FrameFormatExtend : kFLEXCAN_FrameFormatStandard;
-	frame.type = remote ? kFLEXCAN_FrameTypeRemote : kFLEXCAN_FrameTypeData;
+	//frame.type = remote ? kFLEXCAN_FrameTypeRemote : kFLEXCAN_FrameTypeData;
 	frame.id = extended_id ? FLEXCAN_ID_EXT(id) : FLEXCAN_ID_STD(id);
+
+	flexcan_mb_transfer_t& transfer = frame_data->txTransfer;
+	transfer = {};
+
+	transfer.frame = &frame;
+	transfer.mbIdx = mb_id;
+
+	if(tx_continuous) {
+		mode = MB_transfer_mode::TX_continuous;
+	} else {
+		mode = MB_transfer_mode::TX_single;
+	}
+
+    // TODO This aborts tx; is mb_id sure to be free?
+	FLEXCAN_SetTxMbConfig(base, mb_id, true);
+
+	return true;
+}
+
+/*
+ * @brief start sending data
+ * TODO Check that remote frame is formatted properly
+ */
+bool MB_info::tx_data(const uint8_t (&data)[max_msg_size], uint8_t dlc, bool remote) {
+	assert(dlc <= max_msg_size);
+	// finish assembling frame from arguments
+	::flexcan_frame_t& frame = frame_data->fsl_frame;
+
+	frame.length = remote ? 0 : dlc;
+	frame.type = remote ? kFLEXCAN_FrameTypeRemote : kFLEXCAN_FrameTypeData;
 
 	// copy over frame data
 	uint32_t* dataword0 = (uint32_t*)(&data[0]);
@@ -135,36 +176,30 @@ bool MB_info::set_frame_data_tx(uint32_t id,
 		frame.dataWord1 = byteSwap<uint32_t>(*dataword1);
 	}
 
-	flexcan_mb_transfer_t transfer = {};
-	transfer.frame = &frame;
-	transfer.mbIdx = mb_id;
-
-    // TODO This aborts tx; is mb_id sure to be free?
-	FLEXCAN_SetTxMbConfig(base, mb_id, true);
-
-	flexcan_handle_t* handle = frame_data->handle;
-
-    // Start transfer or 
-	status_t status = FLEXCAN_TransferSendNonBlocking(base, handle, &transfer);
+	// TODO Should this be a critical section?
+	// Start transfer
+	completed = false;
+	status_t status = FLEXCAN_TransferSendNonBlocking(config_data->base, config_data->flexcanHandle, &frame_data->txTransfer);
 
 	if (status == kStatus_Success) {
-		completed = false;
 		return true;
 	}
+	completed = true;
 	return false;
 }
 
-bool MB_info::set_frame_data_rx(uint32_t id, uint8_t dlc, bool remote,
+bool MB_info::set_frame_rx(uint32_t id, uint8_t dlc, bool remote,
 		bool extended_id, uint32_t mask) {
 
-	assert(mode == MB_transfer_mode::RX_continuous || mode == MB_transfer_mode::RX_single);
-    // TODO < or <= ?
+	assert(mode == MB_transfer_mode::disabled);
+
 	assert(dlc <= max_msg_size);
 
-    // Determine which CAN
-	CAN_Type* base = (bus == Controller::bus_CAN0) ? CAN0 : CAN1;
+	CAN_Type* base = config_data->base;
 
-	flexcan_rx_mb_config_t mbConfig = {};
+	flexcan_rx_mb_config_t& mbConfig = frame_data->rxTransfer;
+	mbConfig = {};
+
 	mbConfig.format = extended_id ? kFLEXCAN_FrameFormatExtend : kFLEXCAN_FrameFormatStandard;
 	mbConfig.type = remote ? kFLEXCAN_FrameTypeRemote : kFLEXCAN_FrameTypeData;
 	mbConfig.id = extended_id ? FLEXCAN_ID_EXT(id) : FLEXCAN_ID_STD(id);
@@ -173,13 +208,14 @@ bool MB_info::set_frame_data_rx(uint32_t id, uint8_t dlc, bool remote,
 
 	FLEXCAN_SetRxIndividualMask(base, mb_id, mask);
 
-	// volatile frame from frame_data used. driver puts data into this struct during interrupt
-	flexcan_mb_transfer_t transfer = {};
+	// volatile frame from frame_data used. fsl driver puts data into this struct during interrupt
+	flexcan_mb_transfer_t& transfer = frame_data->rxTransfer;
+	transfer = {};
+
 	transfer.mbIdx = mb_id;
-    // TODO why the const_cast?
 	transfer.frame = &frame_data->fsl_frame;
 
-	flexcan_handle_t* handle = frame_data->handle;
+	flexcan_handle_t* handle = config_data->flexcanHandle;
 
 	status_t status = FLEXCAN_TransferReceiveNonBlocking(base, handle,
 			&transfer);
@@ -195,27 +231,29 @@ CAN_drv::CAN_drv(const can_config* conf) :
 	assert(conf);
 	// check if controller is going to be used, then copy out config
 	if (conf->CAN0_config)
-		CAN0_config = new Controller_data(*(conf->CAN0_config));
+		CAN0_config = new Controller_data(CAN0, *(conf->CAN0_config));
 	if (conf->CAN1_config)
-		CAN1_config = new Controller_data(*(conf->CAN1_config));
+		CAN1_config = new Controller_data(CAN1, *(conf->CAN1_config));
 }
 
+// TODO fix use of set_frame_data_tx
 bool CAN_drv::tx_msg(Controller bus, uint32_t id,
 		const uint8_t (&data)[max_msg_size], uint8_t dlc, bool remote,
-		bool extended_id, const callback_type* callback) {
+		bool extended_id, callback_type callback) {
 
 	MB_info* available = get_free_mb_info(bus);
 	if (!available)
 		return false;
-	if (callback != nullptr && !callback->isNull())
-		available->set_callback(*callback);
+	if (!callback.isNull())
+		available->set_callback(callback);
 
-	available->set_mode(MB_info::MB_transfer_mode::TX_single);
-	return available->set_frame_data_tx(id, data, dlc, remote, extended_id);
+	available->set_frame_tx(id, extended_id, false);
+	return available->tx_data(data, dlc, remote);
 }
 
+// TODO fix use of set_frame_data_rx
 bool CAN_drv::rx_msg(Controller bus, uint32_t id, bool extended_id, uint8_t dlc,
-		bool remote, uint32_t mask, const callback_type& callback) {
+		bool remote, uint32_t mask, callback_type callback) {
 	assert(!callback.isNull());
 
 	MB_info* available = get_free_mb_info(bus);
@@ -224,8 +262,7 @@ bool CAN_drv::rx_msg(Controller bus, uint32_t id, bool extended_id, uint8_t dlc,
 
 	available->set_callback(callback);
 
-	available->set_mode(MB_info::MB_transfer_mode::RX_single);
-	return available->set_frame_data_rx(id, dlc, remote, extended_id, mask);
+	return available->set_frame_rx(id, dlc, remote, extended_id, mask);
 }
 
 void CAN_drv::tick() {
@@ -249,11 +286,16 @@ void CAN_drv::init() {
 		config_controller(CAN1_config, Controller::bus_CAN1);
 
     uint8_t i = 0;
+    MB_info::Config_data c = {};
     for (i = 0; i < number_MBs; ++i) {
-        mb_can0[i] = MB_info(Controller::bus_CAN0, i);
+    	c.base = CAN0;
+    	c.flexcanHandle = &(CAN0_config->flexcanHandle);
+        mb_can0[i] = MB_info(&c, i);
     }
     for (i = 0; i < number_MBs; ++i) {
-        mb_can1[i] = MB_info(Controller::bus_CAN1, i);
+    	c.base = CAN1;
+		c.flexcanHandle = &(CAN1_config->flexcanHandle);
+        mb_can1[i] = MB_info(&c, i);
     }
 
 }
@@ -331,6 +373,8 @@ MB_info* CAN_drv::get_free_mb_info(Controller bus) {
 //(*flexcan_transfer_callback_t)(CAN_Type *base, flexcan_handle_t *handle, status_t status, uint32_t result, void *userData);
 static void flexcan_callback(CAN_Type *base, flexcan_handle_t *handle, status_t status, uint32_t result, void *userData) {
 	// result is mb number
+
+	printf("CAN callback\n");
 
 	// resolve bus
 	Controller bus = (base == CAN0) ? Controller::bus_CAN0 : Controller::bus_CAN1;

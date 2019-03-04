@@ -2,7 +2,7 @@
  * can.h
  *
  *  Created on: Oct 24, 2018
- *      Author: oneso
+ *      Author: HB
  *
  *	Description:
  *		This library is a wrapper around the supplied CAN driver. It allows for
@@ -56,7 +56,7 @@ enum class Controller {
 	bus_CAN1
 };
 
-using callback_type = se::Event<void(const uint8_t*, uint8_t, Controller)>;
+using callback_type = se::Event<void(const uint8_t*, uint8_t)>;
 
 // info for individual message buffers in CAN controller
 // warning: this cannot be constructed until after can controller is constructed.
@@ -76,14 +76,13 @@ private:
 	MB_transfer_mode mode = MB_transfer_mode::disabled;
 
 	uint8_t mb_id;
-	Controller bus;
-
-	// frame data
-	//uint8_t* 	data;	// this only holds data after an RX event
 
 	// wrapper struct for the fsl_can flexcan_frame_t type
-	//TODO: remove publc
+	//TODO: remove public
 public:
+	struct Config_data;
+	Config_data* config_data = nullptr;
+
 	struct Frame_data;
 	Frame_data* frame_data = nullptr;
 
@@ -97,15 +96,13 @@ public:
 public:
 
 	MB_info() = default;
-	MB_info(Controller bus, uint8_t mb_id);
+	MB_info(const Config_data* conf, uint8_t mb_id);
 	~MB_info();
-
-	struct flexcan_frame_t* initialize_frame(struct flexcan_frame_t*);
 
 	/*!
 	 * @brief abort any ongoing tx, or rx, clear hardware status, disable mb interrupts, and set mb_info state to disabled
 	 */
-	void reset();
+	void reset(bool disable = false);
 
 	/*!
 	 * @brief Check if completed flag is set, then fire callback if valid and clear flag
@@ -129,22 +126,21 @@ public:
 	}
 
 	/*!
-	 * @brief configure the frame data used in TX modes
+	 * @brief configure the frame data for TX modes
 	 */
-	bool set_frame_data_tx(uint32_t id, const uint8_t (&data)[max_msg_size],
-			uint8_t dlc, bool remote, bool extended_id);
+	bool set_frame_tx(uint32_t id, bool extended_id, bool tx_continuous);
+
+	bool tx_data(const uint8_t (&data)[max_msg_size], uint8_t dlc, bool remote = false);
 
 	/*!
-	 * @brief configure the expected frame for RX modes
+	 * @brief configure the frame data for RX modes
 	 */
-	bool set_frame_data_rx(uint32_t id, uint8_t dlc, bool remote, bool extended_id, uint32_t mask);
+	bool set_frame_rx(uint32_t id, uint8_t dlc, bool remote, bool extended_id, uint32_t mask);
 
 	/*!
-	 * @brief Set the mode for this MB
+	 * @brief read last frame received
 	 */
-	inline void set_mode(MB_transfer_mode mode) {
-		this->mode = mode;
-	}
+	void rx_data();
 
 	/*!
 	 * @brief is this mb currently in one of the RX or TX modes
@@ -189,13 +185,13 @@ public:
 	 */
 	bool tx_msg(Controller bus, uint32_t id,
 			const uint8_t (&data)[max_msg_size], uint8_t dlc, bool remote,
-			bool extended_id, const callback_type* callback = nullptr);
+			bool extended_id, callback_type callback);
 
 	/*
 	 * rx using selected mb
 	 */
 	bool rx_msg(Controller bus, uint32_t id, bool extended_id, uint8_t dlc,
-			bool remote, uint32_t mask, const callback_type& callback);
+			bool remote, uint32_t mask, callback_type callback);
 
 
 	// performance info
@@ -231,7 +227,9 @@ public:
 	 */
 	void ISR_CAN_driver_TX(Controller bus, uint32_t result);
 
+
 private:
+
 	struct Controller_data;
 
 	// parameters passed in during construction, used during init
