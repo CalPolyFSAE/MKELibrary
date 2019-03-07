@@ -209,7 +209,7 @@ bool MB_info::set_frame_rx(uint32_t id, uint8_t dlc, bool remote,
 	FLEXCAN_SetRxIndividualMask(base, mb_id, mask);
 
 	// volatile frame from frame_data used. fsl driver puts data into this struct during interrupt
-	flexcan_mb_transfer_t& transfer = frame_data->rxTransfer;
+	flexcan_mb_transfer_t& transfer = frame_data->txTransfer;
 	transfer = {};
 
 	transfer.mbIdx = mb_id;
