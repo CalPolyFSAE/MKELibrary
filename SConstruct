@@ -44,7 +44,6 @@ env.Append(CPPPATH = [
 env['LINKFLAGS'] = '-O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -DDEBUG -g -O0 -Wall -fno-common -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mthumb -mapcs -fno-rtti -fno-exceptions -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -MMD -MP -DCPU_MKE18F512VLL16   -g --specs=nano.specs --specs=nosys.specs -Wall -fno-common -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mthumb -mapcs -Xlinker --gc-sections -Xlinker -static -Xlinker -z -Xlinker muldefs -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -Tmake/MKE18F512xxx16_flash.ld -static'
 
 cppsource = Glob('build/lib/*.cpp') +\
-    Glob('build/source/*.cpp') +\
     Glob('build/System/*.cpp')
 
 csource = Glob('build/board/*.c') +\
@@ -54,4 +53,5 @@ csource = Glob('build/board/*.c') +\
 
 asm = Glob('build/asm/*.S')
 
-env.Program(target='main', source=cppsource+csource+asm)
+env.StaticLibrary(target='bsp', source=asm+cppsource+csource)
+env.Program(target='main', source=Glob('build/source/*.cpp'), LIBS=['bsp'], LIBPATH=['.'])
