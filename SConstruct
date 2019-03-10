@@ -24,11 +24,22 @@ env['RANLIB'] = GNU_PATH+'arm-none-eabi-ranlib'
 env['OBJCOPY'] = GNU_PATH+'arm-none-eabi-objcopy'
 env['PROGSUFFIX'] = '.elf'
 
-env['ASFLAGS'] = '-g -g -g -g -g -g -g -g -g -g -g -g -DDEBUG -D__STARTUP_CLEAR_BSS -D__STARTUP_INITIALIZE_NONCACHEDATA -g -Wall -fno-common -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mthumb -mapcs -std=gnu99 -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -I/home/gray/formula/nxp/MKELibrary/make/../board -I/home/gray/formula/nxp/MKELibrary/make/../CMSIS -I/home/gray/formula/nxp/MKELibrary/make/../drivers -I/home/gray/formula/nxp/MKELibrary/make/../utilities -I/home/gray/formula/nxp/MKELibrary/make/../lib -I/home/gray/formula/nxp/MKELibrary/make/../source -I/home/gray/formula/nxp/MKELibrary/make/../System -I/home/gray/formula/nxp/MKELibrary/make/..'
+env['ASFLAGS'] = '-g -g -g -g -g -g -g -g -g -g -g -g -DDEBUG -D__STARTUP_CLEAR_BSS -D__STARTUP_INITIALIZE_NONCACHEDATA -g -Wall -fno-common -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mthumb -mapcs -std=gnu99 -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 '
 
-env['CCFLAGS'] = '-O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -DDEBUG -DCPU_MKE18F512VLL16 -DTWR_KE18F -DTOWER -g -O0 -Wall -fno-common -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mthumb -mapcs -std=gnu99 -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -MMD -MP -I/home/gray/formula/nxp/MKELibrary/make/../board -I/home/gray/formula/nxp/MKELibrary/make/../CMSIS -I/home/gray/formula/nxp/MKELibrary/make/../drivers -I/home/gray/formula/nxp/MKELibrary/make/../utilities -I/home/gray/formula/nxp/MKELibrary/make/../lib -I/home/gray/formula/nxp/MKELibrary/make/../source -I/home/gray/formula/nxp/MKELibrary/make/../System -I/home/gray/formula/nxp/MKELibrary/make/..'
+env['CCFLAGS'] = '-O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -DDEBUG -DCPU_MKE18F512VLL16 -DTWR_KE18F -DTOWER -g -O0 -Wall -fno-common -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mthumb -mapcs -std=gnu99 -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -MMD -MP '
 
-env['CXXFLAGS'] = ' -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -DDEBUG -g -O0 -Wall -fno-common -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mthumb -mapcs -fno-rtti -fno-exceptions -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -MMD -MP -DCPU_MKE18F512VLL16 -I/home/gray/formula/nxp/MKELibrary/make/../board -I/home/gray/formula/nxp/MKELibrary/make/../CMSIS -I/home/gray/formula/nxp/MKELibrary/make/../drivers -I/home/gray/formula/nxp/MKELibrary/make/../utilities -I/home/gray/formula/nxp/MKELibrary/make/../lib -I/home/gray/formula/nxp/MKELibrary/make/../source -I/home/gray/formula/nxp/MKELibrary/make/../System -I/home/gray/formula/nxp/MKELibrary/make/..'
+env['CXXFLAGS'] = ' -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -DDEBUG -g -O0 -Wall -fno-common -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mthumb -mapcs -fno-rtti -fno-exceptions -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -MMD -MP -DCPU_MKE18F512VLL16 '
+
+env.Append(CPPPATH = [
+    'board',
+    'CMSIS',
+    'drivers',
+    'utilities',
+    'lib',
+    'source',
+    'System',
+    '.'
+])
 
 env['LINKFLAGS'] = '-O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -DDEBUG -g -O0 -Wall -fno-common -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mthumb -mapcs -fno-rtti -fno-exceptions -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -MMD -MP -DCPU_MKE18F512VLL16   -g --specs=nano.specs --specs=nosys.specs -Wall -fno-common -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mthumb -mapcs -Xlinker --gc-sections -Xlinker -static -Xlinker -z -Xlinker muldefs -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -Tmake/MKE18F512xxx16_flash.ld -static'
 
