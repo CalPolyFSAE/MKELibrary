@@ -3,6 +3,7 @@
 **/debug
 **/Release
 **/CMakeFiles
+**/build
 
 *.swp
 

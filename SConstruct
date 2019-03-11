@@ -1,7 +1,8 @@
-# hi
 import os
-GNU_PATH = '/home/gray/embedded/gcc-arm-none-eabi/bin/'
 
+GNU_PATH = '/home/japji316/embedded/gcc-arm-none-eabi/bin/'
+
+# Create Communal build directory to store all the .o's
 VariantDir('build/asm', 'asm')
 VariantDir('build/board', 'board')
 VariantDir('build/CMSIS', 'CMSIS')
@@ -23,12 +24,29 @@ env['LINK'] = GNU_PATH+'arm-none-eabi-g++'
 env['RANLIB'] = GNU_PATH+'arm-none-eabi-ranlib'
 env['OBJCOPY'] = GNU_PATH+'arm-none-eabi-objcopy'
 env['PROGSUFFIX'] = '.elf'
+OBJDUMP = GNU_PATH+'arm-none-eabi-objdump'
+READELF = GNU_PATH+'arm-none-eabi-readelf'
 
-env['ASFLAGS'] = '-g -g -g -g -g -g -g -g -g -g -g -g -DDEBUG -D__STARTUP_CLEAR_BSS -D__STARTUP_INITIALIZE_NONCACHEDATA -g -Wall -fno-common -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mthumb -mapcs -std=gnu99 -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 '
+compileTarget = 'main'
 
-env['CCFLAGS'] = '-O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -DDEBUG -DCPU_MKE18F512VLL16 -DTWR_KE18F -DTOWER -g -O0 -Wall -fno-common -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mthumb -mapcs -std=gnu99 -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -MMD -MP '
+env['ASFLAGS'] = '-g -DDEBUG -D__STARTUP_CLEAR_BSS \
+        -D__STARTUP_INITIALIZE_NONCACHEDATA -Wall -fno-common \
+        -ffunction-sections -fdata-sections -ffreestanding \
+        -fno-builtin -mthumb -mapcs -std=gnu99 -mcpu=cortex-m4 \
+        -mfloat-abi=hard -mfpu=fpv4-sp-d16'
 
-env['CXXFLAGS'] = ' -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -DDEBUG -g -O0 -Wall -fno-common -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mthumb -mapcs -fno-rtti -fno-exceptions -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -MMD -MP -DCPU_MKE18F512VLL16 '
+env['CCFLAGS'] = '-O0 -g -DDEBUG -DCPU_MKE18F512VLH16 \
+        -DTWR_KE18F -DTOWER -Wall -fno-common \
+        -ffunction-sections -fdata-sections -ffreestanding \
+        -fno-builtin -mthumb -mapcs -std=gnu99 -mcpu=cortex-m4 \
+        -mfloat-abi=hard -mfpu=fpv4-sp-d16 -MMD -MP'
+
+env['CXXFLAGS'] = '-O0 -g -DDEBUG -Wall \
+        -fno-common -ffunction-sections -fdata-sections \
+        -ffreestanding -fno-builtin -mthumb -mapcs \
+        -fno-rtti -fno-exceptions -mcpu=cortex-m4 \
+        -mfloat-abi=hard -mfpu=fpv4-sp-d16 -MMD -MP \
+        -DCPU_MKE18F512VLH16 '
 
 env.Append(CPPPATH = [
     'board',
@@ -41,7 +59,19 @@ env.Append(CPPPATH = [
     '.'
 ])
 
-env['LINKFLAGS'] = '-O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -O0 -g -DDEBUG -g -O0 -Wall -fno-common -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mthumb -mapcs -fno-rtti -fno-exceptions -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -MMD -MP -DCPU_MKE18F512VLL16   -g --specs=nano.specs --specs=nosys.specs -Wall -fno-common -ffunction-sections -fdata-sections -ffreestanding -fno-builtin -mthumb -mapcs -Xlinker --gc-sections -Xlinker -static -Xlinker -z -Xlinker muldefs -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -Tmake/MKE18F512xxx16_flash.ld -static'
+env['LINKFLAGS'] = '-O0 -g -DDEBUG -g -O0 -Wall \
+    -fno-common -ffunction-sections -fdata-sections \
+    -ffreestanding -fno-builtin -mthumb -mapcs \
+    -fno-rtti -fno-exceptions -mcpu=cortex-m4 \
+    -mfloat-abi=hard -mfpu=fpv4-sp-d16 -MMD -MP \
+    -DCPU_MKE18F512VLH16   -g -specs=nano.specs \
+    -specs=nosys.specs -Wall -fno-common \
+    -ffunction-sections -fdata-sections \
+    -ffreestanding -fno-builtin -mthumb \
+    -mapcs -Xlinker --gc-sections -Xlinker \
+    -static -Xlinker -z -Xlinker muldefs \
+    -mcpu=cortex-m4 -mfloat-abi=hard \
+    -mfpu=fpv4-sp-d16 -Tmake/MKE18F512xxx16_flash.ld -static'
 
 cppsource = Glob('build/lib/*.cpp') +\
     Glob('build/System/*.cpp')
@@ -53,5 +83,15 @@ csource = Glob('build/board/*.c') +\
 
 asm = Glob('build/asm/*.S')
 
+# Make Static BSP Library
 env.StaticLibrary(target='bsp', source=asm+cppsource+csource)
-env.Program(target='main', source=Glob('build/source/*.cpp'), LIBS=['bsp'], LIBPATH=['.'])
+
+# Run the compile command and create .elf
+env.Program(compileTarget, source=Glob('build/source/*.cpp'), LIBS=['bsp'], LIBPATH=['.'])
+
+# Create .lst from .elf
+env.Command(compileTarget+".lst", compileTarget+".elf", \
+    OBJDUMP+" -D " + compileTarget+".elf" + " > " + compileTarget+".lst")
+
+# Print Memory Map -> .elf Headers
+env.Command(compileTarget, compileTarget+".elf", READELF+" -e " + compileTarget+".elf")
