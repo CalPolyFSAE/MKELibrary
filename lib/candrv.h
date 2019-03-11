@@ -56,7 +56,7 @@ enum class Controller {
 	bus_CAN1
 };
 
-using callback_type = se::Event<void(const uint8_t*, uint8_t)>;
+using callback_type = se::Event<void(uint32_t id, const uint8_t* data, uint8_t dlc)>;
 
 // info for individual message buffers in CAN controller
 // warning: this cannot be constructed until after can controller is constructed.
@@ -116,6 +116,7 @@ public:
 		if(completed)
 			++overrun_count;// increment error
 		completed = true;
+		reset();
 	}
 
 	/*!
@@ -135,7 +136,7 @@ public:
 	/*!
 	 * @brief configure the frame data for RX modes
 	 */
-	bool set_frame_rx(uint32_t id, uint8_t dlc, bool remote, bool extended_id, uint32_t mask);
+	bool set_frame_rx(uint32_t id, uint8_t dlc, bool remote, bool extended_id, uint32_t mask, bool continuous);
 
 	/*!
 	 * @brief read last frame received
@@ -191,7 +192,7 @@ public:
 	 * rx using selected mb
 	 */
 	bool rx_msg(Controller bus, uint32_t id, bool extended_id, uint8_t dlc,
-			bool remote, uint32_t mask, callback_type callback);
+			bool remote, uint32_t mask, callback_type callback, bool continuous);
 
 
 	// performance info
