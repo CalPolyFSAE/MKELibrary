@@ -3,7 +3,6 @@ import os
 GNU_PATH = '/home/japji316/embedded/gcc-arm-none-eabi/bin/'
 
 # Create Communal build directory to store all the .o's
-#VariantDir('build/asm', 'asm')
 VariantDir('build/board', 'board')
 VariantDir('build/CMSIS', 'CMSIS')
 VariantDir('build/drivers', 'drivers')
@@ -87,11 +86,11 @@ asm = Glob('build/CMSIS/*.S')
 env.StaticLibrary(target='bsp', source=asm+cppsource+csource)
 
 # Run the compile command and create .elf
-env.Program(compileTarget, source=Glob('build/source/*.cpp'), LIBS=['bsp'], LIBPATH=['.'])
+#env.Program(compileTarget, source=Glob('build/source/*.cpp'), LIBS=['bsp'], LIBPATH=['.'])
 
 # Create .lst from .elf
-env.Command(compileTarget+".lst", compileTarget+".elf", \
-    OBJDUMP+" -D " + compileTarget+".elf" + " > " + compileTarget+".lst")
+#env.Command(compileTarget+".lst", compileTarget+".elf", \
+#    OBJDUMP+" -D " + compileTarget+".elf" + " > " + compileTarget+".lst")
 
 # Print Memory Map -> .elf Headers
-env.Command(compileTarget, compileTarget+".elf", READELF+" -e " + compileTarget+".elf")
+#env.Command(compileTarget, compileTarget+".elf", READELF+" -e " + compileTarget+".elf")
