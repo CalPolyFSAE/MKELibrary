@@ -3,7 +3,7 @@ import os
 GNU_PATH = '/home/japji316/embedded/gcc-arm-none-eabi/bin/'
 
 # Create Communal build directory to store all the .o's
-VariantDir('build/asm', 'asm')
+#VariantDir('build/asm', 'asm')
 VariantDir('build/board', 'board')
 VariantDir('build/CMSIS', 'CMSIS')
 VariantDir('build/drivers', 'drivers')
@@ -71,7 +71,7 @@ env['LINKFLAGS'] = '-O0 -g -DDEBUG -Wall \
     -mapcs -Xlinker --gc-sections -Xlinker \
     -static -Xlinker -z -Xlinker muldefs \
     -mcpu=cortex-m4 -mfloat-abi=hard \
-    -mfpu=fpv4-sp-d16 -Tmake/MKE18F512xxx16_flash.ld -static'
+    -mfpu=fpv4-sp-d16 -TMKE18F512xxx16_flash.ld -static'
 
 cppsource = Glob('build/lib/*.cpp') +\
     Glob('build/System/*.cpp')
@@ -81,7 +81,7 @@ csource = Glob('build/board/*.c') +\
     Glob('build/drivers/*.c') +\
     Glob('build/utilities/*.c')
 
-asm = Glob('build/asm/*.S')
+asm = Glob('build/CMSIS/*.S')
 
 # Make Static BSP Library
 env.StaticLibrary(target='bsp', source=asm+cppsource+csource)
