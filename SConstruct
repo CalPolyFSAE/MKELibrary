@@ -1,6 +1,11 @@
 import os
 
+# !! Update these aths to point to your respective directories !!
 GNU_PATH = '/home/japji316/embedded/gcc-arm-none-eabi/bin/'
+
+# Change the compiled name of the file below
+# ex. compileTarget = 'exampleProject'
+compileTarget = 'main'
 
 # Create Communal build directory to store all the .o's
 VariantDir('build/board', 'board')
@@ -26,7 +31,6 @@ env['PROGSUFFIX'] = '.elf'
 OBJDUMP = GNU_PATH+'arm-none-eabi-objdump'
 READELF = GNU_PATH+'arm-none-eabi-readelf'
 
-compileTarget = 'main'
 
 env['ASFLAGS'] = '-g -DDEBUG -D__STARTUP_CLEAR_BSS \
         -D__STARTUP_INITIALIZE_NONCACHEDATA -Wall -fno-common \
@@ -86,11 +90,14 @@ asm = Glob('build/CMSIS/*.S')
 env.StaticLibrary(target='bsp', source=asm+cppsource+csource)
 
 # Run the compile command and create .elf
+# !! This is not necessary in the BSP !!
 #env.Program(compileTarget, source=Glob('build/source/*.cpp'), LIBS=['bsp'], LIBPATH=['.'])
 
 # Create .lst from .elf
+# !! This is not necessary in the BSP !!
 #env.Command(compileTarget+".lst", compileTarget+".elf", \
 #    OBJDUMP+" -D " + compileTarget+".elf" + " > " + compileTarget+".lst")
 
 # Print Memory Map -> .elf Headers
+# !! This is not necessary in the BSP !!
 #env.Command(compileTarget, compileTarget+".elf", READELF+" -e " + compileTarget+".elf")
