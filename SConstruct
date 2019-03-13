@@ -59,12 +59,12 @@ env.Append(CPPPATH = [
     '.'
 ])
 
-env['LINKFLAGS'] = '-O0 -g -DDEBUG -g -O0 -Wall \
+env['LINKFLAGS'] = '-O0 -g -DDEBUG -Wall \
     -fno-common -ffunction-sections -fdata-sections \
     -ffreestanding -fno-builtin -mthumb -mapcs \
     -fno-rtti -fno-exceptions -mcpu=cortex-m4 \
     -mfloat-abi=hard -mfpu=fpv4-sp-d16 -MMD -MP \
-    -DCPU_MKE18F512VLH16   -g -specs=nano.specs \
+    -DCPU_MKE18F512VLH16 -specs=nano.specs \
     -specs=nosys.specs -Wall -fno-common \
     -ffunction-sections -fdata-sections \
     -ffreestanding -fno-builtin -mthumb \
