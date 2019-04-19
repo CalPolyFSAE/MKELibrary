@@ -201,9 +201,9 @@
                   <clock_output id="Flash_clock.outFreq" value="12 MHz" locked="false" accuracy=""/>
                   <clock_output id="LPO1KCLK.outFreq" value="1 kHz" locked="false" accuracy=""/>
                   <clock_output id="LPO_clock.outFreq" value="128 kHz" locked="false" accuracy=""/>
-                  <clock_output id="PCC.PCC_ADC0_CLK.outFreq" value="30 MHz" locked="false" accuracy=""/>
-                  <clock_output id="PCC.PCC_ADC1_CLK.outFreq" value="30 MHz" locked="false" accuracy=""/>
-                  <clock_output id="PCC.PCC_ADC2_CLK.outFreq" value="30 MHz" locked="false" accuracy=""/>
+                  <clock_output id="PCC.PCC_ADC0_CLK.outFreq" value="90 MHz" locked="false" accuracy=""/>
+                  <clock_output id="PCC.PCC_ADC1_CLK.outFreq" value="90 MHz" locked="false" accuracy=""/>
+                  <clock_output id="PCC.PCC_ADC2_CLK.outFreq" value="90 MHz" locked="false" accuracy=""/>
                   <clock_output id="PCC.PCC_FLEXIO_CLK.outFreq" value="30 MHz" locked="false" accuracy=""/>
                   <clock_output id="PCC.PCC_FTM0_CLK.outFreq" value="60 MHz" locked="false" accuracy=""/>
                   <clock_output id="PCC.PCC_FTM1_CLK.outFreq" value="60 MHz" locked="false" accuracy=""/>
@@ -226,9 +226,9 @@
                   <clock_output id="System_clock.outFreq" value="60 MHz" locked="false" accuracy=""/>
                </clock_outputs>
                <clock_settings>
-                  <setting id="PCC.PCC_ADC0_SEL.sel" value="SCG.FIRCDIV2_CLK" locked="false"/>
-                  <setting id="PCC.PCC_ADC1_SEL.sel" value="SCG.FIRCDIV2_CLK" locked="false"/>
-                  <setting id="PCC.PCC_ADC2_SEL.sel" value="SCG.FIRCDIV2_CLK" locked="false"/>
+                  <setting id="PCC.PCC_ADC0_SEL.sel" value="SCG.PLLDIV2_CLK" locked="false"/>
+                  <setting id="PCC.PCC_ADC1_SEL.sel" value="SCG.PLLDIV2_CLK" locked="false"/>
+                  <setting id="PCC.PCC_ADC2_SEL.sel" value="SCG.PLLDIV2_CLK" locked="false"/>
                   <setting id="PCC.PCC_FLEXIO_SEL.sel" value="SCG.FIRCDIV2_CLK" locked="false"/>
                   <setting id="PCC.PCC_FTM0_SEL.sel" value="SCG.FIRCDIV1_CLK" locked="false"/>
                   <setting id="PCC.PCC_FTM1_SEL.sel" value="SCG.FIRCDIV1_CLK" locked="false"/>
