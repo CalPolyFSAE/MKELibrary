@@ -137,7 +137,6 @@ int32_t can_api::write(const CANMessage& msg) {
 int32_t can_api::read(CANMessage& msg, int32_t handle) {
 	assert(!(obj->base->MCR & CAN_MCR_MDIS_MASK));
 	assert(handle >= 0);
-	assert(msg);
 
 	uint16_t mbid;
 	if(handle == 0) {
@@ -151,11 +150,12 @@ int32_t can_api::read(CANMessage& msg, int32_t handle) {
 	}
 
 	/* Read handle mb and error if mb was not full*/
-	if(readMB(mbid, *msg) < 0)
+	if(readMB(mbid, msg) < 0)
 		return -1;
 
 	/* mb is locked by reading CS register, and unlocked by
 	 * reading free running timer or by reading cs on another mb */
+	[[maybe_unused]]
 	uint32_t tmr = obj->base->TIMER;
 
 	return mbid + 1;
@@ -192,16 +192,18 @@ int32_t can_api::filter(uint32_t id, uint32_t mask, CanFormat format, CanFrameTy
 bool can_api::isInUse(int32_t handle) {
 	assert(handle > 0);
 
-	uint8_t code = (uint8_t)((obj->base->MB[i].CS & CAN_CS_CODE_MASK) >> CAN_CS_CODE_SHIFT);
+	uint8_t code = (uint8_t)((obj->base->MB[handle - 1].CS & CAN_CS_CODE_MASK) >> CAN_CS_CODE_SHIFT);
 	if (code == CS_RX_FULL || code == CS_RX_EMPTY || code == CS_RX_BUSY || code == CS_RX_OVERRUN
 			|| code == CS_TX_DATAREMOTE)
 		return true;
+	return false;
 }
 
 int32_t can_api::closeFilter(int32_t handle) {
 	assert(handle > 0);
 	/* reset all fields in mb and disable interrupt */
 	clearMB(handle - 1);
+	return 0;
 }
 
 void can_api::can_irq_init(CanIrqHandlerType handler) {
