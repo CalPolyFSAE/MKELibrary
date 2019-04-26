@@ -85,7 +85,10 @@ uint8_t CANlight::tx(uint8_t bus, frame f){
     fslf.dataWord1 = CAN_WORD1_DATA_BYTE_4(f.data[4]) | CAN_WORD1_DATA_BYTE_5(f.data[5]) | CAN_WORD1_DATA_BYTE_6(f.data[6]) |
                         CAN_WORD1_DATA_BYTE_7(f.data[7]);
 
-    FLEXCAN_TransferSendBlocking(base(bus), 5, &fslf);
+    // i don't know what i'm doing lmao
+    if(base(bus)->IFLAG1 & 1<<5) FLEXCAN_ClearMbStatusFlags(base(bus), 1<<5);
+    FLEXCAN_WriteTxMb(base(bus), 5, &fslf);
+    //FLEXCAN_TransferSendBlocking(base(bus), 5, &fslf);
 
     return 0;
 
