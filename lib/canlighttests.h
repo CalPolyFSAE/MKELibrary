@@ -59,3 +59,28 @@ void motorcontrollertest(){
 
     can.tx(0, out);
 }
+
+void bursttest(){
+    can::canlight_config config;
+    can::CANlight::canx_config can0_config;
+    can::CANlight::ConstructStatic(&config);
+    can::CANlight& can = can::CANlight::StaticClass();
+    can0_config.baudRate = 500000;
+    can.init(0, &can0_config);
+
+    can::CANlight::frame out0;
+    can::CANlight::frame out1;
+    can::CANlight::frame out2;
+
+    out0.id = 0x10;
+    out1.id = 0x20;
+    out2.id = 0x30;
+
+    can.tx(0, out0);
+    can.tx(0, out1);
+    can.tx(0, out2);
+
+    while(1);
+
+}
+
