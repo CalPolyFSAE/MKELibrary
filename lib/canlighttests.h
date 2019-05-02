@@ -60,7 +60,13 @@ void motorcontrollertest(){
     can.tx(0, out);
 }
 
+can::CANlight::frame out0;
+can::CANlight::frame out1;
+can::CANlight::frame out2;
+
 void bursttest(){
+    SysTick_Config(100000);
+
     can::canlight_config config;
     can::CANlight::canx_config can0_config;
     can::CANlight::ConstructStatic(&config);
@@ -68,19 +74,19 @@ void bursttest(){
     can0_config.baudRate = 500000;
     can.init(0, &can0_config);
 
-    can::CANlight::frame out0;
-    can::CANlight::frame out1;
-    can::CANlight::frame out2;
-
     out0.id = 0x10;
     out1.id = 0x20;
     out2.id = 0x30;
-
-    can.tx(0, out0);
-    can.tx(0, out1);
-    can.tx(0, out2);
 
     while(1);
 
 }
 
+extern "C" {
+	void SysTick_Handler() {
+    can::CANlight& can = can::CANlight::StaticClass();
+    can.tx(0, out0);
+    can.tx(0, out1);
+    can.tx(0, out2);
+	}
+}

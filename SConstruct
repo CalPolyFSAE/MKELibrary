@@ -1,7 +1,7 @@
 import os
 
 # !! Update these aths to point to your respective directories !!
-GNU_PATH = '/home/japji316/embedded/gcc-arm-none-eabi/bin/'
+GNU_PATH = '/home/gray/embedded/gcc-arm-none-eabi/bin/'
 
 # Change the compiled name of the file below
 # ex. compileTarget = 'exampleProject'
@@ -91,7 +91,7 @@ env.StaticLibrary(target='bsp', source=asm+cppsource+csource)
 
 # Run the compile command and create .elf
 # !! This is not necessary in the BSP !!
-#env.Program(compileTarget, source=Glob('build/source/*.cpp'), LIBS=['bsp'], LIBPATH=['.'])
+env.Program(compileTarget, source=Glob('build/source/*.cpp'), LIBS=['bsp'], LIBPATH=['.'])
 
 # Create .lst from .elf
 # !! This is not necessary in the BSP !!
