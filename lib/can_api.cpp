@@ -8,6 +8,8 @@
 #include "can_api.h"
 
 #include "MKE18F16.h"
+#include "MKE18F16_features.h"
+#include "fsl_clock.h"
 
 /* RX CS status and control codes */
 static constexpr uint8_t CS_RX_INACTIVE 	= 0b0000;
@@ -35,21 +37,33 @@ static constexpr uint8_t CS_TX_ABORT_MASK 		= 0x0F;
 static constexpr uint8_t CS_TX_DATAREMOTE_MASK 	= 0x0F;
 static constexpr uint8_t CS_TX_TANSWER_MASK		= 0x0F;
 
-using namespace can;
+static inline uint32_t CS_CODE(uint8_t code) {
+	return (((uint32_t)(((uint32_t)(code)) << CAN_CS_CODE_SHIFT)) & CAN_CS_CODE_MASK);
+}
+
+using namespace hal::can;
 
 static void can0_irq() {
-	// TODO Make an NVIC driver that can pass user data, or uses se::Event.
+	// TODO Make an NVIC driver that can pass user data, or uses util::delegate.
 	CAN0Description.driver->can_irq_handler();
 	__DSB(); // for good luck
 }
 
 static void can1_irq() {
-	// TODO Make an NVIC driver that can pass user data, or uses se::Event.
+	// TODO Make an NVIC driver that can pass user data, or uses util::delegate.
 	CAN1Description.driver->can_irq_handler();
 	__DSB(); // for good luck
 }
 
-can_api::can_api(can_t* obj) : obj{obj}, handler{}, interruptMask{} {
+/* hook for CAN0 isr. also need one for CAN1*/
+extern "C" {
+	void CAN0_DriverIRQHandler(void) {
+		if(CAN0Description.driver)
+			CAN0Description.driver->can_irq_handler();
+	}
+}
+
+can_api::can_api(can_object_t* obj) : obj{obj}, handler{}, interruptMask{} {
 	assert(obj);
 	assert(!obj->driver);
 
@@ -59,6 +73,7 @@ can_api::can_api(can_t* obj) : obj{obj}, handler{}, interruptMask{} {
 can_api::~can_api() {
 	reset();
 	NVIC_DisableIRQ(obj->irqn);
+	CLOCK_DisableClock(obj->clock);
 	obj->driver = nullptr;
 }
 
@@ -84,6 +99,8 @@ void can_api::init(const can_config_t& config) {
 
 	/* put controller into a known state*/
 	reset();
+	/* for config */
+	freeze(true);
 
 	uint32_t mcr = obj->base->MCR;
 	/*
@@ -103,17 +120,20 @@ void can_api::init(const can_config_t& config) {
 	obj->base->CTRL1 = (config.enableLoopback) ? obj->base->CTRL1 | CAN_CTRL1_LPB_MASK : obj->base->CTRL1 & ~CAN_CTRL1_LPB_MASK;
 
 	/* Point irq vector to can_irq and enable irq*/
-	// TODO NVIC vector user data
+	// TODO NVIC vector user data and move vector table to SRAM
 	// TODO Enable other error irqs
+	/*
+	__disable_irq();
 	if(obj->base == CAN0) {
 		NVIC_SetVector(obj->irqn, (uint32_t) &can0_irq);
 	} else {
 		NVIC_SetVector(obj->irqn, (uint32_t) &can1_irq);
 	}
-
+	__enable_irq();
+	*/
 	NVIC_EnableIRQ(obj->irqn);
 
-	/* exit freeze mode. Automatically enabled after clock selection/module enabled*/
+	/* exit freeze mode */
 	freeze(false);
 
 	/* config bus speed*/
@@ -124,14 +144,16 @@ int32_t can_api::write(const CANMessage& msg) {
 	assert(!(obj->base->MCR & CAN_MCR_MDIS_MASK));
 
 	/* find an available mb */
-	uint16_t mbid = findFirstInactiveMB();
+	int16_t mbid = findFirstInactiveMB();
 	if(mbid < 0)
 		return -1;
 
-	configTxMB(mbid, msg);
-
-	/* don't return a handle */
-	return 0;
+	if(CS_CODE(CS_TX_DATAREMOTE) != (obj->base->MB[mbid].CS & CAN_CS_CODE_MASK)) {
+		configTxMB(mbid, msg);
+		return 0;
+	}
+	/* found mb is active */
+	return -1;
 }
 
 int32_t can_api::read(CANMessage& msg, int32_t handle) {
@@ -141,6 +163,7 @@ int32_t can_api::read(CANMessage& msg, int32_t handle) {
 	uint16_t mbid;
 	if(handle == 0) {
 		/* findFirstMBWithCode will lock the MB if CS CODE is FULL */
+		/* TODO also look for overrun mbs */
 		mbid = findFirstMBWithCode(CS_RX_FULL, CS_RX_FULL_MASK);
 		handle = mbid + 1;
 		if(mbid < 0)
@@ -225,9 +248,9 @@ void can_api::can_irq_set(CanIrqType irq, bool enabled) {
 	case CanIrqType::RX:
 	case CanIrqType::TX:
 		if (enabled) {
-			interruptMask |= 1 << (uint16_t) irq;
+			interruptMask |= (uint16_t)irq;
 		} else {
-			interruptMask &= ~(1 << (uint16_t) irq);
+			interruptMask &= ~((uint16_t)irq);
 		}
 		break;
 	}
@@ -286,6 +309,7 @@ void can_api::can_irq_handler() {
 					assert(handler);
 					handler(CanIrqType::TX, this, mbid + 1);
 				}
+				setMBInterrupt(mbid, false); // disable interrupt for tx now that it is complete
 				break;
 			case CS_RX_OVERRUN:
 				// RX message buffer has been overwritten with another message before the mb was serviced
@@ -293,6 +317,9 @@ void can_api::can_irq_handler() {
 					assert(handler);
 					handler(CanIrqType::OVERRUN, this, mbid + 1);
 				}
+				break;
+			default:
+				break;
 			}
 
 			/* clear iflag by writing a 1 to it */
@@ -332,8 +359,8 @@ void can_api::freeze(bool enabled) {
 			;
 	} else {
 		/* clear freeze and halt bits */
-		obj->base->MCR |= CAN_MCR_FRZ_MASK;
-		obj->base->MCR |= CAN_MCR_HALT_MASK;
+		obj->base->MCR &= ~CAN_MCR_FRZ_MASK;
+		obj->base->MCR &= ~CAN_MCR_HALT_MASK;
 
 		/* wait for freeze mode disable to be acknowledged */
 		while (obj->base->MCR & CAN_MCR_FRZACK_MASK)
@@ -354,9 +381,13 @@ void can_api::reset() {
 	/* reset CAN module */
 	obj->base->MCR &= CAN_MCR_SOFTRST_MASK;
 
+	obj->base->IFLAG1 = ~(uint32_t)(0);
+
 	/* wait for reset to complete */
 	while (obj->base->MCR & CAN_MCR_SOFTRST_MASK)
 		;
+
+	freeze(true);
 
 	/* enable warnings, internal wakeup filter, and reset max mb number */
 	obj->base->MCR |= CAN_MCR_WRNEN_MASK | CAN_MCR_WAKSRC_MASK |
@@ -391,6 +422,8 @@ void can_api::reset() {
 	{
 		obj->base->MB[i].CS = 0x0;
 	}
+
+	freeze(false);
 }
 
 void can_api::setupClock(uint32_t baud) {
@@ -401,7 +434,8 @@ void can_api::setupClock(uint32_t baud) {
 	assert(baud <= 1000000);
 
 	/* Get FlexCAN source clock frequency */
-	uint32_t srcClk = CLOCK_GetIpFreq(obj->clock);
+	CLOCK_EnableClock(obj->clock);
+	uint32_t srcClk = CLOCK_GetBusClkFreq();
 
 	/*	Default timing configs. Quantum is 10
 	 *	config->timingConfig.phaseSeg1 = 3;
@@ -456,8 +490,8 @@ int16_t can_api::findFirstMBWithCode(uint8_t code, uint8_t mask) {
 int16_t can_api::findFirstInactiveMB() {
 	for (uint16_t i = 0; i < FSL_FEATURE_FLEXCAN_HAS_MESSAGE_BUFFER_MAX_NUMBERn(base);
 				i++) {
-		uint8_t cs = (uint8_t)((obj->base->MB[i].CS & CAN_CS_CODE_MASK) >> CAN_CS_CODE_SHIFT);
-		if(cs == CS_RX_INACTIVE || cs == CS_TX_INACTIVE) {
+		uint8_t cs = (uint8_t)((uint32_t)(obj->base->MB[i].CS & CAN_CS_CODE_MASK) >> CAN_CS_CODE_SHIFT);
+		if((cs == CS_RX_INACTIVE || cs == CS_TX_INACTIVE) && !(obj->base->IFLAG1 & obj->base->IMASK1 & (uint32_t)(1 << i))) {
 			return i;
 		}
 	}
@@ -468,8 +502,9 @@ int8_t can_api::readMB(uint16_t mbid, CANMessage& msg) {
 	uint32_t cs = obj->base->MB[mbid].CS;
 	uint8_t cs_code = (cs & CAN_CS_CODE_MASK) >> CAN_CS_CODE_SHIFT;
 	if (cs_code == CS_RX_FULL || cs_code == CS_RX_OVERRUN) {
-		msg.id = obj->base->MB[mbid].ID & (CAN_ID_STD_MASK | CAN_ID_EXT_MASK);
-		msg.format = (cs & CAN_ID_EXT_MASK) ? CanFormat::Extended : CanFormat::Standard;
+		msg.id = (cs & CAN_CS_IDE_MASK) ? (obj->base->MB[mbid].ID & CAN_ID_EXT_MASK) >> CAN_ID_EXT_SHIFT
+			: (obj->base->MB[mbid].ID & CAN_ID_STD_MASK) >> CAN_ID_STD_SHIFT;
+		msg.format = (cs & CAN_CS_IDE_MASK) ? CanFormat::Extended : CanFormat::Standard;
 		msg.type = (cs & CAN_CS_RTR_MASK) ? CanFrameType::Remote : CanFrameType::Data;
 		msg.len = (cs & CAN_CS_DLC_MASK) >> CAN_CS_DLC_SHIFT;
 		msg.dataWord[0] = obj->base->MB[mbid].WORD0;
@@ -496,8 +531,8 @@ uint8_t can_api::clearMB(uint8_t mbid) {
 	/* save abort status */
 	uint8_t code = (obj->base->MB[mbid].CS & CAN_CS_CODE_MASK) >> CAN_CS_CODE_SHIFT;
 
-	/* clear interrupt flag */
-	obj->base->IFLAG1 &= ~(1 << mbid);
+	/* clear interrupt flag by writing a 1 */
+	obj->base->IFLAG1 = (1 << mbid);
 
 	/* clear all fields */
 	obj->base->MB[mbid].CS = 0;
@@ -520,6 +555,9 @@ void can_api::configTxMB(uint16_t mbid, const CANMessage& msg) {
 	/* abort and clear interrupt for mb */
 	clearMB(mbid);
 
+	/* set tx mb to inactive */
+	obj->base->MB[mbid].CS = (obj->base->MB[mbid].CS & ~CAN_CS_CODE_MASK) | CS_CODE(CS_TX_INACTIVE);
+
 	/* write id */
 	obj->base->MB[mbid].ID = (msg.format == CanFormat::Extended) ? CAN_ID_EXT(msg.id) : CAN_ID_STD(msg.id);
 
@@ -540,7 +578,7 @@ void can_api::configTxMB(uint16_t mbid, const CANMessage& msg) {
 		cs_code |= CAN_CS_RTR_MASK;
 	}
 
-	cs_code |= CS_TX_DATAREMOTE;
+	cs_code |= CS_CODE(CS_TX_DATAREMOTE);
 
 	/* enable interrupt */
 	setMBInterrupt(mbid, true);
@@ -573,12 +611,12 @@ void can_api::configRxMB(uint16_t mbid, uint32_t id, uint32_t idmask, CanFormat 
 	freeze(true);
 	/* MG[31] RTR, MG[30] IDE , RXIMR[28:0] ID*/
 	obj->base->RXIMR[mbid] =
-			(filterformat ? 1 : 0 << 31) |
-			(filtertype ? 1 : 0 << 30) |
+			((filterformat ? 1 : 0) << 31) |
+			((filtertype ? 1 : 0) << 30) |
 			(idmask & 0x3FFFFFFF);
 	freeze(false);
 
-	cs_code |= CS_RX_EMPTY;
+	cs_code |= CS_CODE(CS_RX_EMPTY);
 
 	/* enable interrupt */
 	setMBInterrupt(mbid, true);
