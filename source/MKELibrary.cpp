@@ -1,12 +1,8 @@
-#include <stdio.h>
-#include "board.h"
-#include "peripherals.h"
 #include "pin_mux.h"
 #include "clock_config.h"
 #include "MKE18F16.h"
-#include "fsl_debug_console.h"
-#include "canlight.h"
-#include "canlighttests.h"
+
+#include "gpiotests.h"
 
 using namespace BSP;
 
@@ -18,10 +14,8 @@ void tick(void){
 int main(void) {
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
-    BOARD_InitBootPeripherals();
-	BOARD_InitDebugConsole();
 
-    bursttest();
+    tests::togglemany();
 
     while(1) {
     }

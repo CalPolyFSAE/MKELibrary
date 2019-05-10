@@ -33,14 +33,19 @@ void togglemany(){
 	gpio.in_dir(gpio::PortB, 11);
 	gpio.config_function(gpio::PortB, togglemany_callback);
 	gpio.config_interrupt(gpio::PortB, 11, kPORT_InterruptEitherEdge);
-	for(uint8_t i = 0; i < 200; i++)
-		gpio.toggle(gpio::PortB, 10);
-	printf("%d edges counted\n", togglemany_count);
-	togglemany_count = 0;
+	for(uint8_t i = 0; i < 200; i++){
+        gpio.toggle(gpio::PortB, 10);
+    }
+
+    while(togglemany_count < 200);
+
+    togglemany_count = 0;
 	gpio.config_interrupt(gpio::PortB, 11, kPORT_InterruptRisingEdge);
-	for(uint8_t i = 0; i < 200; i++)
+	for(uint8_t i = 0; i < 200; i++){
 		gpio.toggle(gpio::PortB, 10);
-	printf("%d rising edges counted\n", togglemany_count);
+    }
+
+    while(togglemany_count < 200);
 
 }
 
