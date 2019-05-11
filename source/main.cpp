@@ -4,7 +4,6 @@
 
 #include "forwarder.h"
 
-// main program
 int main() {
     // initialize board hardware
     BOARD_InitBootClocks();
