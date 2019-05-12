@@ -4,7 +4,12 @@ using namespace BSP::gpio;
 
 GPIO::GPIO() :
 		function() {
-	printf("GPIO Start\n");
+    EnableIRQ(PORTA_IRQn);
+    EnableIRQ(PORTB_IRQn);
+    EnableIRQ(PORTC_IRQn);
+    EnableIRQ(PORTD_IRQn);
+    EnableIRQ(PORTE_IRQn);
+    printf("GPIO Start\n");
 }
 
 void GPIO::set(GPIO_port port, uint32_t pin) {
