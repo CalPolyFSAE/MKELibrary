@@ -111,10 +111,10 @@ void ADC::enable_hardware_trigger(ADC_Type *base, bool enable){
 void ADC::get_default_config(adc_config_t *config){
 	config->function = NULL;
 	config->clock_source = kCLOCK_IpSrcFircAsync;
-	config->base_config = {kADC12_ReferenceVoltageSourceVref, kADC12_ClockSourceAlt0, kADC12_ClockDivider2, kADC12_Resolution12Bit, 17U, true};
+	config->base_config = {kADC12_ReferenceVoltageSourceVref, kADC12_ClockSourceAlt0, kADC12_ClockDivider1, kADC12_Resolution12Bit, 17U, true};
 	config->channel_config = {0, false};
 	config->hardware_compare_config = {kADC12_HardwareCompareMode0, 0, 0};
-	config->hardware_average_mode = kADC12_HardwareAverageDisabled;
+	config->hardware_average_mode = kADC12_HardwareAverageCount16;
 	config->offset = 0;
 	config->gain = 1;
 	config->dma = false;
