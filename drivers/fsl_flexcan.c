@@ -1361,10 +1361,10 @@ status_t FLEXCAN_TransferSendBlocking(CAN_Type *base, uint8_t mbIdx, flexcan_fra
 #if (defined(FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER)) && (FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER > 0)
         while (!FLEXCAN_GetMbStatusFlags(base, (uint64_t)1 << mbIdx))
 #else
-        //while (!FLEXCAN_GetMbStatusFlags(base, 1 << mbIdx))
+        while (!FLEXCAN_GetMbStatusFlags(base, 1 << mbIdx))
 #endif
-        //{
-        //}
+        {
+        }
 
         /* Clean Tx Message Buffer Flag. */
 #if (defined(FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER)) && (FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER > 0)
