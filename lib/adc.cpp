@@ -25,7 +25,6 @@ ADC::ADC(const adc_config_t *config){
 	if(ADC::calibrate(ADC2) != kStatus_Success) assert(0);
 }
 
-// routine ADC procedures
 void ADC::tick(){}
 
 // configures an ADC
