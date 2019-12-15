@@ -25,8 +25,6 @@ public:
 
     LPIT(const lpit_config*);
 
-    void tick();
-
     void init(uint8_t ch, uint32_t period, callback cb);
 
     void interrupt(uint8_t ch);

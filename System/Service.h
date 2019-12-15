@@ -5,8 +5,6 @@
  *      Author: oneso
  */
 
-#pragma once
-
 #ifndef SERVICE_H_
 #define SERVICE_H_
 
@@ -14,16 +12,16 @@
 #include <utility>
 #include <assert.h>
 
+
 class Service {
 public:
-	virtual void tick() = 0;
 	virtual ~Service() {}
 };
+
 
 template<class T, typename ...Args>
 class StaticService : public Service {
 public:
-	virtual void tick() = 0;
 
 	// called after construction, do hardware setup here
 	virtual void init() {}
@@ -51,39 +49,5 @@ protected:
 template<class T, typename ...Args>
 T* StaticService<T, Args...>::inst;
 
-
-
-///////////////////////////
-// TESTING
-///////////////////////////
-//#include <iostream>
-//
-//class DOB{
-//public:
-//	DOB() : a(1) {
-//		echo();
-//	}
-//	DOB(const DOB& other) : a(other.a) {
-//		echo();
-//	}
-//
-//private:
-//	void echo() {
-//		std::cout << "DOB echo" << std::endl;
-//	}
-//
-//	int a;
-//};
-
-/*class TestService : public StaticService<TestService, int> {
-public:
-	TestService(int a){
-		printf("TESTSERVICE INITIALIZED WITH %d\n", a);
-	}
-
-	virtual void tick() override {
-		printf("tick\n");
-	}
-};*/
 
 #endif /* SERVICE_H_ */

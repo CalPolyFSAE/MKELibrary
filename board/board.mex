@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding= "UTF-8" ?>
-<configuration name="" version="1.5" xsi:schemaLocation="http://mcuxpresso.nxp.com/XSD/mex_configuration_1.5 http://mcuxpresso.nxp.com/XSD/mex_configuration_1.5.xsd" uuid="4316a86c-cdc3-4a3e-988e-0ca66c9c5e17" xmlns="http://mcuxpresso.nxp.com/XSD/mex_configuration_1.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<configuration name="" version="1.5" xsi:schemaLocation="http://mcuxpresso.nxp.com/XSD/mex_configuration_1.5 http://mcuxpresso.nxp.com/XSD/mex_configuration_1.5.xsd" uuid="29965e0c-e856-4c32-9d32-d294a1244631" xmlns="http://mcuxpresso.nxp.com/XSD/mex_configuration_1.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <common>
       <processor>MKE18F512xxx16</processor>
       <package>MKE18F512VLH16</package>
-      <board></board>
       <mcu_data>ksdk2_0</mcu_data>
       <cores selected="core0">
          <core name="Cortex-M4F" id="core0" description="M4 core"/>
@@ -28,51 +27,13 @@
                   <enableClock>true</enableClock>
                </options>
                <dependencies>
-                  <dependency resourceType="Peripheral" resourceId="LPSPI0" description="Peripheral LPSPI0 is not initialized" problem_level="1" source="Pins:BOARD_InitPins">
-                     <feature name="initialized" evaluation="equal">
-                        <data>true</data>
-                     </feature>
-                  </dependency>
-                  <dependency resourceType="Peripheral" resourceId="ADC0" description="Peripheral ADC0 is not initialized" problem_level="1" source="Pins:BOARD_InitPins">
-                     <feature name="initialized" evaluation="equal">
-                        <data>true</data>
-                     </feature>
-                  </dependency>
-                  <dependency resourceType="Peripheral" resourceId="ADC1" description="Peripheral ADC1 is not initialized" problem_level="1" source="Pins:BOARD_InitPins">
-                     <feature name="initialized" evaluation="equal">
-                        <data>true</data>
-                     </feature>
-                  </dependency>
-                  <dependency resourceType="Peripheral" resourceId="CAN0" description="Peripheral CAN0 is not initialized" problem_level="1" source="Pins:BOARD_InitPins">
-                     <feature name="initialized" evaluation="equal">
-                        <data>true</data>
-                     </feature>
-                  </dependency>
                   <dependency resourceType="SWComponent" resourceId="platform.drivers.common" description="Pins initialization requires the COMMON Driver in the project." problem_level="2" source="Pins:BOARD_InitPins">
                      <feature name="enabled" evaluation="equal" configuration="core0">
                         <data>true</data>
                      </feature>
                   </dependency>
-                  <dependency resourceType="SWComponent" resourceId="platform.drivers.port" description="Pins initialization requires the PORT Driver in the project." problem_level="2" source="Pins:BOARD_InitPins">
-                     <feature name="enabled" evaluation="equal" configuration="core0">
-                        <data>true</data>
-                     </feature>
-                  </dependency>
                </dependencies>
-               <pins>
-                  <pin peripheral="GPIOD" signal="GPIO, 2" pin_num="46" pin_signal="ADC1_SE2/PTD2/FTM3_CH4/LPSPI1_SOUT/FXIO_D4/TRGMUX_IN5"/>
-                  <pin peripheral="GPIOA" signal="GPIO, 3" pin_num="47" pin_signal="ADC1_SE1/PTA3/FTM3_CH1/LPI2C0_SCL/EWM_IN/LPUART0_TX"/>
-                  <pin peripheral="GPIOA" signal="GPIO, 2" pin_num="48" pin_signal="ADC1_SE0/PTA2/FTM3_CH0/LPI2C0_SDA/EWM_OUT_b/LPUART0_RX"/>
-                  <pin peripheral="LPSPI0" signal="SOUT" pin_num="33" pin_signal="ADC0_SE5/ADC1_SE15/PTB1/LPUART0_TX/LPSPI0_SOUT/TCLK0"/>
-                  <pin peripheral="LPSPI0" signal="SCK" pin_num="32" pin_signal="ADC0_SE6/PTB2/FTM1_CH0/LPSPI0_SCK/FTM1_QD_PHB/TRGMUX_IN3"/>
-                  <pin peripheral="LPSPI0" signal="SIN" pin_num="31" pin_signal="ADC0_SE7/PTB3/FTM1_CH1/LPSPI0_SIN/FTM1_QD_PHA/TRGMUX_IN2"/>
-                  <pin peripheral="ADC0" signal="SE, 0" pin_num="50" pin_signal="ADC0_SE0/ACMP0_IN0/PTA0/FTM2_CH1/LPI2C0_SCLS/FXIO_D2/FTM2_QD_PHA/LPUART0_CTS/TRGMUX_OUT3"/>
-                  <pin peripheral="ADC1" signal="SE, 5" pin_num="51" pin_signal="ADC1_SE5/PTC7/LPUART1_TX/CAN1_TX/FTM3_CH3"/>
-                  <pin peripheral="GPIOD" signal="GPIO, 1" pin_num="1" pin_signal="ADC2_SE1/PTD1/FTM0_CH3/LPSPI1_SIN/FTM2_CH1/FXIO_D1/TRGMUX_OUT2"/>
-                  <pin peripheral="GPIOD" signal="GPIO, 0" pin_num="2" pin_signal="ADC2_SE0/PTD0/FTM0_CH2/LPSPI1_SCK/FTM2_CH0/FXIO_D0/TRGMUX_OUT1"/>
-                  <pin peripheral="CAN0" signal="TX" pin_num="20" pin_signal="ADC0_SE11/ACMP0_IN4/EXTAL32/PTC3/FTM0_CH3/CAN0_TX"/>
-                  <pin peripheral="CAN0" signal="RX" pin_num="21" pin_signal="ADC0_SE10/ACMP0_IN5/XTAL32/PTC2/FTM0_CH2/CAN0_RX"/>
-               </pins>
+               <pins/>
             </function>
          </functions_list>
       </pins>
@@ -102,9 +63,9 @@
                   <clock_output id="Flash_clock.outFreq" value="12 MHz" locked="false" accuracy=""/>
                   <clock_output id="LPO1KCLK.outFreq" value="1 kHz" locked="false" accuracy=""/>
                   <clock_output id="LPO_clock.outFreq" value="128 kHz" locked="false" accuracy=""/>
-                  <clock_output id="PCC.PCC_ADC0_CLK.outFreq" value="30 MHz" locked="false" accuracy=""/>
-                  <clock_output id="PCC.PCC_ADC1_CLK.outFreq" value="30 MHz" locked="false" accuracy=""/>
-                  <clock_output id="PCC.PCC_ADC2_CLK.outFreq" value="30 MHz" locked="false" accuracy=""/>
+                  <clock_output id="PCC.PCC_ADC0_CLK.outFreq" value="90 MHz" locked="false" accuracy=""/>
+                  <clock_output id="PCC.PCC_ADC1_CLK.outFreq" value="90 MHz" locked="false" accuracy=""/>
+                  <clock_output id="PCC.PCC_ADC2_CLK.outFreq" value="90 MHz" locked="false" accuracy=""/>
                   <clock_output id="PCC.PCC_FLEXIO_CLK.outFreq" value="30 MHz" locked="false" accuracy=""/>
                   <clock_output id="PCC.PCC_FTM0_CLK.outFreq" value="60 MHz" locked="false" accuracy=""/>
                   <clock_output id="PCC.PCC_FTM1_CLK.outFreq" value="60 MHz" locked="false" accuracy=""/>
@@ -127,9 +88,9 @@
                   <clock_output id="System_clock.outFreq" value="60 MHz" locked="false" accuracy=""/>
                </clock_outputs>
                <clock_settings>
-                  <setting id="PCC.PCC_ADC0_SEL.sel" value="SCG.FIRCDIV2_CLK" locked="false"/>
-                  <setting id="PCC.PCC_ADC1_SEL.sel" value="SCG.FIRCDIV2_CLK" locked="false"/>
-                  <setting id="PCC.PCC_ADC2_SEL.sel" value="SCG.FIRCDIV2_CLK" locked="false"/>
+                  <setting id="PCC.PCC_ADC0_SEL.sel" value="SCG.PLLDIV2_CLK" locked="false"/>
+                  <setting id="PCC.PCC_ADC1_SEL.sel" value="SCG.PLLDIV2_CLK" locked="false"/>
+                  <setting id="PCC.PCC_ADC2_SEL.sel" value="SCG.PLLDIV2_CLK" locked="false"/>
                   <setting id="PCC.PCC_FLEXIO_SEL.sel" value="SCG.FIRCDIV2_CLK" locked="false"/>
                   <setting id="PCC.PCC_FTM0_SEL.sel" value="SCG.FIRCDIV1_CLK" locked="false"/>
                   <setting id="PCC.PCC_FTM1_SEL.sel" value="SCG.FIRCDIV1_CLK" locked="false"/>

@@ -23,11 +23,11 @@
 /* clang-format off */
 /* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 !!GlobalInfo
-product: Clocks v4.1
+product: Clocks v5.0
 processor: MKE18F512xxx16
 package_id: MKE18F512VLH16
 mcu_data: ksdk2_0
-processor_version: 4.0.0
+processor_version: 5.0.0
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 /* clang-format on */
 
@@ -117,9 +117,9 @@ outputs:
 - {id: Flash_clock.outFreq, value: 12 MHz}
 - {id: LPO1KCLK.outFreq, value: 1 kHz}
 - {id: LPO_clock.outFreq, value: 128 kHz}
-- {id: PCC.PCC_ADC0_CLK.outFreq, value: 30 MHz}
-- {id: PCC.PCC_ADC1_CLK.outFreq, value: 30 MHz}
-- {id: PCC.PCC_ADC2_CLK.outFreq, value: 30 MHz}
+- {id: PCC.PCC_ADC0_CLK.outFreq, value: 90 MHz}
+- {id: PCC.PCC_ADC1_CLK.outFreq, value: 90 MHz}
+- {id: PCC.PCC_ADC2_CLK.outFreq, value: 90 MHz}
 - {id: PCC.PCC_FLEXIO_CLK.outFreq, value: 30 MHz}
 - {id: PCC.PCC_FTM0_CLK.outFreq, value: 60 MHz}
 - {id: PCC.PCC_FTM1_CLK.outFreq, value: 60 MHz}
@@ -141,9 +141,9 @@ outputs:
 - {id: SIRC_CLK.outFreq, value: 8 MHz}
 - {id: System_clock.outFreq, value: 60 MHz}
 settings:
-- {id: PCC.PCC_ADC0_SEL.sel, value: SCG.FIRCDIV2_CLK}
-- {id: PCC.PCC_ADC1_SEL.sel, value: SCG.FIRCDIV2_CLK}
-- {id: PCC.PCC_ADC2_SEL.sel, value: SCG.FIRCDIV2_CLK}
+- {id: PCC.PCC_ADC0_SEL.sel, value: SCG.PLLDIV2_CLK}
+- {id: PCC.PCC_ADC1_SEL.sel, value: SCG.PLLDIV2_CLK}
+- {id: PCC.PCC_ADC2_SEL.sel, value: SCG.PLLDIV2_CLK}
 - {id: PCC.PCC_FLEXIO_SEL.sel, value: SCG.FIRCDIV2_CLK}
 - {id: PCC.PCC_FTM0_SEL.sel, value: SCG.FIRCDIV1_CLK}
 - {id: PCC.PCC_FTM1_SEL.sel, value: SCG.FIRCDIV1_CLK}
@@ -245,11 +245,11 @@ void BOARD_BootClockRUN(void)
     /* Set SystemCoreClock variable. */
     SystemCoreClock = BOARD_BOOTCLOCKRUN_CORE_CLOCK;
     /* Set PCC ADC0 selection */
-    CLOCK_SetIpSrc(kCLOCK_Adc0, kCLOCK_IpSrcFircAsync);
+    CLOCK_SetIpSrc(kCLOCK_Adc0, kCLOCK_IpSrcSysPllAsync);
     /* Set PCC ADC1 selection */
-    CLOCK_SetIpSrc(kCLOCK_Adc1, kCLOCK_IpSrcFircAsync);
+    CLOCK_SetIpSrc(kCLOCK_Adc1, kCLOCK_IpSrcSysPllAsync);
     /* Set PCC ADC2 selection */
-    CLOCK_SetIpSrc(kCLOCK_Adc2, kCLOCK_IpSrcFircAsync);
+    CLOCK_SetIpSrc(kCLOCK_Adc2, kCLOCK_IpSrcSysPllAsync);
     /* Set PCC LPSPI0 selection */
     CLOCK_SetIpSrc(kCLOCK_Lpspi0, kCLOCK_IpSrcFircAsync);
     /* Set PCC LPSPI1 selection */

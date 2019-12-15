@@ -48,8 +48,6 @@ struct spi_config {
 class SPI final : public StaticService<SPI, const spi_config*> {
 public:
 
-    void tick() override;
-
     struct masterConfig {
 
         uint32_t baudRate = 500000;

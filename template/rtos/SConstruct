@@ -1,19 +1,17 @@
 #!/bin/python
 
+BSP_PATH = '../MKELibrary/'
+
 import os
 
-GNU_PATH = SConscript('config.txt')
+GNU_PATH = SConscript(BSP_PATH+'config.txt')
 
 compileTarget = 'main'
 
 # Create Communal build directory to store all the .o's
 VariantDir('build/board', 'board')
-VariantDir('build/CMSIS', 'CMSIS')
-VariantDir('build/drivers', 'drivers')
-VariantDir('build/lib', 'lib')
-VariantDir('build/System', 'System')
-VariantDir('build/utilities', 'utilities')
 VariantDir('build/source', 'source')
+VariantDir('build/rtos', 'rtos')
 
 env = Environment(ENV = os.environ)
 
@@ -36,20 +34,38 @@ env['ASFLAGS'] = '-g -DDEBUG -D__STARTUP_CLEAR_BSS \
         -ffunction-sections -fdata-sections -ffreestanding \
         -fno-builtin -mthumb -mapcs -std=gnu99 -mcpu=cortex-m4 \
         -mfloat-abi=hard -mfpu=fpv4-sp-d16'
-
 env['CCFLAGS'] = '-O0 -g -DDEBUG -DCPU_MKE18F512VLH16 \
         -DTWR_KE18F -DTOWER -Wall -fno-common \
         -ffunction-sections -fdata-sections -ffreestanding \
         -fno-builtin -mthumb -mapcs -std=gnu99 -mcpu=cortex-m4 \
         -mfloat-abi=hard -mfpu=fpv4-sp-d16 -MMD -MP'
-
 env['CXXFLAGS'] = '-O0 -g -DDEBUG -Wall \
         -fno-common -ffunction-sections -fdata-sections \
         -ffreestanding -fno-builtin -mthumb -mapcs \
         -fno-rtti -fno-exceptions -mcpu=cortex-m4 \
         -mfloat-abi=hard -mfpu=fpv4-sp-d16 -MMD -MP \
-        -DCPU_MKE18F512VLH16 '
+        -DCPU_MKE18F512VLH16'
 
+includes = [
+    'source',
+    'board',
+    BSP_PATH+'CMSIS',
+    BSP_PATH+'drivers',
+    BSP_PATH+'utilities',
+    BSP_PATH+'lib',
+    BSP_PATH+'System',
+    BSP_PATH
+]
+
+
+rtos_includes = [
+    'rtos',
+    'rtos/include',
+    'rtos/portable/ARM_CM4F'
+    ]
+
+env.Append(CPPPATH = includes)
+env.Append(CPPPATH = rtos_includes)
 
 env['LINKFLAGS'] = '-O0 -g -DDEBUG -Wall \
     -fno-common -ffunction-sections -fdata-sections \
@@ -65,44 +81,22 @@ env['LINKFLAGS'] = '-O0 -g -DDEBUG -Wall \
     -mcpu=cortex-m4 -mfloat-abi=hard \
     -mfpu=fpv4-sp-d16 -TMKE18F512xxx16_flash.ld -static'
 
-
-###############
-# GENERIC LIB #
-###############
-
-includes = [
-        'board',
-        'CMSIS',
-        'drivers',
-        'utilities',
-        'lib',
-        'source',
-        'System',
-        '.'
-        ]
-
-env.Append(CPPPATH = includes)
-
-cppsource = Glob('build/lib/*.cpp') +\
-    Glob('build/System/*.cpp')
-
-csource = Glob('build/board/*.c') +\
-    Glob('build/CMSIS/*.c') +\
-    Glob('build/drivers/*.c') +\
-    Glob('build/utilities/*.c')
-
-asm = Glob('build/CMSIS/*.S')
-
-env.StaticLibrary(target='bsp', source=asm+cppsource+csource)
+src = \
+    Glob('build/board/*.c'), \
+    Glob('build/source/*.cpp'), \
+    Glob('build/source/*.c'),
+    
+rtos_src = \
+    Glob('build/rtos/*.c'), \
+    'build/rtos/portable/ARM_CM4F/port.c', \
+    'build/rtos/portable/MemMang/heap_4.c'
 
 # Run the compile command and create .elf
-# env.Program(compileTarget, source=Glob('build/source/*.cpp'), LIBS=['bsp'], LIBPATH=['.'])
+env.Program(compileTarget, source=src+rtos_src, LIBS=['bsp'], LIBPATH=[BSP_PATH])
 
 # Create .lst from .elf
-# !! This is not necessary in the BSP !!
 #env.Command(compileTarget+".lst", compileTarget+".elf", \
 #    OBJDUMP+" -D " + compileTarget+".elf" + " > " + compileTarget+".lst")
 
 # Print Memory Map -> .elf Headers
-# !! This is not necessary in the BSP !!
 #env.Command(compileTarget, compileTarget+".elf", READELF+" -e " + compileTarget+".elf")

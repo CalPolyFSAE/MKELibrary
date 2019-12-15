@@ -1,6 +1,14 @@
+/*
+ * candemo.h
+ */
+
 #include "canlight.h"
 
 using namespace BSP;
+
+/*
+ * demo 1: loopback
+ */
 
 uint8_t counter;
 
@@ -31,8 +39,6 @@ void loopbacktest(){
 
 }
 
-// Test motor controller response
-// Attempts to read CAN offset
 can::CANlight::frame out;
 
 void callback(){

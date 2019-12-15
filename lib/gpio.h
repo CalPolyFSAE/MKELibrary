@@ -33,10 +33,6 @@ public:
 
     GPIO();
 
-	void tick() override {
-		printf("tock\n");
-	}
-
     // Make pin an input
     static void in_dir(GPIO_port port, uint32_t pin);
 

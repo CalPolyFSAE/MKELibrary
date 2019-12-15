@@ -13,10 +13,6 @@ UART::UART(const config* conf){
 	EnableIRQ(LPUART2_RX_IRQn);
 }
 
-void UART::tick(){
-
-}
-
 void UART::init(uint8_t no, UART::uartconfig* conf){
 
 	lpuart_config_t fslconf;

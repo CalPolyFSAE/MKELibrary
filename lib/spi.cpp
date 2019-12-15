@@ -16,39 +16,6 @@ SPI::SPI(const spi_config* spiconfig) {
 
 }
 
-void SPI::tick(){
-
-}
-/*
-void SPI::initSlave(uint8_t no, slaveConfig* sc){
-
-    // Convert struct to the FSL format
-    
-    lpspi_slave_config_t fslsc;
-
-    fslsc.bitsPerFrame = sc->frameLength;
-    fslsc.cpol = sc->cpol;
-    fslsc.cpha = sc->cphase;
-    fslsc.whichPcs = sc->pcs;
-    pcs[no] = sc->pcs;
-    fslsc.direction = sc->bitdir;
-    fslsc.pcsActiveHighOrLow = sc->pcspol;
-    fslsc.pinCfg = sc->pincfg;
-    fslsc.dataOutConfig = sc->datacfg;
-
-    LPSPI_SlaveInit(bases[no], &fslsc);
-
-    handles[no] = new lpspi_slave_handle_t;
-
-    // Necessary to cast handles[] and callbacks[] as those are general purpose 
-    // and could be either master or slave constructs
-    LPSPI_SlaveTransferCreateHandle(bases[no],
-			(lpspi_slave_handle_t*)handles[no],
-            (lpspi_slave_transfer_callback_t)callbacks[no], 
-            NULL);
-
-}
-*/
 void SPI::initMaster(uint8_t no, masterConfig* mc){
 
     // Convert custom config struct to the FSL format.

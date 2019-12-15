@@ -1,0 +1,3 @@
+GNU_PATH = '/home/gray/embedded/gcc-arm-none-eabi/bin/'
+
+Return('GNU_PATH')

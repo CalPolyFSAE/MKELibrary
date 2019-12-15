@@ -40,10 +40,6 @@ void LPIT::init(uint8_t ch, uint32_t period, callback cb){
 }
 
 
-void LPIT::tick(){
-
-}
-
 void LPIT::interrupt(uint8_t ch){
     if(ch == 0) base->MSR |= LPIT_MSR_TIF0(1);
     if(ch == 1) base->MSR |= LPIT_MSR_TIF1(1);

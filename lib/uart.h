@@ -4,9 +4,7 @@
 #include "Service.h"
 #include "fsl_lpuart.h"
 
-
-namespace BSP {
-namespace uart {
+namespace BSP::uart {
 
 struct config {
 	clock_ip_src_t clock = kCLOCK_IpSrcFircAsync;
@@ -16,7 +14,6 @@ typedef void (*uartcallback)(uint8_t);
 
 class UART final : public StaticService<UART, const config*> {
 public:
-	void tick() override;
 
 	UART(const config*);
 
@@ -62,7 +59,6 @@ private:
 
 };
 
-}
 }
 
 #endif
