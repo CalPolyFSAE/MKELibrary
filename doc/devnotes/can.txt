@@ -1,0 +1,56 @@
+## FSL machine
+
+The CAN system revolves around a flexcan handle object. This should be created once and kept in scope.
+flexcan_handle_t contains:
+- A callback function for whenever CAN interrupts trigger
+- A void pointer, for passing data to the callback
+- An array containing pointers to the message buffers.
+- An array which holds the message buffer states.
+- A pointer to the RX FIFO buffer.
+- The state of the RF FIFO buffer.
+
+
+## CPFSAE machine
+
+MB (message buffer or mail box) central to behavior of driver
+MB_info class contains:
+- MB_transfer_mode determines behavior of MB, tx/rx and continuous/oneshot
+- callback is function called on tick
+- all frame data as Frame_data pointer
+- status info: completed boolean; overrun_count counts missed callbacks;
+
+Frame_data: 
+- points to handle
+- holds one frame (fsl format)
+- constructor requires handle be passed
+
+MB_info methods
+---
+constructor
+- args: bus 1 or 0, MB id (0-16)
+- associate handle 1 or 0 with the MB via frame_data member
+
+reset
+- abort transfer, unconfigure registers via fsl function calls
+- set mode to disabled
+
+do_callback
+- gets frame data and frame length and passes them to callback
+
+set_frame_data_tx
+- args: all frame parameters
+- assemble frame and transfer parameters
+- configure mb (abort, clean, configure as tx)
+- send, expect callback after success
+
+set_frame_data_rx
+- i don't understand
+
+CAN_drv
+---
+constructor
+- takes CAN0_config and CAN1_config wrapped in can_config
+- populate MB_info arrays for all 16 in each
+- create new Controller_data objects for each
+
+

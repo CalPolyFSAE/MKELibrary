@@ -1,0 +1,62 @@
+## ADC
+
+Dependencies: fsl_adc12.h
+
+### Setup
+
+Configuration structs
+- adc12_config_t
+  - Reference voltage source
+  - Clock source, prescale
+  - Resolution
+  - Sample clock count
+    - Noise reduction thing?
+  - Continuous conversion mode?
+- adc12_channel_config_t
+  - Channel number
+  - Interrupt?
+
+Clock set:
+''' CLOCK_SetIpSrc(kCLOCK_Adc0, kCLOCK_IpSrcFircAsync); '''
+
+''' ADC12_GetDefaultConfig() '''
+- Voltage reference: between pins VrefH and VrefL
+- Clock source: alt 0
+- Clock prescale: 1
+- Resolution: 8b
+- Sample clock count: 13
+- No continuous conversion
+
+''' ADC12_Init '''
+- Sets configuration based on adc12_config_t argument
+
+''' ADC12_EnableHardwareTrigger '''
+- If true is passed, ???
+- If false is passed, starting conversion is done by calling a function. 
+
+### Interrupt setup
+
+Enable specific IRQ:
+''' EnableIRQ(ADC0_IRQn) '''
+- IRQn enum is defined in MKE18F16.h
+
+Tie handler to request:
+''' #define user_function ADC0_IRQn '''
+- Handler names are in startup_mke18f1.c
+  - Sequence is the same as in IRQn enum, but numbers are different.
+
+Which interrupt corresponds to which IRQn? fukcing guess binch
+
+### Conversion
+
+Configure channel, in adc12_channel_config_t struct:
+- Set channelNumber to input number (see datasheet)
+- Set enableInterruptOnConversionCompleted to: 
+  - False if manually checking  
+  - True if IRQ handler is set up
+
+Trigger conversion: 
+- Call ADC12_SetChannelConfig
+  - Pass ADC base, input channel group, and by adr channel config struct 
+
+

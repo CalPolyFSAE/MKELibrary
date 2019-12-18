@@ -1,0 +1,68 @@
+# MKE
+
+## Notes
+
+Clock issues can be very difficult to debug. Make sure to be extremely careful
+that clocks will only be used as will properly function.
+
+Hardware registers are accessed like so:
+
+- A peripheral has a macro which ties a name to a memory location:
+  - ADC0 = 0x4003B000
+- This name is cast to a pointer to a struct:
+  - (ADC_Type * )ADC0
+- The struct holds registers as offsets from the peripheral base. 
+  - ADC0->SC2 points to base + 0x90, or Status/Control 2 register.
+  - Registers have keywords '__IO' or similar
+    - volatile or volatile const, defined in CMSIS/Include/core*.h 
+
+Manually write to register PERIPHERAL0_REG, field FIELD:
+base->REG = PERIPHERAL_REG_FIELD(x);
+rhs is macro to shift and mask argument x.
+macros are defined in MKE18F16.h
+Interrupt handlers:
+
+### Interrupts
+
+Two kinds of interrupt handlers:
+
+- x_IRQHandler handles a specific interrupt. This is the function which actually gets called from the vector. One function per vector.
+- x_DriverIRQHandler handles all interrupts for a hardware driver. One interrupt per hardware peripheral, i.e. SPI0, SPI1, CAN0, etc.
+
+startup/startup_mke18f16.cpp declares x_IRQHandler functions as WEAK functions, with a definition which just calls the corresponding x_DriverIRQHandler.
+It declares x_DriverIRQHandler functions, but does not define them.
+
+This leaves two main ways of writing interrupts: 
+
+- Write one x_DriverIRQHandler function for your peripheral, which checks interrupt flags and responds accordingly.
+- Write a x_IRQHandler function for each interrupt you care about.
+
+The latter requires you to manually control which interrupts are enabled for your peripheral. The default behavior for any DriverIRQHandler is while(1){}, so unhandled IRQHandler functions will hang the processor.
+
+Sequence of interrupts is in CMSIS/MKE18F16.h
+
+Interrupts are generally enabled/disabled BOTH in peripheral registers AND in NVIC registers.
+Calling EnableIRQ(x_IRQn) is necessary to set latter. This can be done once, then controlled via peripheral functions. Example,
+```
+EnableIRQ(LPSPI0_IRQn)
+...
+LPSPI0->IER |= interruptmask
+...
+LPSPI0->IER &= ~interruptmask
+```
+
+- Enable specific IRQ: `EnableIRQ(IRQn)`
+- IRQn enum is defined in MKE18F16.h
+
+- Tie handler to request:
+''' #define user_function peripheralname_IRQn '''
+- Handler names are in startup_mke18f1.c
+  - Sequence is the same as in IRQn enum, but numbers are different.
+
+
+## Troubleshooting
+
+### Things which can cause hard faults
+
+- Calling a function pointer which hasn't been initialized: `NULL()`
+- Calling LPTMR fsl functions before initializing LP_TIMER

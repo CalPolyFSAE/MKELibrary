@@ -2,8 +2,6 @@
 #include "pin_mux.h"
 #include "clock_config.h"
 
-using namespace BSP;
-
 int main(void) {
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
