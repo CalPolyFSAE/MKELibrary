@@ -8,7 +8,6 @@
 *.swp
 *.vscode
 CMakeCache.txt
-Makefile
 cmake_install.cmake
 **/debug
 

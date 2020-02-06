@@ -2,8 +2,6 @@
 #include "clock_config.h"
 #include "pin_mux.h"
 
-using namespace BSP;
-
 int main() {
 
     // initialize board hardware
