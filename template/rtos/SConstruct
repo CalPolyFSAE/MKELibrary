@@ -64,8 +64,8 @@ rtos_includes = [
     'rtos/portable/ARM_CM4F'
     ]
 
-env.Append(CPPPATH = includes)
 env.Append(CPPPATH = rtos_includes)
+env.Append(CPPPATH = includes)
 
 env['LINKFLAGS'] = '-O0 -g -DDEBUG -Wall \
     -fno-common -ffunction-sections -fdata-sections \
