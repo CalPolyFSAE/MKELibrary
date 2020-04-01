@@ -2,7 +2,7 @@
  * candemo.h
  */
 
-#include "canlight.h"
+#include "can.h"
 
 using namespace BSP;
 
