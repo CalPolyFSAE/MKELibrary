@@ -96,7 +96,7 @@ asm = Glob('build/CMSIS/*.S')
 env.StaticLibrary(target='bsp', source=asm+cppsource+csource)
 
 # Run the compile command and create .elf
-env.Program(compileTarget, source=Glob('build/source/*.cpp'), LIBS=['bsp'], LIBPATH=['.'])
+# env.Program(compileTarget, source=Glob('build/source/*.cpp'), LIBS=['bsp'], LIBPATH=['.'])
 
 # Create .lst from .elf
 # !! This is not necessary in the BSP !!
