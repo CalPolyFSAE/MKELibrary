@@ -6,6 +6,10 @@ Written according to MKELibrary v2.0
 
 MKELibrary contains all of the prerequisites for building a program to run on an MKE1xF microcontroller. In addition to low-level software adapted from the SDK, MKELibrary includes a number of libraries which can be used to simplify hardware interaction. 
 
+## Other stuff you should read
+
+`new.md`: contains information on setting up new projects
+
 ## How to use a library
 
 For every hardware library you use in your program, you need to begin with some initial setup. Here, the CAN library is used as an example. 
