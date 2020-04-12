@@ -1,6 +1,8 @@
 #include "uart.h"
 using namespace BSP;
 
+#define UART_No 0
+
 enum userstate_t {
 	offline,
 	attached,
@@ -19,7 +21,7 @@ void cb0(uint8_t data){
 		if(data == '@'){
 			userstate = attached;
 			uint8_t message[] = "hello.\r\nenter a number.\r\n";
-			uart.write(0, message, sizeof(message)/sizeof(message[0]));
+			uart.write(UART_No, message, sizeof(message)/sizeof(message[0]));
 			uart.flags[0].echo = 1;
 			input = 0;
 		}
@@ -39,13 +41,15 @@ void cb0(uint8_t data){
 	case reading:
 	{
 		uint8_t message[] = "goodbye.\r\n";
-		uart.write(0, message, sizeof(message)/sizeof(message[0]));
+		uart.write(UART_No, message, sizeof(message)/sizeof(message[0]));
 	}
 		break;
 	default:
 		break;
 	}
 }
+
+uint8_t message[] = "hello.\r\nenter a number.\r\n";
 
 void uarttest(){
 
@@ -58,6 +62,7 @@ void uarttest(){
 	uart::UART::uartconfig uart0c;
 	uart0c.callback = cb0;
 	uart0c.echo = 0;
-	uart.init(0, &uart0c);
+	uart.init(UART_No, &uart0c);
+    uart.write(UART_No, message, sizeof(message)/sizeof(message[0]));
 
 }
