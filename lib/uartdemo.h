@@ -62,6 +62,7 @@ void uarttest(){
 	uart::UART::uartconfig uart0c;
 	uart0c.callback = cb0;
 	uart0c.echo = 0;
+    uart0c.baudrate = 921600;
 	uart.init(UART_No, &uart0c);
     uart.write(UART_No, message, sizeof(message)/sizeof(message[0]));
 

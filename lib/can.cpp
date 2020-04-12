@@ -115,7 +115,7 @@ CANlight::frame CANlight::readrx(uint8_t bus){
     flexcan_frame_t rxbuffer = bus ? rxbuffer1 : rxbuffer0;
     f.ext = rxbuffer.format;
     f.rtr = rxbuffer.type;
-    f.id = rxbuffer.id;
+    f.id = f.ext ? rxbuffer.id : rxbuffer.id >> 18; // what the fuck ahha
     f.dlc = rxbuffer.length;
     f.data[0] = rxbuffer.dataByte0;
     f.data[1] = rxbuffer.dataByte1;
